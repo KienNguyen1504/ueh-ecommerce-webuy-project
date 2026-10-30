@@ -1,0 +1,70 @@
+<!-- WeBuy Header shared template.
+Place inside <body> and use css/styles.css. For products & product-detail set class=is-active and aria-current=page on Sản phẩm; for about use Giới thiệu. -->
+<div class="announcement"><div class="container announcement-inner"><span><span class="ann-star">✳</span> WeBuy — Mua chung, giá tốt hơn mỗi ngày</span><a href="about.html#quy-trinh">Khám phá cách mua chung <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a></div></div>
+<header class="site-header">
+<div class="container header-inner">
+<a aria-label="WeBuy - Trang chủ" class="brand" href="index.html">
+<img alt="" class="brand-mark" src="images/logo-mark.png"/>
+<span class="brand-text">
+<span class="brand-name">
+       We
+       <span>
+        Buy
+       </span>
+</span>
+<span class="brand-line">
+       Mua chung · Giá tốt hơn
+      </span>
+</span>
+</a>
+<nav aria-label="Điều hướng chính" class="primary-nav">
+<a aria-current="page" class="nav-item is-active" href="index.html">
+      Trang chủ
+     </a>
+<a class="nav-item" href="products.html">
+      Sản phẩm
+     </a>
+<a class="nav-item" href="about.html">
+      Giới thiệu
+     </a>
+</nav>
+<div class="header-actions">
+<form action="products.html" class="header-search" method="get" role="search">
+<svg aria-hidden="true" viewBox="0 0 24 24">
+<circle cx="10.8" cy="10.8" r="7">
+</circle>
+<path d="m16 16 5 5">
+</path>
+</svg>
+<label class="sr-only" for="header-search-index.html">
+       Tìm kiếm sản phẩm
+      </label>
+<input id="header-search-index.html" name="q" placeholder="Tìm món bạn thích..." type="search"/>
+<button aria-label="Tìm kiếm" type="submit">
+       →
+      </button>
+</form>
+<a aria-label="Giỏ hàng" class="header-cart" href="cart.html">
+<svg aria-hidden="true" viewBox="0 0 24 24">
+<path d="M3 4h2l2.3 11.5a2 2 0 0 0 2 1.6H19a2 2 0 0 0 2-1.6L22 8H6">
+</path>
+<circle cx="10" cy="21" r="1">
+</circle>
+<circle cx="19" cy="21" r="1">
+</circle>
+</svg>
+<span class="cart-counter" data-cart-count="">
+       0
+      </span>
+</a>
+<a aria-label="Hồ sơ người dùng" class="header-avatar" href="profile.html">
+<span class="avatar-circle" data-avatar="">
+       WB
+      </span>
+<span class="avatar-caption">
+       Tài khoản
+      </span>
+</a>
+</div>
+</div>
+</header>
