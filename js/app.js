@@ -120,7 +120,12 @@
     document.title=p.name+' | WeBuy';setText('#detail-title',p.name);setText('#detail-category',p.category.toUpperCase()+' · SẢN PHẨM');
     setText('#detail-retail-price',money(p.retail));setText('#detail-group-price',money(p.group));setText('#detail-group-min',`Áp dụng khi nhóm đạt ít nhất ${p.minMembers} thành viên`);
     setText('#detail-summary',`${p.name} thuộc danh mục ${p.category}. Khám phá lựa chọn mua lẻ hoặc mua chung cùng WeBuy để nhận mức giá phù hợp.`);
-    document.querySelectorAll('.breadcrumb span').forEach((el,i)=>{if(i===1)el.textContent=p.name;});
+  const breadcrumbName =
+  document.querySelector('.breadcrumb span:last-child');
+
+if (breadcrumbName) {
+  breadcrumbName.textContent = p.name;
+}
     const im=document.getElementById('detail-product-image');if(im){im.src=p.image;im.alt=p.name;}
     const desc=document.querySelector('.details-description');
     if(desc){
