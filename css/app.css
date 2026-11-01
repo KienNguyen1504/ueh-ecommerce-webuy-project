@@ -13,3 +13,10 @@
 @media(max-width:599px){.header-inner{flex-wrap:wrap;gap:8px}.header-actions{width:100%;order:3;justify-content:stretch;gap:7px}.header-search{max-width:none;min-width:0;height:42px}.header-search input{font-size:12px}.header-cart,.header-avatar{height:42px;width:42px}.brand{order:1}.primary-nav{order:2}.avatar-caption{display:none}.cart-layout,.checkout-layout,.profile-layout{gap:17px}.cart-summary{padding:19px}.cart-item{grid-template-columns:78px minmax(0,1fr);align-items:start}.cart-item img{width:78px;height:78px}.cart-line-price{grid-column:2;justify-self:end;margin-top:-5px}.cart-item-bottom{gap:7px;flex-wrap:wrap}.cart-item-title{font-size:13px}.app-section{padding:22px 0 45px}.demo-banner{font-size:11px}.checkout-layout .panel,.profile-panel{padding:20px}.profile-form{grid-template-columns:1fr}.profile-form .form-field:nth-of-type(4){grid-column:auto}.detail-quantity .btn{margin-left:0;width:100%}.detail-quantity>label{width:100%}.group-row{flex-wrap:wrap}.available-group{padding:12px}.app-modal{padding:23px}.app-modal h2{font-size:25px}.share-field{flex-wrap:wrap}.share-field button{width:100%}.activity-line{grid-template-columns:50px minmax(0,1fr);gap:8px}.activity-line img{width:50px;height:50px}.activity-line>a:last-child{grid-column:2}}
 @media(max-width:380px){.card-shop-actions{flex-direction:column}.card-add-button,.card-join-link{width:100%}.cart-kind{font-size:10px}.cart-item-state{font-size:10px}}
 .simulate-member{margin-top:10px;padding:8px 11px;background:#fff6e9;border:1px dashed #f0c58f;border-radius:7px;color:#98602e;font-size:10px;font-weight:750;cursor:pointer}.simulate-member:hover{background:#ffecd4}
+
+/* Bước 8 - Cải thiện Hover cho bộ lọc sản phẩm */
+.filter-chip:hover {
+    background-color: #D1FAE5;
+    border-color: #0B7D5B;
+    color: #075139;
+}
