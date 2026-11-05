@@ -255,56 +255,162 @@ if (breadcrumbName) {
     }
     if(target.matches('#cart-checkout')&&target.getAttribute('aria-disabled')==='true')e.preventDefault();
   });
-  document.addEventListener('submit',e=>{
-    
-document.addEventListener('change', e => {
-  if (e.target.id !== 'catalog-sort') return;
+ 
+  // Xử lý khi người dùng thay đổi lựa chọn sắp xếp giá
+  document.addEventListener('change', e => {
+    if (e.target.id !== 'catalog-sort') return;
 
-  const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(location.search);
 
-  if (e.target.value === 'default') {
-    params.delete('sort');
-  } else {
-    params.set('sort', e.target.value);
-  }
-
-  const query = params.toString();
-
-  history.replaceState(
-    null,
-    '',
-    location.pathname + (query ? '?' + query : '')
-  );
-
-  renderCatalog();
-});
-
-    if(e.target.id==='catalog-search'){
-      e.preventDefault();let q=document.getElementById('catalog-q').value.trim();const params=new URLSearchParams(location.search);
-      q?params.set('q',q):params.delete('q');history.replaceState(null,'',location.pathname+(params.toString()?'?'+params.toString():''));renderCatalog();
+    if (e.target.value === 'default') {
+      params.delete('sort');
+    } else {
+      params.set('sort', e.target.value);
     }
-    if(e.target.id==='profile-form'){
-      e.preventDefault();const f=e.target;const values=Object.fromEntries(new FormData(f));
-      if(!values.name?.trim()){flash('Vui lòng nhập tên hiển thị.','error');return;}
-      const profile={name:values.name.trim(),email:(values.email||'').trim(),phone:(values.phone||'').trim(),address:(values.address||'').trim()};
-      put('profile',profile);updateAvatar();renderProfile();flash('Đã lưu hồ sơ demo trên trình duyệt.');
+
+    const query = params.toString();
+
+    history.replaceState(
+      null,
+      '',
+      location.pathname + (query ? '?' + query : '')
+    );
+
+    renderCatalog();
+  });
+
+  // Xử lý các biểu mẫu: tìm kiếm, hồ sơ và xác nhận đơn hàng
+  document.addEventListener('submit', e => {
+
+    if (e.target.id === 'catalog-search') {
+      e.preventDefault();
+      let q = document.getElementById('catalog-q').value.trim();
+      const params = new URLSearchParams(location.search);
+
+      q ? params.set('q', q) : params.delete('q');
+
+      history.replaceState(
+        null,
+        '',
+        location.pathname + (params.toString() ? '?' + params.toString() : '')
+      );
+
+      renderCatalog();
     }
-    if(e.target.id==='checkout-form'){
-      e.preventDefault();const f=e.target;
-      if(!f.reportValidity())return;
-      const ready=cart.filter(item=>item.kind==='retail'||groups.some(g=>g.id===item.groupId&&groupState(g)==='success'));
-      if(!ready.length){flash('Không có sản phẩm đủ điều kiện xác nhận.','error');return;}
-      const values=Object.fromEntries(new FormData(f));
-      if(!values.name?.trim()||!values.phone?.trim()||!values.address?.trim()){flash('Vui lòng nhập đầy đủ thông tin nhận hàng.','error');return;}
-      const total=ready.reduce((sum,it)=>{const p=product(it.productId);return sum+(it.kind==='retail'?p.retail:p.group)*it.quantity;},0);
-      const id='WB'+String(Date.now()).slice(-9);
-      const orders=get('orders',[]);orders.push({id,date:new Date().toLocaleString('vi-VN'),items:ready.map(x=>({...x})),total,shipping:{name:values.name,phone:values.phone,address:values.address},status:'demo'});put('orders',orders);
-      cart=cart.filter(it=>!ready.includes(it));saveCart();put('profile',{...currentProfile(),name:values.name.trim(),phone:values.phone.trim(),address:values.address.trim()});
+
+    if (e.target.id === 'profile-form') {
+      e.preventDefault();
+      const f = e.target;
+      const values = Object.fromEntries(new FormData(f));
+
+      if (!values.name?.trim()) {
+        flash('Vui lòng nhập tên hiển thị.', 'error');
+        return;
+      }
+
+      const profile = {
+        name: values.name.trim(),
+        email: (values.email || '').trim(),
+        phone: (values.phone || '').trim(),
+        address: (values.address || '').trim()
+      };
+
+      put('profile', profile);
+      updateAvatar();
+      renderProfile();
+      flash('Đã lưu hồ sơ demo trên trình duyệt.');
+    }
+
+    if (e.target.id === 'checkout-form') {
+      e.preventDefault();
+      const f = e.target;
+
+      if (!f.reportValidity()) return;
+
+      const ready = cart.filter(item =>
+        item.kind === 'retail' ||
+        groups.some(g =>
+          g.id === item.groupId && groupState(g) === 'success'
+        )
+      );
+
+      if (!ready.length) {
+        flash('Không có sản phẩm đủ điều kiện xác nhận.', 'error');
+        return;
+      }
+
+      const values = Object.fromEntries(new FormData(f));
+
+      if (
+        !values.name?.trim() ||
+        !values.phone?.trim() ||
+        !values.address?.trim()
+      ) {
+        flash('Vui lòng nhập đầy đủ thông tin nhận hàng.', 'error');
+        return;
+      }
+
+      const total = ready.reduce((sum, it) => {
+        const p = product(it.productId);
+        return sum + (it.kind === 'retail' ? p.retail : p.group) * it.quantity;
+      }, 0);
+
+      const id = 'WB' + String(Date.now()).slice(-9);
+      const orders = get('orders', []);
+
+      orders.push({
+        id,
+        date: new Date().toLocaleString('vi-VN'),
+        items: ready.map(x => ({ ...x })),
+        total,
+        shipping: {
+          name: values.name,
+          phone: values.phone,
+          address: values.address
+        },
+        status: 'demo'
+      });
+
+      put('orders', orders);
+
+      cart = cart.filter(it => !ready.includes(it));
+      saveCart();
+
+      put('profile', {
+        ...currentProfile(),
+        name: values.name.trim(),
+        phone: values.phone.trim(),
+        address: values.address.trim()
+      });
+
       showDialog(`<span class="dialog-icon">✓</span><h2>Đã lưu đơn hàng demo</h2><p>Mã đơn <strong>${safe(id)}</strong> với tổng tiền hàng <strong>${money(total)}</strong> đã được lưu trên trình duyệt. Đây là bước mô phỏng xác nhận đặt hàng, <strong>chưa phát sinh giao dịch, thu tiền hoặc giao hàng thực tế</strong>.</p><a href="profile.html" class="btn btn-primary">Xem lịch sử đơn demo</a>`);
-      renderCheckout();refreshHeader();
+
+      renderCheckout();
+      refreshHeader();
     }
   });
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDialog();});
-  window.addEventListener('storage',e=>{if(e.key?.startsWith(storagePrefix)){groups=get('groups',seedGroups());cart=get('cart',[]);refreshHeader();refreshProductProgress();renderDetail();renderCart();renderProfile();}});
-  refreshHeader();refreshProductProgress();renderCatalog();renderDetail();renderCart();renderCheckout();renderProfile();
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDialog();
+  });
+
+  window.addEventListener('storage', e => {
+    if (e.key?.startsWith(storagePrefix)) {
+      groups = get('groups', seedGroups());
+      cart = get('cart', []);
+      refreshHeader();
+      refreshProductProgress();
+      renderDetail();
+      renderCart();
+      renderProfile();
+    }
+  });
+
+  refreshHeader();
+  refreshProductProgress();
+  renderCatalog();
+  renderDetail();
+  renderCart();
+  renderCheckout();
+  renderProfile();
 })();
