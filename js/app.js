@@ -88,26 +88,52 @@
       }
     }
   };
-  const renderCatalog=()=>{
-    if(page!=='products.html')return;
-    const searchParams=new URLSearchParams(location.search);
-    let filter=searchParams.get('category')||'all'; if(!CATEGORIES[filter]) filter='all';
-    const keyword=(searchParams.get('q')||'').trim();
-    const input=document.getElementById('catalog-q');if(input)input.value=keyword;
-    document.querySelectorAll('[data-filter]').forEach(b=>{
-      let isActive=b.dataset.filter===filter;b.classList.toggle('is-selected',isActive);b.setAttribute('aria-pressed',String(isActive));
-    });
-    let visible=0;
-    document.querySelectorAll('[data-product-id]').forEach(card=>{
-      const p=product(card.dataset.productId);if(!p)return;
-      const matchCat=filter==='all'||p.category===CATEGORIES[filter];
-      const matchQ=!keyword||(p.name+' '+p.category).toLocaleLowerCase('vi-VN').includes(keyword.toLocaleLowerCase('vi-VN'));
-      card.hidden=!(matchCat&&matchQ);
-      if(!card.hidden)visible++;
-    });
-    const count=document.getElementById('catalog-count');if(count)count.textContent=`Hiển thị ${visible}/${products.length} sản phẩm${filter!=='all'?' · '+CATEGORIES[filter]:''}`;
-    const empty=document.getElementById('empty-search');if(empty)empty.hidden=visible!==0;
-  };
+const renderCatalog = () => {
+  if (page !== 'products.html') return;
+
+  const params = new URLSearchParams(location.search);
+  let category = params.get('category') || 'all';
+  if (!CATEGORIES[category]) category = 'all';
+
+  const keyword = (params.get('q') || '').trim();
+  const sort = params.get('sort') || 'default';
+
+  const input = document.getElementById('catalog-q');
+  if (input) input.value = keyword;
+
+  const select = document.getElementById('catalog-sort');
+  if (select) select.value =
+    ['price-asc', 'price-desc'].includes(sort) ? sort : 'default';
+
+  document.querySelectorAll('[data-filter]').forEach(button => {
+    const active = button.dataset.filter === category;
+    button.classList.toggle('is-selected', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+
+  // Tìm kiếm và lọc sản phẩm
+  const result = products.filter(p => {
+    const matchCategory =
+      category === 'all' || p.category === CATEGORIES[category];
+
+    const matchName = p.name.toLocaleLowerCase('vi-VN')
+      .includes(keyword.toLocaleLowerCase('vi-VN'));
+
+    return matchCategory && matchName;
+  });
+
+  // Sắp xếp giá mua lẻ
+  if (sort === 'price-asc') {
+    result.sort((a, b) => a.price - b.price);
+  } else if (sort === 'price-desc') {
+    result.sort((a, b) => b.price - a.price);
+  }
+
+  // Cập nhật danh sách trên giao diện
+  window.renderProducts(result);
+  refreshProductProgress();
+};
+
   const setCategory=(cat)=>{
     const searchParams=new URLSearchParams(location.search);
     if(cat==='all')searchParams.delete('category');else searchParams.set('category',cat);
@@ -230,6 +256,29 @@ if (breadcrumbName) {
     if(target.matches('#cart-checkout')&&target.getAttribute('aria-disabled')==='true')e.preventDefault();
   });
   document.addEventListener('submit',e=>{
+    
+document.addEventListener('change', e => {
+  if (e.target.id !== 'catalog-sort') return;
+
+  const params = new URLSearchParams(location.search);
+
+  if (e.target.value === 'default') {
+    params.delete('sort');
+  } else {
+    params.set('sort', e.target.value);
+  }
+
+  const query = params.toString();
+
+  history.replaceState(
+    null,
+    '',
+    location.pathname + (query ? '?' + query : '')
+  );
+
+  renderCatalog();
+});
+
     if(e.target.id==='catalog-search'){
       e.preventDefault();let q=document.getElementById('catalog-q').value.trim();const params=new URLSearchParams(location.search);
       q?params.set('q',q):params.delete('q');history.replaceState(null,'',location.pathname+(params.toString()?'?'+params.toString():''));renderCatalog();
