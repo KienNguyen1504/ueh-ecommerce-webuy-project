@@ -157,7 +157,7 @@ const renderCatalog = () => {
     const setText=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=value;};
     document.title=p.name+' | WeBuy';setText('#detail-title',p.name);setText('#detail-category',p.category.toUpperCase()+' · SẢN PHẨM');
     setText('#detail-retail-price',money(p.retail));setText('#detail-group-price',money(p.group));setText('#detail-group-min',`Áp dụng khi nhóm đạt ít nhất ${p.minMembers} thành viên`);
-    setText('#detail-summary',`${p.name} thuộc danh mục ${p.category}. Khám phá lựa chọn mua lẻ hoặc mua chung cùng WeBuy để nhận mức giá phù hợp.`);
+    setText('#detail-summary',p.description);
   const breadcrumbName =
   document.querySelector('.breadcrumb span:last-child');
 
@@ -168,8 +168,8 @@ if (breadcrumbName) {
     const desc=document.querySelector('.details-description');
     if(desc){
       const heading=desc.querySelector('.description-grid h2'),paragraph=desc.querySelector('.description-grid > div:first-child > p:last-of-type');
-      if(heading)heading.textContent=p.id==='1'?'Đơn giản, tiện dụng và dễ phối đồ.':'Khám phá lựa chọn phù hợp với bạn.';
-      if(paragraph)paragraph.textContent=`${p.name} được giới thiệu trên WeBuy dưới hình thức mua lẻ hoặc mua chung. Hình ảnh, mô tả và mức giá hiện phục vụ minh họa cho đồ án.`;
+      if(heading)heading.textContent='Mô tả sản phẩm';
+      if(paragraph)paragraph.textContent=p.description;
       const spec=desc.querySelector('.spec-table tbody');if(spec)spec.innerHTML=`<tr><th>Tên sản phẩm</th><td>${safe(p.name)}</td></tr><tr><th>Danh mục</th><td>${safe(p.category)}</td></tr><tr><th>Giá mua lẻ</th><td>${money(p.retail)}</td></tr><tr><th>Giá mua chung</th><td>${money(p.group)} (từ ${p.minMembers} người)</td></tr><tr><th>Tình trạng</th><td>Dữ liệu minh họa, chưa có giao dịch thật</td></tr>`;
     }
     const table=document.getElementById('dynamic-tiers');if(table){table.innerHTML=`<h2>So sánh giá theo hình thức mua</h2><table class="tier-table"><thead><tr><th>Hình thức</th><th>Điều kiện</th><th>Giá / sản phẩm</th></tr></thead><tbody><tr><td>Mua lẻ</td><td>1 người</td><td>${money(p.retail)}</td></tr><tr class="is-tier"><td>Mua chung</td><td>Từ ${p.minMembers} người</td><td>${money(p.group)}</td></tr></tbody></table><p class="table-note">Giá mua chung chỉ áp dụng khi nhóm đủ số thành viên trong thời hạn. Đây là dữ liệu demo.</p>`;}
