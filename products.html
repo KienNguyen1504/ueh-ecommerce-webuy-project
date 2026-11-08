@@ -182,6 +182,43 @@
        T&igrave;m kiếm
       </button>
      </form>
+    
+<form id="catalog-price-range" class="catalog-price-range">
+  <strong>Khoảng giá mua chung (VNĐ)</strong>
+
+  <label class="sr-only" for="catalog-group-min">
+    Giá mua chung tối thiểu
+  </label>
+  <input
+    id="catalog-group-min"
+    type="number"
+    min="0"
+    step="1000"
+    placeholder="₫ TỪ"
+  >
+
+  <span>—</span>
+
+  <label class="sr-only" for="catalog-group-max">
+    Giá mua chung tối đa
+  </label>
+  <input
+    id="catalog-group-max"
+    type="number"
+    min="0"
+    step="1000"
+    placeholder="₫ ĐẾN"
+  >
+
+  <button type="submit" class="btn btn-primary">
+    Áp dụng
+  </button>
+
+  <button type="button" id="catalog-range-clear">
+    Đặt lại
+  </button>
+</form>
+
      <p class="empty-search" hidden="" id="empty-search">
       Chưa t&igrave;m thấy sản phẩm ph&ugrave; hợp.
       <button id="clear-filters" type="button">
