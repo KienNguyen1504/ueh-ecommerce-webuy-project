@@ -141,7 +141,19 @@ const renderCatalog = () => {
   };
   const renderDetail=()=>{
     if(page!=='product-detail.html')return;
-    const params=new URLSearchParams(location.search),p=product(params.get('id')||'1')||products[0];if(!p)return;
+    const params=new URLSearchParams(location.search),p=product(params.get('id'));
+    if(!p){
+      const detailGrid=document.querySelector('.detail-grid');
+      if(detailGrid){detailGrid.hidden=true;detailGrid.querySelectorAll('button').forEach(button=>button.disabled=true);}
+      const description=document.querySelector('.details-description');if(description)description.hidden=true;
+      const notFound=document.getElementById('detail-not-found');if(notFound)notFound.hidden=false;
+      document.title='Không tìm thấy sản phẩm | WeBuy';
+      const breadcrumbName=document.querySelector('.breadcrumb span:last-child');if(breadcrumbName)breadcrumbName.textContent='Không tìm thấy sản phẩm';
+      return;
+    }
+    const detailGrid=document.querySelector('.detail-grid');if(detailGrid)detailGrid.hidden=false;
+    const description=document.querySelector('.details-description');if(description)description.hidden=false;
+    const notFound=document.getElementById('detail-not-found');if(notFound)notFound.hidden=true;
     const setText=(selector,value)=>{const el=document.querySelector(selector);if(el)el.textContent=value;};
     document.title=p.name+' | WeBuy';setText('#detail-title',p.name);setText('#detail-category',p.category.toUpperCase()+' · SẢN PHẨM');
     setText('#detail-retail-price',money(p.retail));setText('#detail-group-price',money(p.group));setText('#detail-group-min',`Áp dụng khi nhóm đạt ít nhất ${p.minMembers} thành viên`);
