@@ -21,9 +21,55 @@
   let groups = get('groups', null);
   if(!Array.isArray(groups)){groups=seedGroups();put('groups',groups);}
   const saveGroups = () => put('groups',groups);
-  let cart = get('cart', []);
-  if(!Array.isArray(cart))cart=[];
-  const saveCart = ()=>{put('cart',cart);refreshHeader();};
+ 
+  // BƯỚC 6: Lưu và khôi phục giỏ hàng bằng localStorage
+  const readCart = () => {
+    const saved = get('cart', []);
+
+    // Tránh lỗi nếu dữ liệu trong localStorage bị sai
+    if (!Array.isArray(saved)) return [];
+
+    return saved.filter(item => {
+      if (!item || typeof item !== 'object') return false;
+
+      // Sản phẩm phải tồn tại trong dữ liệu chung
+      if (!product(item.productId)) return false;
+
+      // Chỉ chấp nhận hai hình thức mua
+      if (item.kind !== 'retail' && item.kind !== 'group') {
+        return false;
+      }
+
+      // Số lượng phải là số nguyên từ 1 đến 99
+      if (
+        !Number.isInteger(item.quantity) ||
+        item.quantity < 1 ||
+        item.quantity > 99
+      ) {
+        return false;
+      }
+
+      // Mua chung phải có nhóm hợp lệ
+      if (item.kind === 'group') {
+        const group = groups.find(g => g.id === item.groupId);
+        if (!group || group.productId !== item.productId) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  };
+
+  // Khôi phục giỏ hàng khi tải trang
+  let cart = readCart();
+
+  // Lưu giỏ hàng sau mỗi thay đổi
+  const saveCart = () => {
+    put('cart', cart);
+    refreshHeader();
+  };
+
   const groupCount=g => (g.demoCount||0)+(g.members||[]).length;
   const groupState=g => Date.now()>g.endsAt ? (groupCount(g)>=g.need?'success':'expired') : groupCount(g)>=g.need?'success':'open';
   const timeLeft = g=>{let n=Math.max(0,Math.ceil((g.endsAt-Date.now())/3600000));return n?`Còn khoảng ${n} giờ`:'Đã hết hạn';};
@@ -548,7 +594,7 @@ if (e.target.id === 'catalog-price-range') {
   window.addEventListener('storage', e => {
     if (e.key?.startsWith(storagePrefix)) {
       groups = get('groups', seedGroups());
-      cart = get('cart', []);
+     cart = readCart();
       refreshHeader();
       refreshProductProgress();
       renderDetail();
