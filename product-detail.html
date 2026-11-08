@@ -125,7 +125,7 @@
        
        <div class="detail-actions">
         <!-- Nút Tham gia nhóm (Mặc định ẩn) -->
-        <button class="btn btn-primary btn-purchase" id="join-group-btn" type="button" style="display: none;">
+        <button class="btn btn-primary btn-purchase" id="join-group-btn" type="button"></button>
          Tham gia nhóm
          <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24">
           <path d="M5 12h14m-6-6 6 6-6 6"></path>
@@ -147,6 +147,10 @@
         </div>
         <button class="btn btn-outline" id="detail-add-cart" type="button">+ Thêm vào giỏ</button>
        </div>
+       <div class="available-groups-section">
+  <h3>Nhóm đang mở</h3>
+  <div class="available-groups" id="available-groups" aria-live="polite"></div>
+</div>
        <p class="demo-action-notice">Bản demo học tập: giỏ hàng và nhóm mua được lưu trên trình duyệt, chưa xử lý thanh toán thực tế.</p>
       </div>
      </div>
@@ -228,15 +232,11 @@
 
       // Hàm cập nhật hiển thị nút dựa vào dữ liệu đã lưu
       function updateButtonState() {
-        const isCreated = localStorage.getItem(storageKey);
-        if (isCreated === "true") {
-          joinGroupBtn.style.display = "inline-flex";
-          createGroupBtn.style.display = "none";
-        } else {
-          joinGroupBtn.style.display = "none";
-          createGroupBtn.style.display = "inline-block";
-        }
-      }
+  const isCreated = localStorage.getItem(storageKey);
+  // Nút "Tham gia nhóm" luôn hiển thị; app.js tự bật/tắt theo nhóm đang mở.
+  joinGroupBtn.style.display = "inline-flex";
+  createGroupBtn.style.display = (isCreated === "true") ? "none" : "inline-block";
+}
 
       // Kiểm tra trạng thái ngay khi vừa mở trang
       updateButtonState();
