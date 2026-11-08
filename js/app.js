@@ -240,7 +240,11 @@ if (breadcrumbName) {
     if(target.matches('[data-filter]'))setCategory(target.dataset.filter);
     if(target.matches('#clear-filters')){history.replaceState(null,'',location.pathname);renderCatalog();document.getElementById('catalog-q').value='';}
     if(target.matches('[data-add-cart]'))addCart(target.dataset.addCart);
-    if(target.matches('[data-add-detail-cart]'))addCart(target.dataset.addDetailCart,'retail',null,document.getElementById('detail-qty')?.value||1);
+    if(target.matches('[data-add-detail-cart]')){
+      const quantity=Number(document.getElementById('detail-qty')?.value);
+      if(!Number.isInteger(quantity)||quantity<1||quantity>99){flash('Vui lòng nhập số lượng nguyên từ 1 đến 99.','error');return;}
+      addCart(target.dataset.addDetailCart,'retail',null,quantity);
+    }
     if(target.matches('[data-buy-retail]')){addCart(target.dataset.buyRetail,'retail',null,document.getElementById('detail-qty')?.value||1);location.href='cart.html';}
     if(target.matches('[data-join-group]')){if(target.dataset.joinGroup)joinGroup(target.dataset.joinGroup);}
     if(target.matches('[data-create-group]'))createGroup(target.dataset.createGroup);
