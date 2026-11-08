@@ -106,6 +106,23 @@ const normalizeSearchText = (text) =>
 
   const keyword = (params.get('q') || '').trim();
   const sort = params.get('sort') || 'default';
+  
+const readGroupPrice = value =>
+  value !== null &&
+  /^\d+$/.test(value) &&
+  Number.isSafeInteger(Number(value))
+    ? Number(value)
+    : null;
+
+const groupMin = readGroupPrice(params.get('groupMin'));
+const groupMax = readGroupPrice(params.get('groupMax'));
+
+const minInput = document.getElementById('catalog-group-min');
+const maxInput = document.getElementById('catalog-group-max');
+
+if (minInput) minInput.value = groupMin ?? '';
+if (maxInput) maxInput.value = groupMax ?? '';
+
 
   const input = document.getElementById('catalog-q');
   if (input) input.value = keyword;
@@ -136,7 +153,13 @@ if (select) {
 const matchName = normalizeSearchText(p.name)
   .includes(normalizeSearchText(keyword));
 
-    return matchCategory && matchName;
+    
+const matchGroupPrice =
+  (groupMin === null || p.group >= groupMin) &&
+  (groupMax === null || p.group <= groupMax);
+
+return matchCategory && matchName && matchGroupPrice;
+
   });
 
  
@@ -262,9 +285,40 @@ if (breadcrumbName) {
     if(orderbox)orderbox.innerHTML=orders.length?orders.slice().reverse().map(o=>`<article class="order-item"><div class="group-row"><b>Đơn #${safe(o.id)}</b><span class="group-state state-open">Đơn demo · Chưa xử lý</span></div><small>${safe(o.date)} · ${o.items.length} dòng sản phẩm</small><strong>${money(o.total)}</strong></article>`).join(''):'<p class="muted">Chưa có đơn hàng demo nào được xác nhận.</p>';
   };
   document.addEventListener('click',e=>{
-    const target=e.target.closest('button,a');if(!target)return;
-    if(target.matches('[data-filter]'))setCategory(target.dataset.filter);
-    if(target.matches('#clear-filters')){history.replaceState(null,'',location.pathname);renderCatalog();document.getElementById('catalog-q').value='';}
+   
+const target = e.target.closest('button,a');
+if (!target) return;
+
+if (target.matches('[data-filter]')) {
+  setCategory(target.dataset.filter);
+}
+
+// Đặt lại khoảng giá mua chung
+if (target.matches('#catalog-range-clear')) {
+  const params = new URLSearchParams(location.search);
+
+  params.delete('groupMin');
+  params.delete('groupMax');
+
+  const query = params.toString();
+
+  history.replaceState(
+    null,
+    '',
+    location.pathname + (query ? '?' + query : '')
+  );
+
+  renderCatalog();
+  return;
+}
+
+// Hiển thị tất cả sản phẩm
+if (target.matches('#clear-filters')) {
+  history.replaceState(null, '', location.pathname);
+  renderCatalog();
+  document.getElementById('catalog-q').value = '';
+}
+
     if(target.matches('[data-add-cart]'))addCart(target.dataset.addCart);
     if(target.matches('[data-add-detail-cart]')){
       const quantity=Number(document.getElementById('detail-qty')?.value);
@@ -337,6 +391,47 @@ if (breadcrumbName) {
 
   // Xử lý các biểu mẫu: tìm kiếm, hồ sơ và xác nhận đơn hàng
   document.addEventListener('submit', e => {
+
+if (e.target.id === 'catalog-price-range') {
+  e.preventDefault();
+
+  const minText =
+    document.getElementById('catalog-group-min').value.trim();
+  const maxText =
+    document.getElementById('catalog-group-max').value.trim();
+
+  const valid = text =>
+    text === '' ||
+    (/^\d+$/.test(text) &&
+      Number.isSafeInteger(Number(text)));
+
+  if (!valid(minText) || !valid(maxText) ||
+      (minText !== '' && maxText !== '' &&
+       Number(minText) > Number(maxText))) {
+    flash('Khoảng giá không hợp lệ.', 'error');
+    return;
+  }
+
+  const params = new URLSearchParams(location.search);
+
+  minText
+    ? params.set('groupMin', minText)
+    : params.delete('groupMin');
+
+  maxText
+    ? params.set('groupMax', maxText)
+    : params.delete('groupMax');
+
+  const query = params.toString();
+
+  history.replaceState(
+    null, '',
+    location.pathname + (query ? '?' + query : '')
+  );
+
+  renderCatalog();
+  return;
+}
 
     if (e.target.id === 'catalog-search') {
       e.preventDefault();
