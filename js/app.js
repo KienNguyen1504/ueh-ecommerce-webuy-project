@@ -260,7 +260,21 @@ if (breadcrumbName) {
       if(item?.kind==='group'){const g=groups.find(x=>x.id===item.groupId);if(g){g.members=g.members.filter(x=>x!==uid);saveGroups();}}
       cart.splice(idx,1);saveCart();renderCart();flash('Đã xóa sản phẩm khỏi giỏ.');
     }
-    if(target.matches('[data-cart-plus],[data-cart-minus]')){const idx=Number(target.dataset.cartPlus??target.dataset.cartMinus),it=cart[idx];if(!it||it.kind==='group')return;it.quantity=Math.max(1,Math.min(99,it.quantity+(target.hasAttribute('data-cart-plus')?1:-1)));saveCart();renderCart();}
+    if(target.matches('[data-cart-plus],[data-cart-minus]')){
+      const idx=Number(target.dataset.cartPlus??target.dataset.cartMinus),it=cart[idx];
+      if(!it||it.kind==='group')return;
+      if(target.hasAttribute('data-cart-plus')){
+        it.quantity=Math.min(99,it.quantity+1);
+      }else{
+        it.quantity-=1;
+        if(it.quantity<=0){
+          cart.splice(idx,1);
+          flash('Đã xóa sản phẩm khỏi giỏ.');
+        }
+      }
+      saveCart();
+      renderCart();
+    }
     if(target.matches('#qty-plus,#qty-minus')){const input=document.getElementById('detail-qty');input.value=Math.max(1,Math.min(99,(Number(input.value)||1)+(target.id==='qty-plus'?1:-1)));}
     if(target.matches('[data-close-dialog]')||e.target.classList?.contains('app-modal-backdrop'))closeDialog();
     if(target.matches('[data-copy-group]')){
