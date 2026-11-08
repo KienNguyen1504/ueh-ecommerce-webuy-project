@@ -53,3 +53,52 @@
   outline: 2px solid #0b7d5b;
   outline-offset: 2px;
 }
+
+/* Bộ lọc khoảng giá mua chung */
+.catalog-price-range {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 16px;
+  margin: 0 0 20px;
+  background: #f5faf6;
+  border: 1px solid #d8e8de;
+  border-radius: 12px;
+}
+
+.catalog-price-range strong {
+  font-size: 13px;
+  color: #244d3a;
+  margin-right: 10px;
+}
+
+.catalog-price-range input {
+  width: 135px;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid #d7e5db;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.catalog-price-range input:focus-visible {
+  outline: 2px solid #0b7d5b;
+  outline-offset: 2px;
+}
+
+#catalog-range-clear {
+  border: none;
+  background: transparent;
+  color: #0b7d5b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .catalog-price-range strong {
+    width: 100%;
+  }
+}
+
