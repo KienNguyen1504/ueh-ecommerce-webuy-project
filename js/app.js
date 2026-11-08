@@ -101,9 +101,17 @@ const renderCatalog = () => {
   const input = document.getElementById('catalog-q');
   if (input) input.value = keyword;
 
-  const select = document.getElementById('catalog-sort');
-  if (select) select.value =
-    ['price-asc', 'price-desc'].includes(sort) ? sort : 'default';
+  
+const select = document.getElementById('catalog-sort');
+
+if (select) {
+  select.value = [
+    'price-asc',
+    'price-desc',
+    'group-asc',
+    'group-desc'
+  ].includes(sort) ? sort : 'default';
+}
 
   document.querySelectorAll('[data-filter]').forEach(button => {
     const active = button.dataset.filter === category;
@@ -122,12 +130,21 @@ const renderCatalog = () => {
     return matchCategory && matchName;
   });
 
-  // Sắp xếp giá mua lẻ
-  if (sort === 'price-asc') {
-    result.sort((a, b) => a.price - b.price);
-  } else if (sort === 'price-desc') {
-    result.sort((a, b) => b.price - a.price);
-  }
+ 
+// Sắp xếp theo giá mua lẻ hoặc giá mua chung
+if (sort === 'price-asc') {
+  result.sort((a, b) => a.price - b.price);
+
+} else if (sort === 'price-desc') {
+  result.sort((a, b) => b.price - a.price);
+
+} else if (sort === 'group-asc') {
+  result.sort((a, b) => a.group - b.group);
+
+} else if (sort === 'group-desc') {
+  result.sort((a, b) => b.group - a.group);
+}
+
 
   // Cập nhật danh sách trên giao diện
   window.renderProducts(result);
