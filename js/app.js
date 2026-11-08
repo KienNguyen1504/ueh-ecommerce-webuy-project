@@ -88,7 +88,16 @@
       }
     }
   };
-const renderCatalog = () => {
+
+const normalizeSearchText = (text) =>
+  String(text ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .toLowerCase()
+    .trim();
+
+  const renderCatalog = () => {
   if (page !== 'products.html') return;
 
   const params = new URLSearchParams(location.search);
@@ -124,8 +133,8 @@ if (select) {
     const matchCategory =
       category === 'all' || p.category === CATEGORIES[category];
 
-    const matchName = p.name.toLocaleLowerCase('vi-VN')
-      .includes(keyword.toLocaleLowerCase('vi-VN'));
+const matchName = normalizeSearchText(p.name)
+  .includes(normalizeSearchText(keyword));
 
     return matchCategory && matchName;
   });
