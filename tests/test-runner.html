@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiểm thử tự động | WeBuy</title>
+  <style>
+    body{font-family:Inter,Arial,sans-serif;margin:0;padding:24px;background:#f6f8f6;color:#1b2b26}
+    h1{font-size:22px;margin:0 0 6px}
+    p.note{margin:0 0 16px;color:#52665f;font-size:14px;max-width:900px}
+    .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+    button{background:#0b7d5b;color:#fff;border:0;border-radius:8px;padding:11px 18px;font-weight:700;cursor:pointer}
+    button.secondary{background:#fff;color:#0b7d5b;border:1px solid #0b7d5b}
+    button:disabled{opacity:.5;cursor:default}
+    #summary{font-weight:700}#summary.good{color:#0b7d5b}#summary.bad{color:#c0392b}
+    table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}
+    th,td{border:1px solid #dbe5df;padding:8px 10px;text-align:left;vertical-align:top}
+    th{background:#0b4c3b;color:#fff}
+    tr.pass td:last-child{color:#0b7d5b}
+    tr.fail{background:#fff1f0}tr.fail td:last-child{color:#c0392b}
+    iframe{width:1px;height:1px;border:0;position:absolute;left:-9999px}
+  </style>
+</head>
+<body>
+  <h1>WeBuy – Bộ kiểm thử tự động</h1>
+  <p class="note">
+  <div class="bar">
+    <button id="run" type="button">Chạy kiểm thử</button>
+    <button id="copy" class="secondary" type="button">Sao chép bảng kết quả</button>
+    <span id="summary">Chưa chạy.</span>
+  </div>
+  <table>
+    <thead><tr><th>Mã</th><th>Nhóm</th><th>Trường hợp kiểm thử</th><th>Kết quả mong đợi</th><th>Kết quả thực tế</th><th>Trạng thái</th></tr></thead>
+    <tbody id="results"></tbody>
+  </table>
+  <iframe id="sandbox" title="sandbox"></iframe>
+  <script src="../js/catalog-data.js"></script>
+  <script src="webuy-tests.js"></script>
+</body>
+</html>
