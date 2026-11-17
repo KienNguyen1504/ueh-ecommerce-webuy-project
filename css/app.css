@@ -503,3 +503,10 @@
     height: 19px;
   }
 }
+/* Ảnh thật 3 thành phố trọng điểm */
+.loc-city-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
