@@ -29,15 +29,15 @@
     { code: 'all', name: 'Toàn quốc', eta: '2 – 4 ngày làm việc', featured: false },
     {
       code: 'hcm', name: 'TP. Hồ Chí Minh', short: 'TP.HCM', eta: 'Giao nhanh trong 24h', featured: true,
-      art: `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gHcm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE6C7"/><stop offset="100%" stop-color="#FFF7EB"/></linearGradient></defs><rect width="160" height="120" fill="url(#gHcm)"/><circle cx="128" cy="28" r="14" fill="#FF8A00" opacity=".25"/><rect x="28" y="46" width="104" height="58" rx="4" fill="#E8A848"/><rect x="64" y="24" width="32" height="80" rx="3" fill="#F2B857"/><polygon points="60,24 80,10 100,24" fill="#0D6B47"/><circle cx="80" cy="36" r="7" fill="#FFF" stroke="#0D6B47" stroke-width="2"/><rect x="38" y="58" width="12" height="18" rx="6" fill="#0D6B47"/><rect x="110" y="58" width="12" height="18" rx="6" fill="#0D6B47"/><rect x="73" y="76" width="14" height="28" rx="7" fill="#08472F"/><rect x="0" y="102" width="160" height="18" fill="#88C999"/></svg>`
+      art: `<img src="images/${encodeURIComponent('TP.HCM.jpeg')}" alt="TP. Hồ Chí Minh">`
     },
     {
       code: 'hn', name: 'Hà Nội', short: 'Hà Nội', eta: '1 – 2 ngày làm việc', featured: true,
-      art: `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gHn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E2F4EA"/><stop offset="100%" stop-color="#F6FBF8"/></linearGradient></defs><rect width="160" height="120" fill="url(#gHn)"/><circle cx="34" cy="28" r="13" fill="#D9FF4F" opacity=".8"/><rect x="46" y="82" width="68" height="22" fill="#B6895B"/><rect x="58" y="62" width="44" height="20" fill="#C99A6B"/><rect x="70" y="34" width="20" height="28" fill="#D8AA7B"/><line x1="80" y1="12" x2="80" y2="34" stroke="#5A3E28" stroke-width="2.5"/><polygon points="80,13 102,19 80,25" fill="#E53935"/><polygon points="88,17 89,19 91,19 89.5,20.5 90,22.5 88,21.2 86,22.5 86.5,20.5 85,19 87,19" fill="#FFEB3B"/><rect x="0" y="102" width="160" height="18" fill="#0D6B47"/></svg>`
+      art: `<img src="images/${encodeURIComponent('HÀ NỘI.jpg')}" alt="Hà Nội">`
     },
     {
       code: 'dn', name: 'Đà Nẵng', short: 'Đà Nẵng', eta: '1 – 2 ngày làm việc', featured: true,
-      art: `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gDn" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DDF2FF"/><stop offset="100%" stop-color="#F2FAFF"/></linearGradient></defs><rect width="160" height="120" fill="url(#gDn)"/><circle cx="126" cy="26" r="14" fill="#FFB84D" opacity=".45"/><path d="M10 86 Q 45 48, 80 76 T 150 66" fill="none" stroke="#FF8A00" stroke-width="7" stroke-linecap="round"/><path d="M10 86 Q 45 48, 80 76 T 150 66" fill="none" stroke="#FFD54F" stroke-width="2.5" stroke-dasharray="6 5"/><rect x="0" y="86" width="160" height="8" fill="#475569"/><rect x="0" y="94" width="160" height="26" fill="#38BDF8" opacity=".45"/></svg>`
+      art: `<img src="images/${encodeURIComponent('ĐÀ NẴNG.jpg')}" alt="Đà Nẵng">`
     },
     { code: 'bd', name: 'Bình Dương', eta: 'Giao nhanh 24 – 36h' },
     { code: 'dna', name: 'Đồng Nai', eta: 'Giao nhanh 24 – 36h' },
@@ -173,11 +173,9 @@
     });
   };
  
-  // BƯỚC 6: Lưu và khôi phục giỏ hàng bằng localStorage
   const readCart = () => {
     const saved = get('cart', []);
     if (!Array.isArray(saved)) return [];
-
     return saved.filter(item => {
       if (!item || typeof item !== 'object') return false;
       if (!product(item.productId)) return false;
