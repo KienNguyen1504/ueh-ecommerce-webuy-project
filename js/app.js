@@ -23,37 +23,67 @@
   const saveGroups = () => put('groups',groups);
 
   /* =========================================================
-     QUẢN LÝ ĐỊA ĐIỂM KHU VỰC (webuy_demo_v2_location)
+     QUẢN LÝ ĐỊA ĐIỂM KHU VỰC (DANH SÁCH CHÍNH XÁC THEO YÊU CẦU)
      ========================================================= */
+  const FEATURED_CITIES = [
+    {
+      code: 'hcm',
+      name: 'TP.HCM',
+      art: `<img src="images/TP.HCM.jpeg" alt="TP.HCM">`
+    },
+    {
+      code: 'hn',
+      name: 'TP. Hà Nội',
+      art: `<img src="images/H%C3%80%20N%E1%BB%98I.jpg" alt="TP. Hà Nội">`
+    },
+    {
+      code: 'dn',
+      name: 'Đà Nẵng',
+      art: `<img src="images/%C4%90%C3%80%20N%E1%BA%B4NG.jpg" alt="Đà Nẵng">`
+    }
+  ];
+
   const LOCATIONS = [
-    { code: 'all', name: 'Toàn quốc', eta: '2 – 4 ngày làm việc', featured: false },
-    {
-      code: 'hcm', name: 'TP. Hồ Chí Minh', short: 'TP.HCM', eta: 'Giao nhanh trong 24h', featured: true,
-      art: `<img src="images/${encodeURIComponent('TP.HCM.jpeg')}" alt="TP. Hồ Chí Minh">`
-    },
-    {
-      code: 'hn', name: 'Hà Nội', short: 'Hà Nội', eta: '1 – 2 ngày làm việc', featured: true,
-      art: `<img src="images/${encodeURIComponent('HÀ NỘI.jpg')}" alt="Hà Nội">`
-    },
-    {
-      code: 'dn', name: 'Đà Nẵng', short: 'Đà Nẵng', eta: '1 – 2 ngày làm việc', featured: true,
-      art: `<img src="images/${encodeURIComponent('ĐÀ NẴNG.jpg')}" alt="Đà Nẵng">`
-    },
-    { code: 'bd', name: 'Bình Dương', eta: 'Giao nhanh 24 – 36h' },
-    { code: 'dna', name: 'Đồng Nai', eta: 'Giao nhanh 24 – 36h' },
-    { code: 'ct', name: 'Cần Thơ', eta: '1 – 2 ngày làm việc' },
-    { code: 'hp', name: 'Hải Phòng', eta: '1 – 2 ngày làm việc' },
-    { code: 'kh', name: 'Khánh Hòa', eta: '2 – 3 ngày làm việc' },
-    { code: 'brvt', name: 'Bà Rịa - Vũng Tàu', eta: '1 – 2 ngày làm việc' },
-    { code: 'tth', name: 'Thừa Thiên Huế', eta: '2 – 3 ngày làm việc' },
-    { code: 'ld', name: 'Lâm Đồng', eta: '2 – 3 ngày làm việc' },
-    { code: 'qn', name: 'Quảng Ninh', eta: '2 – 3 ngày làm việc' },
-    { code: 'ag', name: 'An Giang', eta: '2 – 3 ngày làm việc' }
+    { code: 'all', name: 'Toàn quốc', note: '' },
+    { code: 'tq', name: 'Tuyên Quang', note: '(sáp nhập Hà Giang – Tuyên Quang)' },
+    { code: 'lc', name: 'Lào Cai', note: '(sáp nhập Yên Bái – Lào Cai)' },
+    { code: 'tn', name: 'Thái Nguyên', note: '(sáp nhập Bắc Kạn – Thái Nguyên)' },
+    { code: 'pt', name: 'Phú Thọ', note: '(sáp nhập Vĩnh Phúc – Hòa Bình – Phú Thọ)' },
+    { code: 'bn', name: 'Bắc Ninh', note: '(sáp nhập Bắc Giang – Bắc Ninh)' },
+    { code: 'hy', name: 'Hưng Yên', note: '(sáp nhập Thái Bình – Hưng Yên)' },
+    { code: 'hp', name: 'Hải Phòng', note: '(sáp nhập Hải Dương – Hải Phòng)' },
+    { code: 'nb', name: 'Ninh Bình', note: '(sáp nhập Hà Nam – Nam Định – Ninh Bình)' },
+    { code: 'qt', name: 'Quảng Trị', note: '(sáp nhập Quảng Bình – Quảng Trị)' },
+    { code: 'dn', name: 'Đà Nẵng', note: '(sáp nhập Quảng Nam – Đà Nẵng)' },
+    { code: 'qng', name: 'Quảng Ngãi', note: '(sáp nhập Kon Tum – Quảng Ngãi)' },
+    { code: 'gl', name: 'Gia Lai', note: '(sáp nhập Bình Định – Gia Lai)' },
+    { code: 'kh', name: 'Khánh Hòa', note: '(sáp nhập Ninh Thuận – Khánh Hòa)' },
+    { code: 'db', name: 'Điện Biên', note: '' },
+    { code: 'hn', name: 'TP. Hà Nội', note: '' },
+    { code: 'ht', name: 'Hà Tĩnh', note: '' },
+    { code: 'ls', name: 'Lạng Sơn', note: '' },
+    { code: 'lch', name: 'Lai Châu', note: '' },
+    { code: 'na', name: 'Nghệ An', note: '' },
+    { code: 'qn', name: 'Quảng Ninh', note: '' },
+    { code: 'sl', name: 'Sơn La', note: '' },
+    { code: 'th', name: 'Thanh Hóa', note: '' },
+    { code: 'cb', name: 'Cao Bằng', note: '' },
+    { code: 'hue', name: 'TP. Huế', note: '' },
+    { code: 'ld', name: 'Lâm Đồng', note: '(sáp nhập Đắk Nông – Bình Thuận – Lâm Đồng)' },
+    { code: 'dl', name: 'Đắk Lắk', note: '(sáp nhập Phú Yên – Đắk Lắk)' },
+    { code: 'hcm', name: 'TP.HCM', note: '(sáp nhập Bà Rịa – Vũng Tàu – Bình Dương – TP.HCM)' },
+    { code: 'dna', name: 'Đồng Nai', note: '(sáp nhập Bình Phước – Đồng Nai)' },
+    { code: 'tni', name: 'Tây Ninh', note: '(sáp nhập Long An – Tây Ninh)' },
+    { code: 'ct', name: 'Cần Thơ', note: '(sáp nhập Sóc Trăng – Hậu Giang – Cần Thơ)' },
+    { code: 'vl', name: 'Vĩnh Long', note: '(sáp nhập Bến Tre – Trà Vinh – Vĩnh Long)' },
+    { code: 'dt', name: 'Đồng Tháp', note: '(sáp nhập Tiền Giang – Đồng Tháp)' },
+    { code: 'cm', name: 'Cà Mau', note: '(sáp nhập Bạc Liêu – Cà Mau)' },
+    { code: 'ag', name: 'An Giang', note: '(sáp nhập Kiên Giang – An Giang)' }
   ];
 
   const DEMO_GROUP_REGION = {
     '1': 'hcm', '2': 'hn', '3': 'hcm', '4': 'dn',
-    '5': 'hcm', '6': 'bd', '7': 'hn', '8': 'dn'
+    '5': 'hcm', '6': 'dna', '7': 'hn', '8': 'dn'
   };
 
   const getCurrentLocation = () => {
@@ -80,7 +110,7 @@
     btn.type = 'button';
     btn.className = 'header-location-btn';
     btn.setAttribute('data-open-location', '');
-    btn.setAttribute('aria-label', 'Chọn khu vực mua chung và giao hàng');
+    btn.setAttribute('aria-label', 'Chọn khu vực mua chung');
     btn.innerHTML = `
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.33-6-10a6 6 0 1 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
       <span class="loc-label" data-location-label>${safe(currentLocation.name)}</span>
@@ -91,16 +121,17 @@
 
   const openLocationModal = () => {
     let selectedCode = currentLocation.code;
-    const featured = LOCATIONS.filter(l => l.featured);
-    const others = LOCATIONS.filter(l => !l.featured);
 
     const renderListItems = (keyword = '') => {
       const q = normalizeSearchText(keyword);
-      const filtered = others.filter(l => normalizeSearchText(l.name).includes(q));
+      const filtered = LOCATIONS.filter(l =>
+        normalizeSearchText(l.name).includes(q) ||
+        normalizeSearchText(l.note || '').includes(q)
+      );
       if (!filtered.length) return `<div class="loc-empty">Không tìm thấy tỉnh/thành phù hợp với "${safe(keyword)}".</div>`;
       return filtered.map(l => `
         <button type="button" class="loc-list-item ${l.code === selectedCode ? 'is-selected' : ''}" data-pick-loc="${safe(l.code)}">
-          <span>${safe(l.name)}<span class="loc-list-sub">(${safe(l.eta)})</span></span>
+          <span>${safe(l.name)}${l.note ? `<span class="loc-list-sub">${safe(l.note)}</span>` : ''}</span>
           <span class="loc-radio" aria-hidden="true"></span>
         </button>
       `).join('');
@@ -110,11 +141,11 @@
       <div class="loc-modal">
         <div class="loc-modal-header">
           <h2>Chọn khu vực mua chung của bạn</h2>
-          <p>Giúp WeBuy gợi ý các nhóm mua gần bạn và tối ưu thời gian giao hàng</p>
+          <p>Giúp WeBuy gợi ý các nhóm mua gần bạn</p>
         </div>
 
         <div class="loc-featured-grid">
-          ${featured.map(c => `
+          ${FEATURED_CITIES.map(c => `
             <button type="button" class="loc-city-card ${c.code === selectedCode ? 'is-selected' : ''}" data-pick-loc="${safe(c.code)}">
               <span class="loc-radio" aria-hidden="true"></span>
               <div class="loc-city-thumb">${c.art}</div>
@@ -352,7 +383,7 @@ const normalizeSearchText = (text) =>
         gridEl.parentNode.insertBefore(locBanner, gridEl);
       }
       locBanner.innerHTML = `
-        <span>📍 Đang hiển thị các sản phẩm hỗ trợ giao tại <strong>${safe(currentLocation.name)}</strong> (ưu tiên nhóm mua gần bạn).</span>
+        <span>📍 Đang hiển thị các sản phẩm tại khu vực <strong>${safe(currentLocation.name)}</strong> (ưu tiên nhóm mua gần bạn).</span>
         <button type="button" data-open-location>Đổi khu vực</button>
       `;
     } else if (locBanner) {
@@ -451,7 +482,7 @@ const normalizeSearchText = (text) =>
         const checkoutBtn = document.getElementById('cart-checkout');
         if (checkoutBtn) summaryBox.insertBefore(etaEl, checkoutBtn);
       }
-      etaEl.innerHTML = `🚚 Khu vực <strong>${safe(currentLocation.name)}</strong>: Dự kiến nhận hàng <b>${safe(currentLocation.eta)}</b>.`;
+      etaEl.innerHTML = `📍 Khu vực đã chọn: <strong>${safe(currentLocation.name)}</strong>`;
     }
 
     const a=document.getElementById('cart-checkout');if(a){a.classList.toggle('is-disabled',ready===0);a.setAttribute('aria-disabled',String(ready===0));a.textContent=ready?'Tiếp tục xác nhận đơn hàng →':'Chưa có sản phẩm sẵn sàng';}
@@ -483,7 +514,7 @@ const normalizeSearchText = (text) =>
         const methodNote = checkoutForm.querySelector('.method-note');
         if (methodNote) checkoutForm.insertBefore(coEta, methodNote);
       }
-      coEta.innerHTML = `🚚 Giao tới <strong>${safe(currentLocation.name)}</strong> · Thời gian dự kiến: <b>${safe(currentLocation.eta)}</b>`;
+      coEta.innerHTML = `📍 Khu vực nhận hàng: <strong>${safe(currentLocation.name)}</strong>`;
     }
   };
   const renderProfile=()=>{
