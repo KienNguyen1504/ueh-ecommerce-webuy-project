@@ -1,0 +1,572 @@
+/* WeBuy | Tính năng 11 - Giao diện khu vực Xu WeBuy (nút nổi, chip xu, popup, trò chơi, hồ sơ, thanh toán).
+ * Mọi lớp đều bắt đầu bằng "wbr-" (WeBuy Rewards) để không đụng CSS của các phần khác.
+ *
+ * Mục lục:
+ *   1. Font, bảng màu, chuyển động
+ *   2. Chip xu trên Header và nút nổi
+ *   3. Khung popup và các thành phần dùng chung
+ *   4. Trang chính của popup (số dư, điểm danh, thẻ trò chơi)
+ *   5. Màn Chúc mừng và Thể lệ
+ *   6. Trò chơi Gom nhóm 15 giây
+ *   7. Trang Hồ sơ
+ *   8. Trang Thanh toán
+ *   9. Màn hình nhỏ và giảm chuyển động
+ */
+
+/* ============ 1. Font, bảng màu, chuyển động ============ */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+
+:root {
+  --wbr-orange: #FD550A;
+  --wbr-green: #015D47;
+  --wbr-lime: #E0F354;
+  --wbr-cream: #FFF6E5;
+  --wbr-ink: #0B2A22;      /* chữ và viền */
+  --wbr-muted: #3C4F49;    /* chữ phụ */
+  --wbr-line: #D9CDB4;     /* đường kẻ nhạt */
+  --wbr-display: 'Baloo 2', 'Be Vietnam Pro', sans-serif;  /* tiêu đề, số xu, nút */
+  --wbr-body: 'Be Vietnam Pro', Inter, Arial, sans-serif;  /* chữ nội dung */
+  --wbr-sticker: 0 6px 0 var(--wbr-ink);                   /* bóng cứng kiểu hình dán */
+}
+
+@keyframes wbr-hop {
+  0%, 100% { transform: translate(0, 0) rotate(-5deg); }
+  50% { transform: translate(5px, -14px) rotate(6deg); }
+}
+@keyframes wbr-hop-alt {
+  0%, 100% { transform: translate(0, 0) rotate(5deg); }
+  50% { transform: translate(-6px, -12px) rotate(-6deg); }
+}
+@keyframes wbr-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+@keyframes wbr-wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes wbr-pop {
+  0% { opacity: 0; transform: translateY(8px) scale(0.8); }
+  20% { opacity: 1; transform: translateY(0) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-46px) scale(1); }
+}
+@keyframes wbr-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-7px); }
+  75% { transform: translateX(7px); }
+}
+@keyframes wbr-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.wbr-hop { display: flex; animation: wbr-hop 0.9s ease-in-out infinite; }
+.wbr-hop-alt { animation-name: wbr-hop-alt; animation-duration: 1.1s; }
+.wbr-wiggle { display: flex; animation: wbr-wiggle 2s ease-in-out infinite; }
+.wbr-pulse { animation: wbr-pulse 1.6s ease-in-out infinite; }
+
+/* Thông báo của website phải nổi trên popup và không bị nút nổi che */
+.app-toast { z-index: 200; }
+body.wbr-has-fab .app-toast { bottom: 196px; }
+body.wbr-lock { overflow: hidden; }
+
+/* ============ 2. Chip xu trên Header và nút nổi ============ */
+.wbr-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 14px 0 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  background: var(--wbr-lime);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 22px;
+  box-shadow: 0 3px 0 var(--wbr-ink);
+  font: 800 18px/1 var(--wbr-display);
+  color: var(--wbr-ink);
+}
+.wbr-chip:hover { transform: translateY(-1px); }
+.wbr-chip:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--wbr-ink); }
+
+.wbr-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 16px;
+  z-index: 90;
+  width: 150px;
+}
+.wbr-fab-main {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  filter: drop-shadow(0 7px 0 rgba(11, 42, 34, 0.22));
+  animation: wbr-wiggle 2.4s ease-in-out infinite;
+}
+.wbr-fab-main svg { display: block; width: 100%; height: auto; }
+.wbr-fab-main:hover { animation-play-state: paused; transform: scale(1.05); }
+.wbr-fab-dot {
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--wbr-orange);
+  border: 3px solid #fff;
+  animation: wbr-pulse 1s ease-in-out infinite;
+}
+.wbr-fab-dot[hidden] { display: none; }
+.wbr-fab-close {
+  position: absolute;
+  right: -6px;
+  top: -8px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--wbr-ink);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+}
+.wbr-fab-close svg { width: 10px; height: 10px; }
+.wbr-fab-close::before { content: ''; position: absolute; inset: -8px; } /* nới vùng bấm cho ngón tay */
+
+/* ============ 3. Khung popup và các thành phần dùng chung ============ */
+.wbr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(11, 42, 34, 0.72);
+}
+.wbr-overlay[hidden] { display: none; }
+
+.wbr-popup {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--wbr-cream);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 28px;
+  font-family: var(--wbr-body);
+  color: var(--wbr-ink);
+  outline: none;
+  animation: wbr-in 0.25s ease-out;
+}
+.wbr-popup[data-view="reward"] { background: var(--wbr-green); }
+.wbr-popup p { margin: 0; }
+
+.wbr-popup :focus-visible,
+.wbr-chip:focus-visible,
+.wbr-fab button:focus-visible,
+.wbr-wallet .wbr-btn:focus-visible,
+.wbr-more:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 7px var(--wbr-ink);
+}
+
+.wbr-blob { position: absolute; border-radius: 50%; pointer-events: none; }
+.wbr-blob-lime { right: -70px; top: -90px; width: 230px; height: 230px; background: var(--wbr-lime); }
+.wbr-blob-cream { left: -60px; bottom: -110px; width: 260px; height: 170px; background: var(--wbr-cream); }
+
+.wbr-head { position: relative; overflow: hidden; background: var(--wbr-orange); padding: 22px 24px 70px; }
+.wbr-head-small { padding-bottom: 22px; }
+.wbr-head-game { padding: 18px 20px 62px; }
+.wbr-head-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.wbr-title {
+  margin: 0;
+  font: 800 34px/1.1 var(--wbr-display);
+  letter-spacing: 0;
+  color: #fff;
+  text-shadow: 0 3px 0 var(--wbr-ink);
+  transform: rotate(-2deg);
+}
+.wbr-title-small { flex: 1; font-size: 26px; transform: none; }
+
+/* Nút tròn: đóng, quay lại */
+.wbr-round {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  background: var(--wbr-cream);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 50%;
+  box-shadow: 0 3px 0 var(--wbr-ink);
+  color: var(--wbr-ink);
+}
+.wbr-round:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--wbr-ink); }
+
+/* Nút lớn kiểu hình dán */
+.wbr-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 60px;
+  padding: 6px 20px;
+  background: var(--wbr-cream);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 18px;
+  box-shadow: var(--wbr-sticker);
+  font: 800 22px/1.1 var(--wbr-display);
+  color: var(--wbr-ink);
+}
+.wbr-btn-lime { background: var(--wbr-lime); }
+.wbr-btn-orange { background: var(--wbr-orange); }
+.wbr-btn:not(:disabled):active { transform: translateY(4px); box-shadow: 0 2px 0 var(--wbr-ink); animation: none; }
+.wbr-btn:disabled { background: #E7E1D3; color: #4A5852; box-shadow: none; cursor: not-allowed; }
+
+.wbr-link {
+  padding: 12px 6px;
+  background: none;
+  border: 0;
+  font: 700 14px/1.2 var(--wbr-body);
+  color: var(--wbr-green);
+  text-decoration: underline;
+}
+.wbr-link-light { color: var(--wbr-cream); }
+
+.wbr-card {
+  position: relative;
+  margin: -46px 16px 0;
+  padding: 40px 14px 18px;
+  background: #fff;
+  border: 3px solid var(--wbr-ink);
+  border-radius: 24px;
+  box-shadow: var(--wbr-sticker);
+}
+
+.wbr-foot { display: flex; justify-content: center; gap: 18px; padding: 16px 24px 20px; }
+
+/* ============ 4. Trang chính của popup ============ */
+.wbr-balance { position: relative; display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.wbr-balance strong { font: 800 68px/1 var(--wbr-display); color: #fff; text-shadow: 0 4px 0 var(--wbr-ink); }
+.wbr-balance > span:last-child { align-self: flex-end; padding-bottom: 8px; font: 800 28px/1 var(--wbr-display); }
+.wbr-worth { font-size: 14px; font-weight: 700; }
+.wbr-head-row + .wbr-balance + .wbr-head-row { margin-top: 8px; }
+.wbr-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 16px;
+  flex-shrink: 0;
+  background: var(--wbr-cream);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 22px;
+  font: 800 16px/1 var(--wbr-display);
+  color: var(--wbr-ink);
+}
+
+.wbr-card-tab {
+  position: absolute;
+  left: 50%;
+  top: -22px;
+  transform: translateX(-50%) rotate(-2deg);
+  padding: 2px 22px;
+  white-space: nowrap;
+  background: var(--wbr-lime);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 22px;
+  font: 800 22px/1.4 var(--wbr-display);
+}
+
+/* Lịch 7 ngày */
+.wbr-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.wbr-day {
+  height: 86px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: var(--wbr-cream);
+  border: 2px dashed var(--wbr-ink);
+  border-radius: 14px;
+}
+.wbr-day b { font: 800 15px/1 var(--wbr-display); }
+.wbr-day small { font-size: 10px; font-weight: 600; white-space: nowrap; letter-spacing: -0.02em; color: var(--wbr-muted); }
+.wbr-day.is-done { background: var(--wbr-green); border: 0; }
+.wbr-day.is-done b { color: var(--wbr-lime); }
+.wbr-day.is-done small { color: var(--wbr-cream); }
+.wbr-day.is-today,
+.wbr-day.is-big { border: 3px solid var(--wbr-ink); box-shadow: 0 4px 0 var(--wbr-ink); }
+.wbr-day.is-today { background: var(--wbr-lime); transform: translateY(-8px) rotate(-4deg); }
+.wbr-day.is-big { background: var(--wbr-orange); transform: rotate(4deg); }
+.wbr-day.is-today b,
+.wbr-day.is-big b { font-size: 18px; }
+.wbr-day.is-today small,
+.wbr-day.is-big small { color: var(--wbr-ink); font-weight: 700; }
+
+.wbr-checkin .wbr-btn { margin-top: 18px; }
+.wbr-note { margin-top: 16px !important; font-size: 13px; font-weight: 500; line-height: 1.5; text-align: center; color: var(--wbr-muted); }
+
+.wbr-section-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 24px 24px 12px; }
+.wbr-section-row h3 { margin: 0; font: 800 26px/1.1 var(--wbr-display); color: var(--wbr-ink); }
+.wbr-tag { padding: 6px 12px; white-space: nowrap; background: var(--wbr-green); border-radius: 14px; font-size: 13px; font-weight: 700; color: var(--wbr-lime); }
+
+/* Thẻ dẫn vào trò chơi */
+.wbr-game-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 246px;
+  margin: 0 16px;
+  padding: 20px;
+  background: var(--wbr-green);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 24px;
+  box-shadow: var(--wbr-sticker);
+}
+.wbr-blob-hill { right: -70px; bottom: -110px; width: 290px; height: 250px; background: var(--wbr-cream); }
+.wbr-game-text { position: relative; width: 250px; max-width: 62%; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.wbr-kicker { padding: 4px 10px; background: var(--wbr-lime); border-radius: 10px; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.wbr-game-name { font: 800 44px/1 var(--wbr-display); color: var(--wbr-lime); text-shadow: 0 3px 0 var(--wbr-ink); transform: rotate(-3deg); }
+.wbr-game-sub { font: 800 30px/1 var(--wbr-display); color: #fff; }
+.wbr-game-text p { max-width: 190px; font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--wbr-cream); }
+.wbr-game-text .wbr-btn { width: auto; min-height: 48px; margin-top: 6px; padding: 0 24px; border-radius: 24px; box-shadow: 0 4px 0 var(--wbr-ink); font-size: 20px; }
+.wbr-badge {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  width: 84px;
+  height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--wbr-lime);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 50%;
+  transform: rotate(10deg);
+  font: 800 23px/1 var(--wbr-display);
+}
+.wbr-badge small { font-size: 13px; }
+.wbr-demo { position: absolute; }
+.wbr-demo-1 { right: 128px; bottom: 34px; }
+.wbr-demo-2 { right: 70px; bottom: 16px; }
+.wbr-demo-3 { right: 12px; bottom: 44px; animation-delay: 0.3s; }
+
+/* ============ 5. Màn Chúc mừng và Thể lệ ============ */
+.wbr-reward {
+  position: relative;
+  overflow: hidden;
+  min-height: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 92px 28px 32px;
+  text-align: center;
+  color: #fff;
+  /* Các tia sáng tỏa ra từ giữa: hai sắc xanh xen kẽ */
+  background: repeating-conic-gradient(from 0deg at 50% 40%, #015D47 0deg 12deg, #0A6E55 12deg 24deg);
+}
+.wbr-reward-close { position: absolute; right: 20px; top: 20px; }
+.wbr-congrats {
+  margin: 0 0 14px;
+  font: 800 60px/1 var(--wbr-display);
+  letter-spacing: 0;
+  color: var(--wbr-lime);
+  text-shadow: 0 5px 0 var(--wbr-ink);
+  transform: rotate(-4deg);
+}
+.wbr-reward-lead { margin-top: 10px !important; font-size: 20px; font-weight: 700; }
+.wbr-reward-amount { font: 800 84px/0.95 var(--wbr-display); color: #fff; text-shadow: 0 5px 0 var(--wbr-orange); }
+.wbr-reward-rate { margin-top: 6px !important; padding: 10px 18px; background: var(--wbr-ink); border-radius: 22px; font-size: 14px; font-weight: 600; color: var(--wbr-cream); }
+.wbr-reward-rate b { color: var(--wbr-lime); }
+.wbr-reward-sub { font-size: 14px; font-weight: 600; color: var(--wbr-cream); }
+.wbr-reward .wbr-btn { margin-top: 16px; }
+.wbr-confetti { position: absolute; width: 14px; height: 8px; border-radius: 2px; }
+.wbr-confetti-o { background: var(--wbr-orange); }
+.wbr-confetti-l { background: var(--wbr-lime); }
+.wbr-confetti-c { background: var(--wbr-cream); }
+
+.wbr-rules { margin: 0; padding: 22px 24px 4px 44px; display: grid; gap: 12px; font-size: 14px; line-height: 1.55; }
+
+/* ============ 6. Trò chơi Gom nhóm 15 giây ============ */
+.wbr-hud { position: relative; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.wbr-timer { display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; background: var(--wbr-ink); border-radius: 16px; font: 800 30px/1 var(--wbr-display); color: var(--wbr-lime); }
+.wbr-timebar { flex: 1; height: 18px; overflow: hidden; background: var(--wbr-cream); border: 3px solid var(--wbr-ink); border-radius: 9px; }
+.wbr-timebar i { display: block; width: 100%; height: 100%; background: var(--wbr-lime); }
+.wbr-score { display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 14px; background: var(--wbr-lime); border: 3px solid var(--wbr-ink); border-radius: 16px; font: 800 22px/1 var(--wbr-display); }
+
+.wbr-group { margin-top: -44px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+.wbr-group-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.wbr-group-text strong { font: 800 20px/1.2 var(--wbr-display); }
+.wbr-group-text span { font-size: 13px; font-weight: 600; color: var(--wbr-muted); }
+.wbr-group-text small { font-size: 12px; font-weight: 700; color: var(--wbr-green); }
+.wbr-slots { display: flex; gap: 8px; }
+.wbr-slot {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  background: var(--wbr-cream);
+  border: 3px dashed var(--wbr-ink);
+  border-radius: 50%;
+  font: 800 28px/1 var(--wbr-display);
+}
+.wbr-slot.is-filled { background: var(--wbr-lime); border-style: solid; }
+.wbr-group-badge {
+  position: absolute;
+  right: -8px;
+  top: -18px;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  background: var(--wbr-orange);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 50%;
+  transform: rotate(12deg);
+  font: 800 20px/1 var(--wbr-display);
+}
+
+/* Sân chơi: các nhân vật được JavaScript đặt vị trí bằng transform */
+.wbr-field {
+  position: relative;
+  overflow: hidden;
+  height: 400px;
+  margin: 18px 16px 22px;
+  background: var(--wbr-green);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 24px;
+  box-shadow: var(--wbr-sticker);
+  touch-action: manipulation;
+}
+.wbr-field.is-shake { animation: wbr-shake 0.35s; }
+.wbr-ring { position: absolute; border: 3px dashed var(--wbr-lime); border-radius: 50%; opacity: 0.35; }
+.wbr-ring-1 { left: 40px; top: 20px; width: 340px; height: 340px; }
+.wbr-ring-2 { left: 120px; top: 100px; width: 180px; height: 180px; }
+.wbr-blob-ground { left: -70px; right: -70px; bottom: -190px; height: 250px; background: var(--wbr-cream); }
+.wbr-field-hint { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 13px; font-weight: 700; color: var(--wbr-ink); }
+.wbr-count { position: absolute; inset: 0; display: grid; place-items: center; font: 800 120px/1 var(--wbr-display); color: var(--wbr-lime); text-shadow: 0 6px 0 var(--wbr-ink); }
+
+.wbr-buddy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: 0;
+  transition: none; /* website đặt transition cho mọi nút; ở đây phải tắt để nhân vật chạy mượt */
+  will-change: transform;
+  touch-action: manipulation;
+}
+.wbr-buddy small { margin-top: -4px; padding: 1px 7px; white-space: nowrap; background: var(--wbr-cream); border: 2px solid var(--wbr-ink); border-radius: 10px; font: 700 11px/1.4 var(--wbr-body); color: var(--wbr-ink); }
+.wbr-pop { position: absolute; z-index: 2; white-space: nowrap; pointer-events: none; font: 800 22px/1 var(--wbr-display); color: var(--wbr-lime); text-shadow: 0 3px 0 var(--wbr-ink); animation: wbr-pop 0.9s ease-out forwards; }
+
+/* ============ 7. Trang Hồ sơ ============ */
+.wbr-wallet {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--wbr-green);
+  border: 3px solid var(--wbr-ink);
+  border-radius: 22px;
+  box-shadow: var(--wbr-sticker);
+  font-family: var(--wbr-body);
+}
+.wbr-blob-orange { left: -50px; top: -70px; width: 170px; height: 170px; background: var(--wbr-orange); }
+.wbr-wallet-coin { position: relative; display: flex; }
+.wbr-wallet-main { position: relative; flex: 1; min-width: 170px; display: flex; flex-direction: column; gap: 2px; }
+.wbr-wallet-main strong { font: 800 44px/1 var(--wbr-display); color: var(--wbr-lime); text-shadow: 0 3px 0 var(--wbr-ink); }
+.wbr-wallet-main span { font-size: 14px; color: var(--wbr-cream); }
+.wbr-wallet-streak { display: flex; flex-direction: column; gap: 2px; padding-left: 18px; border-left: 2px dashed var(--wbr-lime); }
+.wbr-wallet-streak span { font-size: 13px; color: var(--wbr-cream); }
+.wbr-wallet-streak strong { font: 800 22px/1.1 var(--wbr-display); color: #fff; }
+.wbr-wallet .wbr-btn { width: auto; min-height: 50px; padding: 0 20px; border-radius: 16px; box-shadow: 0 4px 0 var(--wbr-ink); font-size: 18px; }
+
+.wbr-history-title { margin: 26px 0 4px; font: 800 20px/1.2 var(--wbr-display); color: var(--wbr-ink); }
+.wbr-history { font-family: var(--wbr-body); font-size: 14px; color: var(--wbr-ink); }
+.wbr-history-row { display: grid; grid-template-columns: 124px minmax(0, 1fr) 84px 60px; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--wbr-line); }
+.wbr-history-row span:nth-child(1) { color: var(--wbr-muted); }
+.wbr-history-row span:nth-child(3),
+.wbr-history-row span:nth-child(4) { text-align: right; font-weight: 700; }
+.wbr-history-head { border-bottom: 2px solid var(--wbr-ink); font-size: 13px; font-weight: 700; color: var(--wbr-muted); }
+.is-plus { color: var(--wbr-green); }
+.is-minus { color: #B93A00; }
+.wbr-more { display: block; min-height: 44px; margin: 16px auto 0; padding: 0 22px; background: var(--wbr-cream); border: 3px solid var(--wbr-ink); border-radius: 14px; font: 800 16px/1 var(--wbr-display); color: var(--wbr-ink); }
+
+/* ============ 8. Trang Thanh toán ============ */
+#checkout-xu { margin-top: 8px; font-family: var(--wbr-body); color: var(--wbr-ink); }
+.wbr-pay { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--wbr-lime); border: 3px solid var(--wbr-ink); border-radius: 18px; box-shadow: 0 5px 0 var(--wbr-ink); }
+.wbr-pay.is-off { background: var(--wbr-cream); box-shadow: none; }
+.wbr-pay-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.wbr-pay-text label { font: 800 20px/1.2 var(--wbr-display); }
+.wbr-pay-text span { font-size: 13px; line-height: 1.4; }
+
+/* Công tắc bật/tắt: ô checkbox thật nằm trong suốt phía trên để vẫn dùng được bàn phím */
+.wbr-switch { position: relative; width: 56px; height: 44px; flex-shrink: 0; display: flex; align-items: center; }
+.wbr-switch input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.wbr-switch i { position: relative; width: 56px; height: 32px; background: #fff; border: 3px solid var(--wbr-ink); border-radius: 16px; }
+.wbr-switch i::after { content: ''; position: absolute; left: 2px; top: 2px; width: 22px; height: 22px; background: var(--wbr-ink); border-radius: 50%; transition: transform 0.2s; }
+.wbr-switch input:checked + i { background: var(--wbr-green); }
+.wbr-switch input:checked + i::after { transform: translateX(24px); background: #fff; }
+.wbr-switch input:focus-visible + i { outline: 3px solid var(--wbr-orange); outline-offset: 2px; }
+.wbr-switch input:disabled { cursor: not-allowed; }
+.wbr-switch input:disabled + i { opacity: 0.45; }
+
+.wbr-pay-line,
+.wbr-pay-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 14px; }
+.wbr-pay-line small { color: var(--wbr-muted); }
+.wbr-pay-total { padding-top: 14px; border-top: 1px solid var(--wbr-line); font-weight: 700; }
+.wbr-pay-total strong { font: 800 28px/1 var(--wbr-display); color: var(--wbr-green); }
+.wbr-pay-note { margin: 12px 0 0; font-size: 12px; line-height: 1.5; color: var(--wbr-muted); }
+.wbr-dialog-note { margin-top: 10px; padding: 10px 14px; background: var(--wbr-lime); border-radius: 12px; font-size: 14px; color: var(--wbr-ink); }
+
+/* ============ 9. Màn hình nhỏ và giảm chuyển động ============ */
+@media (max-width: 599px) {
+  .wbr-fab { right: 10px; bottom: 10px; width: 108px; }
+  body.wbr-has-fab .app-toast { bottom: 146px; }
+  .wbr-chip { height: 42px; padding: 0 10px 0 6px; font-size: 16px; }
+
+  /* Popup thành bảng trượt từ dưới lên */
+  .wbr-overlay { align-items: flex-end; padding: 0; }
+  .wbr-popup { width: 100%; max-height: 92vh; border-radius: 28px 28px 0 0; border-bottom: 0; }
+
+  .wbr-balance strong { font-size: 56px; }
+  .wbr-worth { font-size: 13px; }
+  .wbr-days { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 8px; }
+  .wbr-day.is-big { grid-column: span 2; }
+  .wbr-section-row h3 { font-size: 22px; }
+  .wbr-game-name { font-size: 38px; }
+  .wbr-demo-1 { display: none; }
+  .wbr-congrats { font-size: 48px; }
+  .wbr-reward-amount { font-size: 72px; }
+  .wbr-reward { min-height: 0; padding-top: 84px; }
+  .wbr-timer { font-size: 24px; padding: 0 10px; }
+  .wbr-slot { width: 46px; height: 46px; }
+  .wbr-slot svg { width: 34px; height: auto; }
+  .wbr-field { height: 340px; }
+  .wbr-ring-1 { left: 10px; width: 300px; height: 300px; }
+  .wbr-history-row { grid-template-columns: 86px minmax(0, 1fr) 66px 40px; gap: 8px; font-size: 13px; }
+  .wbr-wallet-streak { padding-left: 0; border-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wbr-hop, .wbr-wiggle, .wbr-pulse, .wbr-fab-main, .wbr-fab-dot, .wbr-popup, .wbr-field.is-shake { animation: none; }
+  .wbr-switch i::after { transition: none; }
+}
