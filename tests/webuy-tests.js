@@ -265,6 +265,30 @@
     ok(w.document.getElementById('checkout-form').hidden, 'Biểu mẫu vẫn hiển thị khi giỏ trống');
     return 'Biểu mẫu bị ẩn khi giỏ trống';
   });
+  tc('TC28', 'Trang chủ', 'Hiển thị timeline 5 bước và carousel dùng ảnh sản phẩm', 'Có 5 bước, tiến độ 2/3, hai trạng thái kết quả và ảnh đúng dữ liệu', async () => {
+    const w = await load('../index.html');
+    eq($$(w, '.journey-step').length, 5, 'Số bước timeline');
+    eq($(w, '.journey-progress-label strong').textContent.trim(), '2/3 thành viên', 'Tiến độ nhóm');
+    eq($$(w, '.journey-outcome').length, 2, 'Số trạng thái kết quả');
+    eq($(w, '.journey-cta').getAttribute('href'), 'products.html', 'Đường dẫn CTA');
+    eq($$(w, '.fp-card').length, P().length, 'Số sản phẩm nổi bật');
+    eq($$(w, '.fp-card img')[0].getAttribute('src'), P()[0].image, 'Ảnh sản phẩm đầu tiên');
+    return 'Timeline đủ 5 bước; CTA và ảnh sản phẩm đúng';
+  });
+  tc('TC29', 'Địa điểm', 'Tự mở popup khi chưa lưu địa điểm', 'Popup lựa chọn xuất hiện khi vào trang', async () => {
+    sessionStorage.removeItem('webuy_location_prompted');
+    localStorage.removeItem(PREFIX + 'location');
+    const w = await load('../index.html');
+    ok($(w, '.loc-modal'), 'Popup địa điểm không tự mở');
+    return 'Popup tự mở khi chưa lưu địa điểm';
+  });
+  tc('TC30', 'Địa điểm', 'Không tự mở popup khi đã lưu địa điểm', 'Trang tải bình thường, popup không xuất hiện', async () => {
+    sessionStorage.removeItem('webuy_location_prompted');
+    localStorage.setItem(PREFIX + 'location', JSON.stringify({ code: 'hcm', name: 'TP.HCM' }));
+    const w = await load('../index.html');
+    ok(!$(w, '.loc-modal'), 'Popup vẫn tự mở dù đã có địa điểm');
+    return 'Không hiện popup khi địa điểm đã được lưu';
+  });
 
   /* ---- Chay va hien thi ket qua ---- */
   const tbody = document.getElementById('results');

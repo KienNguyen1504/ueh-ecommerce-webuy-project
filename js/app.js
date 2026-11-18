@@ -743,4 +743,14 @@ const normalizeSearchText = (text) =>
   renderCart();
   renderCheckout();
   renderProfile();
+  if (!get('location', null)) {
+    let shouldPrompt = true;
+    try {
+      if (sessionStorage.getItem('webuy_location_prompted')) shouldPrompt = false;
+      else sessionStorage.setItem('webuy_location_prompted', '1');
+    } catch (error) {
+      console.warn('WeBuy: không thể ghi nhận lần mở popup địa điểm trong phiên này.', error);
+    }
+    if (shouldPrompt) window.setTimeout(openLocationModal, 0);
+  }
 })();

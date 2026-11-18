@@ -199,10 +199,9 @@
    <section class="section section-products reveal" aria-labelledby="fp-title">
     <div class="container">
      <div class="section-header">
-      <div>
-       <p class="eyebrow"><span></span>Nhóm mua đang được chú ý</p>
+      <div class="fp-heading">
+       <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19c0-8.3 5.4-13.7 16-14-0.3 10.6-5.7 16-14 16"></path><path d="M5 19c3-4.5 6.7-7.5 11-10"></path></svg>
        <h2 id="fp-title">Sản phẩm nổi bật</h2>
-       <p class="section-desc">Giá mua chung luôn đi kèm điều kiện số người rõ ràng.</p>
       </div>
       <a class="section-link" href="products.html">Xem tất cả sản phẩm
        <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
@@ -218,10 +217,6 @@
       <button aria-label="Sản phẩm tiếp theo" class="car-btn car-next" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg></button>
       <div class="car-dots" data-dots="products"></div>
      </div>
-     <p class="demo-disclaimer">
-      <b>Thông tin minh họa:</b>
-      Giá, thành viên, trạng thái nhóm và thời gian trên các thẻ là dữ liệu mẫu để thiết kế giao diện; chưa có giao dịch thực.
-     </p>
     </div>
    </section>
 
@@ -302,41 +297,83 @@
    </section>
 
    <!-- ============ QUY TRÌNH ============ -->
-   <section class="section process-section reveal">
+   <section class="section process-section reveal" id="quy-trinh" aria-labelledby="process-title">
     <div class="container">
      <div class="section-header">
       <div>
        <p class="eyebrow"><span></span>Chỉ với vài bước</p>
-       <h2>Mua chung hoạt động thế nào?</h2>
-       <p class="section-desc">Từ lúc chọn món đến khi nhận kết quả nhóm, mọi thứ đều được hiển thị rõ ràng.</p>
+       <h2 id="process-title">Mua chung hoạt động thế nào?</h2>
+       <p class="section-desc">Theo dõi từng bước và xem rõ trạng thái của nhóm trước khi quyết định.</p>
       </div>
      </div>
-     <div class="process-grid">
-      <article>
-       <span class="step-count">01</span>
-       <div class="step-icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></div>
-       <h3>Chọn món yêu thích</h3>
-       <p>Khám phá sản phẩm và xem trước giá mua lẻ, giá theo nhóm.</p>
+     <div class="journey-steps">
+      <article class="journey-step">
+       <div class="journey-marker">
+        <span class="journey-count" aria-hidden="true">01</span>
+        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg></span>
+       </div>
+       <div class="journey-copy">
+        <h3>Chọn món yêu thích</h3>
+        <p>Xem thông tin sản phẩm và điều kiện tham gia nhóm.</p>
+       </div>
       </article>
-      <article>
-       <span class="step-count">02</span>
-       <div class="step-icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"></circle><path d="M2 20v-2a6 6 0 0 1 12 0v2"></path><path d="M17 5a3 3 0 0 1 0 6m0 5a5 5 0 0 1 5 4"></path></svg></div>
-       <h3>Tạo hoặc vào nhóm</h3>
-       <p>Chọn nhóm đang mở hoặc tạo nhóm mới, chia sẻ để thêm bạn.</p>
+      <article class="journey-step">
+       <div class="journey-marker">
+        <span class="journey-count" aria-hidden="true">02</span>
+        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2m3-12v6m-3-3h6"></path></svg></span>
+       </div>
+       <div class="journey-copy">
+        <h3>Tạo hoặc tham gia nhóm</h3>
+        <p>Chọn một nhóm đang mở hoặc tạo nhóm mới.</p>
+       </div>
       </article>
-      <article>
-       <span class="step-count">03</span>
-       <div class="step-icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m12 2 8 4v6c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg></div>
-       <h3>Thanh toán giữ chỗ</h3>
-       <p>Hoàn tất thanh toán để được tính là thành viên hợp lệ của nhóm.</p>
+      <article class="journey-step">
+       <div class="journey-marker">
+        <span class="journey-count" aria-hidden="true">03</span>
+        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12.5 9.5 17 20 6.5"></path><path d="M12 22a10 10 0 1 0-10-10"></path></svg></span>
+       </div>
+       <div class="journey-copy">
+        <h3>Xác nhận tham gia</h3>
+        <p>Kiểm tra lựa chọn và xác nhận tham gia nhóm.</p>
+       </div>
       </article>
-      <article>
-       <span class="step-count">04</span>
-       <div class="step-icon"><svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5v10l-9 5-9-5V7Z"></path><path d="m3 7 9 5 9-5M12 12v10"></path></svg></div>
-       <h3>Nhận kết quả nhóm</h3>
-       <p>Nhóm đủ điều kiện sẽ xử lý đơn; không đủ được xử lý hoàn tiền theo chính sách.</p>
+      <article class="journey-step journey-step-progress">
+       <div class="journey-marker">
+        <span class="journey-count" aria-hidden="true">04</span>
+        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.7 10.6 6.6-4.2m-6.6 7 6.6 4"></path></svg></span>
+       </div>
+       <div class="journey-copy">
+        <h3>Rủ bạn, chờ đủ nhóm</h3>
+        <p>Chia sẻ nhóm và theo dõi số thành viên.</p>
+        <div class="journey-progress">
+         <div class="journey-progress-label"><span>Tiến độ nhóm mẫu</span><strong>2/3 thành viên</strong></div>
+         <div class="journey-progress-track" role="progressbar" aria-label="Tiến độ nhóm mẫu" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2"><span></span></div>
+        </div>
+       </div>
+      </article>
+      <article class="journey-step journey-step-outcome">
+       <div class="journey-marker">
+        <span class="journey-count" aria-hidden="true">05</span>
+        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 3.5 7.5v9L12 21l8.5-4.5v-9L12 3Z"></path><path d="m3.8 7.7 8.2 4.5 8.2-4.5M12 12.2V21m-3.5-15 8.2 4.5"></path></svg></span>
+       </div>
+       <div class="journey-copy">
+        <h3>Nhận kết quả nhóm</h3>
+        <div class="journey-outcomes" aria-label="Hai trạng thái có thể có">
+         <div class="journey-outcome journey-outcome--ready">
+          <strong>Nhóm đủ điều kiện</strong>
+          <p>Xem trạng thái và thông tin bước tiếp theo.</p>
+         </div>
+         <div class="journey-outcome journey-outcome--waiting">
+          <strong>Nhóm chưa đủ điều kiện</strong>
+          <p>Nhóm chưa đạt số người yêu cầu.</p>
+         </div>
+        </div>
+       </div>
       </article>
      </div>
+     <a class="journey-cta" href="products.html">Khám phá nhóm mua
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+     </a>
     </div>
    </section>
 
