@@ -290,6 +290,79 @@
     return 'Không hiện popup khi địa điểm đã được lưu';
   });
 
+  /* ---- Tinh nang 11: Xu WeBuy (diem danh, tro choi, dung xu) ---- */
+  tc('TC31', 'Xu WeBuy', 'Mở trang chủ', 'Có nút nổi "Điểm danh săn quà" và chip "0 xu" trên Header', async () => {
+    const w = await load('../index.html');
+    ok($(w, '.wbr-fab-main'), 'Không thấy nút nổi điểm danh');
+    eq($(w, '.wbr-chip').textContent.trim(), '0 xu', 'Chip xu');
+    return 'Có nút nổi và chip "0 xu"';
+  });
+  tc('TC32', 'Xu WeBuy', 'Bấm chip xu rồi bấm "Nhận ngay" để điểm danh lần đầu', 'Số dư 10 xu, lịch sử có dòng "Điểm danh Ngày 1"', async () => {
+    const w = await load('../index.html');
+    await click(w, '.wbr-chip');
+    await click(w, '[data-wbr="checkin"]');
+    const s = w.WeBuyRewards.getState();
+    eq(s.balance, 10, 'Số dư');
+    eq(s.history[0].note, 'Điểm danh Ngày 1', 'Lịch sử');
+    ok($(w, '.wbr-reward'), 'Không hiện màn Chúc mừng');
+    return 'Số dư 10 xu, có màn Chúc mừng';
+  });
+  tc('TC33', 'Xu WeBuy', 'Điểm danh lần thứ hai trong cùng ngày', 'Không cộng thêm xu, số dư vẫn 10', async () => {
+    const w = await load('../index.html');
+    w.WeBuyRewards.claimCheckin();
+    const again = w.WeBuyRewards.claimCheckin();
+    ok(!again.ok, 'Vẫn cho điểm danh lần hai');
+    eq(w.WeBuyRewards.getState().balance, 10, 'Số dư');
+    return 'Lần hai bị chặn, số dư 10';
+  });
+  tc('TC34', 'Xu WeBuy', 'Sang ngày kế tiếp, rồi bỏ lỡ một ngày', 'Ngày kế nhận mức Ngày 2; bỏ lỡ thì chuỗi về Ngày 1', async () => {
+    const w = await load('../index.html');
+    const R = w.WeBuyRewards;
+    R.debugSetToday('2026-11-20'); R.claimCheckin();
+    R.debugSetToday('2026-11-21');
+    const next = R.getCheckin();
+    eq(next.day, 2, 'Ngày kế tiếp');
+    R.claimCheckin();
+    R.debugSetToday('2026-11-23');
+    const skip = R.getCheckin();
+    eq(skip.day, 1, 'Sau khi bỏ lỡ');
+    ok(skip.broken, 'Không báo đứt chuỗi');
+    R.debugSetToday(null);
+    return 'Ngày 2 đúng mức, bỏ lỡ thì về Ngày 1';
+  });
+  tc('TC35', 'Xu WeBuy', 'Dùng hết lượt chơi Gom nhóm trong ngày', 'Còn 0 lượt, nút "Chơi ngay" bị khóa', async () => {
+    const w = await load('../index.html');
+    await click(w, '.wbr-chip');
+    await click(w, '[data-wbr="play"]');
+    await sleep(2400); // chờ đếm ngược 3-2-1 để lượt chơi được tính
+    eq(w.WeBuyRewards.playInfo().left, 0, 'Số lượt còn lại');
+    w.WeBuyRewards.close(); // kết thúc sớm, nhận xu an ủi
+    await sleep(250);
+    ok(w.WeBuyRewards.getState().balance >= 5, 'Không nhận được xu tối thiểu');
+    await click(w, '[data-wbr="hub"]');
+    ok(!$(w, '[data-wbr="play"]'), 'Nút chơi vẫn bấm được');
+    return 'Hết lượt, nhận ít nhất 5 xu';
+  });
+  tc('TC36', 'Xu WeBuy', 'Thanh toán đơn có bật "Dùng Xu WeBuy" khi có 300 xu', 'Đơn được trừ 30.000đ, số dư còn 0 xu', async () => {
+    let w = await load('../index.html');
+    w.WeBuyRewards.addXu(300, 'Nạp thử');
+    localStorage.setItem(PREFIX + 'cart', JSON.stringify([{ productId: P()[0].id, kind: 'retail', groupId: null, quantity: 1, addedAt: Date.now() }]));
+    w = await load('../checkout.html');
+    const total = P()[0].retail;
+    const use = Math.min(300, Math.floor(total * 0.1 / 100));
+    await click(w, '#wbr-use-xu');
+    $(w, '#checkout-name').value = 'Nguyễn Văn A';
+    $(w, '#checkout-phone').value = '0912345678';
+    $(w, '#checkout-address').value = '59C Nguyễn Đình Chiểu';
+    $(w, '#checkout-form').requestSubmit();
+    await sleep(400);
+    const order = JSON.parse(localStorage.getItem(PREFIX + 'orders')).slice(-1)[0];
+    eq(order.xuUsed, use, 'Số xu đã dùng');
+    eq(order.total, total - use * 100, 'Tổng sau giảm');
+    eq(w.WeBuyRewards.getState().balance, 300 - use, 'Số dư còn lại');
+    return `Dùng ${use} xu, giảm ${fmt(use * 100)}`;
+  });
+
   /* ---- Chay va hien thi ket qua ---- */
   const tbody = document.getElementById('results');
   const summary = document.getElementById('summary');
