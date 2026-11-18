@@ -172,9 +172,9 @@
   height: 43px;
   padding: 0 13px;
   border-radius: 10px;
-  background: #f4faf6;
-  border: 1px solid #dfece3;
-  color: #0b7d5b;
+  background: #fff6e8;
+  border: 1px solid #d9ff4f;
+  color: #0d6b47;
   font-family: var(--sans);
   font-size: 13px;
   font-weight: 700;
@@ -183,8 +183,8 @@
   flex-shrink: 0;
 }
 .header-location-btn:hover {
-  background: #e7f4ea;
-  border-color: #bfe0cb;
+  background: #d9ff4f;
+  border-color: #0d6b47;
 }
 .header-location-btn svg {
   width: 16px;
@@ -207,6 +207,8 @@
   width: min(540px, 100%);
   padding: 28px 28px 24px;
   border-radius: 18px;
+  background: #fff6e8;
+  font-family: var(--sans);
 }
 .loc-modal-header {
   text-align: center;
@@ -214,7 +216,7 @@
   padding: 0 24px;
 }
 .loc-modal-header h2 {
-  font-family: 'Playfair Display', var(--serif);
+  font-family: var(--sans);
   font-size: 26px;
   font-weight: 700;
   color: var(--ink);
@@ -239,7 +241,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid #e2e9e5;
+  border: 2px solid #e3ebdb;
   border-radius: 14px;
   background: #fff;
   padding: 8px 8px 11px;
@@ -247,13 +249,13 @@
   transition: border-color .2s, background-color .2s, transform .2s, box-shadow .2s;
 }
 .loc-city-card:hover {
-  border-color: #96cbb4;
+  border-color: #ff6b00;
   transform: translateY(-2px);
 }
 .loc-city-card.is-selected {
-  border-color: #0b7d5b;
-  background: #f4faf6;
-  box-shadow: 0 6px 16px rgba(11, 125, 91, 0.12);
+  border-color: #0d6b47;
+  background: #d9ff4f;
+  box-shadow: 0 4px 12px rgba(13, 107, 71, 0.12);
 }
 .loc-city-thumb {
   width: 100%;
@@ -275,7 +277,7 @@
   line-height: 1.3;
 }
 .loc-city-card.is-selected .loc-city-name {
-  color: #0b7d5b;
+  color: #0d6b47;
 }
 
 /* Nút Radio tròn trên thẻ & danh sách */
@@ -287,15 +289,15 @@
   height: 22px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
-  border: 2px solid #cbd5e1;
+  border: 2px solid #aebdb4;
   display: grid;
   place-items: center;
   transition: all .2s;
 }
 .loc-city-card.is-selected .loc-radio,
 .loc-list-item.is-selected .loc-radio {
-  background: #0b7d5b;
-  border-color: #0b7d5b;
+  background: #0d6b47;
+  border-color: #0d6b47;
 }
 .loc-radio::after {
   content: '';
@@ -317,22 +319,22 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f6f9f7;
-  border: 1.5px solid #e2e9e5;
+  background: #fff;
+  border: 1.5px solid #e3ebdb;
   border-radius: 11px;
   padding: 0 14px;
   height: 44px;
   margin-bottom: 12px;
 }
 .loc-search-box:focus-within {
-  border-color: #0b7d5b;
+  border-color: #0d6b47;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(11, 125, 91, 0.12);
+  box-shadow: 0 0 0 3px rgba(217, 255, 79, 0.65);
 }
 .loc-search-box svg {
   width: 18px;
   height: 18px;
-  color: #6c857a;
+  color: #0d6b47;
   stroke: currentColor;
   fill: none;
   stroke-width: 2;
@@ -351,7 +353,7 @@
 .loc-list-scroll {
   max-height: 185px;
   overflow-y: auto;
-  border: 1px solid #e6eee9;
+  border: 1px solid #e3ebdb;
   border-radius: 12px;
   margin-bottom: 18px;
   background: #fff;
@@ -364,7 +366,7 @@
   justify-content: space-between;
   padding: 11px 44px 11px 15px;
   border: 0;
-  border-bottom: 1px solid #f0f5f2;
+  border-bottom: 1px solid #f2eadc;
   background: transparent;
   text-align: left;
   font-size: 13.5px;
@@ -376,11 +378,11 @@
   border-bottom: 0;
 }
 .loc-list-item:hover {
-  background: #f6fbf8;
+  background: #fff6e8;
 }
 .loc-list-item.is-selected {
-  background: #eff9f2;
-  color: #0b7d5b;
+  background: #d9ff4f;
+  color: #0d6b47;
   font-weight: 750;
 }
 .loc-list-item .loc-radio {
@@ -408,15 +410,21 @@
   min-height: 46px;
   border: 0;
   border-radius: 12px;
-  background: #0b7d5b;
+  background: #0d6b47;
   color: #fff;
   font-size: 14.5px;
   font-weight: 750;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(11, 125, 91, 0.22);
+  box-shadow: 0 4px 12px rgba(13, 107, 71, 0.16);
 }
 .loc-confirm-btn:hover {
-  background: #096449;
+  background: #08472f;
+}
+.loc-city-card:focus-visible,
+.loc-list-item:focus-visible,
+.loc-confirm-btn:focus-visible {
+  outline: 3px solid #ff6b00;
+  outline-offset: 2px;
 }
 
 /* 4 Khu vực chịu ảnh hưởng trên trang */
