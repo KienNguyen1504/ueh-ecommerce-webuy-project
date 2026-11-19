@@ -21,50 +21,207 @@
   let groups = get('groups', null);
   if(!Array.isArray(groups)){groups=seedGroups();put('groups',groups);}
   const saveGroups = () => put('groups',groups);
+
+  /* =========================================================
+     QUẢN LÝ ĐỊA ĐIỂM KHU VỰC (DANH SÁCH CHÍNH XÁC THEO YÊU CẦU)
+     ========================================================= */
+  const FEATURED_CITIES = [
+    {
+      code: 'hcm',
+      name: 'TP.HCM',
+      art: `<img src="images/TP.HCM.jpeg" alt="TP.HCM">`
+    },
+    {
+      code: 'hn',
+      name: 'TP. Hà Nội',
+      art: `<img src="images/H%C3%80%20N%E1%BB%98I.jpg" alt="TP. Hà Nội">`
+    },
+    {
+      code: 'dn',
+      name: 'Đà Nẵng',
+      art: `<img src="images/%C4%90%C3%80%20N%E1%BA%B4NG.jpg" alt="Đà Nẵng">`
+    }
+  ];
+
+  const LOCATIONS = [
+    { code: 'all', name: 'Toàn quốc', note: '' },
+    { code: 'tq', name: 'Tuyên Quang', note: '(sáp nhập Hà Giang – Tuyên Quang)' },
+    { code: 'lc', name: 'Lào Cai', note: '(sáp nhập Yên Bái – Lào Cai)' },
+    { code: 'tn', name: 'Thái Nguyên', note: '(sáp nhập Bắc Kạn – Thái Nguyên)' },
+    { code: 'pt', name: 'Phú Thọ', note: '(sáp nhập Vĩnh Phúc – Hòa Bình – Phú Thọ)' },
+    { code: 'bn', name: 'Bắc Ninh', note: '(sáp nhập Bắc Giang – Bắc Ninh)' },
+    { code: 'hy', name: 'Hưng Yên', note: '(sáp nhập Thái Bình – Hưng Yên)' },
+    { code: 'hp', name: 'Hải Phòng', note: '(sáp nhập Hải Dương – Hải Phòng)' },
+    { code: 'nb', name: 'Ninh Bình', note: '(sáp nhập Hà Nam – Nam Định – Ninh Bình)' },
+    { code: 'qt', name: 'Quảng Trị', note: '(sáp nhập Quảng Bình – Quảng Trị)' },
+    { code: 'dn', name: 'Đà Nẵng', note: '(sáp nhập Quảng Nam – Đà Nẵng)' },
+    { code: 'qng', name: 'Quảng Ngãi', note: '(sáp nhập Kon Tum – Quảng Ngãi)' },
+    { code: 'gl', name: 'Gia Lai', note: '(sáp nhập Bình Định – Gia Lai)' },
+    { code: 'kh', name: 'Khánh Hòa', note: '(sáp nhập Ninh Thuận – Khánh Hòa)' },
+    { code: 'db', name: 'Điện Biên', note: '' },
+    { code: 'hn', name: 'TP. Hà Nội', note: '' },
+    { code: 'ht', name: 'Hà Tĩnh', note: '' },
+    { code: 'ls', name: 'Lạng Sơn', note: '' },
+    { code: 'lch', name: 'Lai Châu', note: '' },
+    { code: 'na', name: 'Nghệ An', note: '' },
+    { code: 'qn', name: 'Quảng Ninh', note: '' },
+    { code: 'sl', name: 'Sơn La', note: '' },
+    { code: 'th', name: 'Thanh Hóa', note: '' },
+    { code: 'cb', name: 'Cao Bằng', note: '' },
+    { code: 'hue', name: 'TP. Huế', note: '' },
+    { code: 'ld', name: 'Lâm Đồng', note: '(sáp nhập Đắk Nông – Bình Thuận – Lâm Đồng)' },
+    { code: 'dl', name: 'Đắk Lắk', note: '(sáp nhập Phú Yên – Đắk Lắk)' },
+    { code: 'hcm', name: 'TP.HCM', note: '(sáp nhập Bà Rịa – Vũng Tàu – Bình Dương – TP.HCM)' },
+    { code: 'dna', name: 'Đồng Nai', note: '(sáp nhập Bình Phước – Đồng Nai)' },
+    { code: 'tni', name: 'Tây Ninh', note: '(sáp nhập Long An – Tây Ninh)' },
+    { code: 'ct', name: 'Cần Thơ', note: '(sáp nhập Sóc Trăng – Hậu Giang – Cần Thơ)' },
+    { code: 'vl', name: 'Vĩnh Long', note: '(sáp nhập Bến Tre – Trà Vinh – Vĩnh Long)' },
+    { code: 'dt', name: 'Đồng Tháp', note: '(sáp nhập Tiền Giang – Đồng Tháp)' },
+    { code: 'cm', name: 'Cà Mau', note: '(sáp nhập Bạc Liêu – Cà Mau)' },
+    { code: 'ag', name: 'An Giang', note: '(sáp nhập Kiên Giang – An Giang)' }
+  ];
+
+  const DEMO_GROUP_REGION = {
+    '1': 'hcm', '2': 'hn', '3': 'hcm', '4': 'dn',
+    '5': 'hcm', '6': 'dna', '7': 'hn', '8': 'dn'
+  };
+
+  const getCurrentLocation = () => {
+    const saved = get('location', null);
+    if (saved && saved.code) {
+      return LOCATIONS.find(l => l.code === saved.code) || LOCATIONS[0];
+    }
+    return LOCATIONS[0];
+  };
+
+  let currentLocation = getCurrentLocation();
+
+  const updateLocationUI = () => {
+    currentLocation = getCurrentLocation();
+    document.querySelectorAll('[data-location-label]').forEach(el => {
+      el.textContent = currentLocation.name;
+    });
+  };
+
+  const injectHeaderLocationBtn = () => {
+    const actions = document.querySelector('.header-actions');
+    if (!actions || actions.querySelector('[data-open-location]')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'header-location-btn';
+    btn.setAttribute('data-open-location', '');
+    btn.setAttribute('aria-label', 'Chọn khu vực mua chung');
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.33-6-10a6 6 0 1 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
+      <span class="loc-label" data-location-label>${safe(currentLocation.name)}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true" style="width:14px;height:14px"><path d="M6 9l6 6 6-6"/></svg>
+    `;
+    actions.insertBefore(btn, actions.firstChild);
+  };
+
+  const openLocationModal = () => {
+    let selectedCode = currentLocation.code;
+
+    const renderListItems = (keyword = '') => {
+      const q = normalizeSearchText(keyword);
+      const filtered = LOCATIONS.filter(l =>
+        normalizeSearchText(l.name).includes(q) ||
+        normalizeSearchText(l.note || '').includes(q)
+      );
+      if (!filtered.length) return `<div class="loc-empty">Không tìm thấy tỉnh/thành phù hợp với "${safe(keyword)}".</div>`;
+      return filtered.map(l => `
+        <button type="button" class="loc-list-item ${l.code === selectedCode ? 'is-selected' : ''}" data-pick-loc="${safe(l.code)}">
+          <span>${safe(l.name)}${l.note ? `<span class="loc-list-sub">${safe(l.note)}</span>` : ''}</span>
+          <span class="loc-radio" aria-hidden="true"></span>
+        </button>
+      `).join('');
+    };
+
+    showDialog(`
+      <div class="loc-modal">
+        <div class="loc-modal-header">
+          <h2>Chọn khu vực mua chung của bạn</h2>
+          <p>Giúp WeBuy gợi ý các nhóm mua gần bạn</p>
+        </div>
+
+        <div class="loc-featured-grid">
+          ${FEATURED_CITIES.map(c => `
+            <button type="button" class="loc-city-card ${c.code === selectedCode ? 'is-selected' : ''}" data-pick-loc="${safe(c.code)}">
+              <span class="loc-radio" aria-hidden="true"></span>
+              <div class="loc-city-thumb">${c.art}</div>
+              <span class="loc-city-name">${safe(c.name)}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <div class="loc-search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="search" id="loc-search-input" placeholder="Tìm tỉnh/thành phố hoặc khu vực..." autocomplete="off">
+        </div>
+
+        <div class="loc-list-scroll" id="loc-list-container">
+          ${renderListItems('')}
+        </div>
+
+        <button type="button" class="loc-confirm-btn" id="loc-confirm-btn">Xác nhận khu vực</button>
+      </div>
+    `);
+
+    const root = document.getElementById('app-dialog-root');
+    const modal = root?.querySelector('.app-modal');
+    if (modal) modal.style.padding = '0';
+
+    const syncSelectionUI = () => {
+      root?.querySelectorAll('[data-pick-loc]').forEach(el => {
+        el.classList.toggle('is-selected', el.dataset.pickLoc === selectedCode);
+      });
+    };
+
+    root?.addEventListener('click', ev => {
+      const pickBtn = ev.target.closest('[data-pick-loc]');
+      if (pickBtn) {
+        selectedCode = pickBtn.dataset.pickLoc;
+        syncSelectionUI();
+        return;
+      }
+      if (ev.target.id === 'loc-confirm-btn') {
+        const picked = LOCATIONS.find(l => l.code === selectedCode) || LOCATIONS[0];
+        put('location', { code: picked.code, name: picked.name });
+        updateLocationUI();
+        closeDialog();
+        flash(`Đã cập nhật khu vực: ${picked.name}`);
+        renderCatalog();
+        renderDetail();
+        renderCart();
+        renderCheckout();
+      }
+    });
+
+    const searchInp = document.getElementById('loc-search-input');
+    const listContainer = document.getElementById('loc-list-container');
+    searchInp?.addEventListener('input', () => {
+      if (listContainer) listContainer.innerHTML = renderListItems(searchInp.value);
+    });
+  };
  
-  // BƯỚC 6: Lưu và khôi phục giỏ hàng bằng localStorage
   const readCart = () => {
     const saved = get('cart', []);
-
-    // Tránh lỗi nếu dữ liệu trong localStorage bị sai
     if (!Array.isArray(saved)) return [];
-
     return saved.filter(item => {
       if (!item || typeof item !== 'object') return false;
-
-      // Sản phẩm phải tồn tại trong dữ liệu chung
       if (!product(item.productId)) return false;
-
-      // Chỉ chấp nhận hai hình thức mua
-      if (item.kind !== 'retail' && item.kind !== 'group') {
-        return false;
-      }
-
-      // Số lượng phải là số nguyên từ 1 đến 99
-      if (
-        !Number.isInteger(item.quantity) ||
-        item.quantity < 1 ||
-        item.quantity > 99
-      ) {
-        return false;
-      }
-
-      // Mua chung phải có nhóm hợp lệ
+      if (item.kind !== 'retail' && item.kind !== 'group') return false;
+      if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99) return false;
       if (item.kind === 'group') {
         const group = groups.find(g => g.id === item.groupId);
-        if (!group || group.productId !== item.productId) {
-          return false;
-        }
+        if (!group || group.productId !== item.productId) return false;
       }
-
       return true;
     });
   };
 
-  // Khôi phục giỏ hàng khi tải trang
   let cart = readCart();
 
-  // Lưu giỏ hàng sau mỗi thay đổi
   const saveCart = () => {
     put('cart', cart);
     refreshHeader();
@@ -105,7 +262,8 @@
   const createGroup=(pId)=>{
     const p=product(pId);if(!p)return;
     const id='group-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);
-    groups.push({id,productId:pId,need:p.minMembers,members:[uid],demoCount:0,endsAt:Date.now()+24*3600000,createdAt:Date.now(),isDemo:false});
+    const regionCode = currentLocation.code !== 'all' ? currentLocation.code : 'hcm';
+    groups.push({id,productId:pId,need:p.minMembers,members:[uid],demoCount:0,endsAt:Date.now()+24*3600000,createdAt:Date.now(),isDemo:false,regionCode});
     saveGroups();cart.push({productId:pId,kind:'group',groupId:id,quantity:1,addedAt:Date.now()});saveCart();
     renderDetail();renderProfile();
     showDialog(`<span class="dialog-icon">✦</span><h2>Đã tạo nhóm mua!</h2><p>Nhóm <strong>${safe(p.name)}</strong> đang có <b>1/${p.minMembers}</b> thành viên. Bản demo cho phép bạn mô phỏng có thêm thành viên tại trang chi tiết sản phẩm. Liên kết chỉ dùng minh họa, chưa thể mời người dùng khác thật sự.</p><div class="share-field"><input value="${safe(new URL(detailLink(p)+'&group='+encodeURIComponent(id),location.href).href)}" id="new-group-link" readonly><button type="button" data-copy-group="${safe(id)}">Sao chép</button></div><p class="muted">Dữ liệu nhóm hiện chỉ lưu trên trình duyệt này, liên kết chưa đồng bộ được giữa các thiết bị.</p><a class="btn btn-primary" href="profile.html">Theo dõi nhóm của tôi</a>`);
@@ -153,37 +311,34 @@ const normalizeSearchText = (text) =>
   const keyword = (params.get('q') || '').trim();
   const sort = params.get('sort') || 'default';
   
-const readGroupPrice = value =>
-  value !== null &&
-  /^\d+$/.test(value) &&
-  Number.isSafeInteger(Number(value))
-    ? Number(value)
-    : null;
+  const readGroupPrice = value =>
+    value !== null &&
+    /^\d+$/.test(value) &&
+    Number.isSafeInteger(Number(value))
+      ? Number(value)
+      : null;
 
-const groupMin = readGroupPrice(params.get('groupMin'));
-const groupMax = readGroupPrice(params.get('groupMax'));
+  const groupMin = readGroupPrice(params.get('groupMin'));
+  const groupMax = readGroupPrice(params.get('groupMax'));
 
-const minInput = document.getElementById('catalog-group-min');
-const maxInput = document.getElementById('catalog-group-max');
+  const minInput = document.getElementById('catalog-group-min');
+  const maxInput = document.getElementById('catalog-group-max');
 
-if (minInput) minInput.value = groupMin ?? '';
-if (maxInput) maxInput.value = groupMax ?? '';
-
+  if (minInput) minInput.value = groupMin ?? '';
+  if (maxInput) maxInput.value = groupMax ?? '';
 
   const input = document.getElementById('catalog-q');
   if (input) input.value = keyword;
 
-  
-const select = document.getElementById('catalog-sort');
-
-if (select) {
-  select.value = [
-    'price-asc',
-    'price-desc',
-    'group-asc',
-    'group-desc'
-  ].includes(sort) ? sort : 'default';
-}
+  const select = document.getElementById('catalog-sort');
+  if (select) {
+    select.value = [
+      'price-asc',
+      'price-desc',
+      'group-asc',
+      'group-desc'
+    ].includes(sort) ? sort : 'default';
+  }
 
   document.querySelectorAll('[data-filter]').forEach(button => {
     const active = button.dataset.filter === category;
@@ -191,40 +346,51 @@ if (select) {
     button.setAttribute('aria-pressed', String(active));
   });
 
-  // Tìm kiếm và lọc sản phẩm
   const result = products.filter(p => {
-    const matchCategory =
-      category === 'all' || p.category === CATEGORIES[category];
+    const matchCategory = category === 'all' || p.category === CATEGORIES[category];
+    const matchName = normalizeSearchText(p.name).includes(normalizeSearchText(keyword));
+    const matchGroupPrice =
+      (groupMin === null || p.group >= groupMin) &&
+      (groupMax === null || p.group <= groupMax);
 
-const matchName = normalizeSearchText(p.name)
-  .includes(normalizeSearchText(keyword));
-
-    
-const matchGroupPrice =
-  (groupMin === null || p.group >= groupMin) &&
-  (groupMax === null || p.group <= groupMax);
-
-return matchCategory && matchName && matchGroupPrice;
-
+    return matchCategory && matchName && matchGroupPrice;
   });
 
- 
-// Sắp xếp theo giá mua lẻ hoặc giá mua chung
-if (sort === 'price-asc') {
-  result.sort((a, b) => a.price - b.price);
+  if (sort === 'price-asc') {
+    result.sort((a, b) => a.price - b.price);
+  } else if (sort === 'price-desc') {
+    result.sort((a, b) => b.price - a.price);
+  } else if (sort === 'group-asc') {
+    result.sort((a, b) => a.group - b.group);
+  } else if (sort === 'group-desc') {
+    result.sort((a, b) => b.group - a.group);
+  } else if (currentLocation.code !== 'all') {
+    result.sort((a, b) => {
+      const aMatch = DEMO_GROUP_REGION[a.id] === currentLocation.code ? 0 : 1;
+      const bMatch = DEMO_GROUP_REGION[b.id] === currentLocation.code ? 0 : 1;
+      return aMatch - bMatch;
+    });
+  }
 
-} else if (sort === 'price-desc') {
-  result.sort((a, b) => b.price - a.price);
+  const gridEl = document.querySelector('.product-grid');
+  if (gridEl) {
+    let locBanner = document.getElementById('catalog-location-banner');
+    if (currentLocation.code !== 'all') {
+      if (!locBanner) {
+        locBanner = document.createElement('div');
+        locBanner.id = 'catalog-location-banner';
+        locBanner.className = 'location-catalog-banner';
+        gridEl.parentNode.insertBefore(locBanner, gridEl);
+      }
+      locBanner.innerHTML = `
+        <span>📍 Đang hiển thị các sản phẩm tại khu vực <strong>${safe(currentLocation.name)}</strong> (ưu tiên nhóm mua gần bạn).</span>
+        <button type="button" data-open-location>Đổi khu vực</button>
+      `;
+    } else if (locBanner) {
+      locBanner.remove();
+    }
+  }
 
-} else if (sort === 'group-asc') {
-  result.sort((a, b) => a.group - b.group);
-
-} else if (sort === 'group-desc') {
-  result.sort((a, b) => b.group - a.group);
-}
-
-
-  // Cập nhật danh sách trên giao diện
   window.renderProducts(result);
   refreshProductProgress();
 };
@@ -253,12 +419,8 @@ if (sort === 'price-asc') {
     document.title=p.name+' | WeBuy';setText('#detail-title',p.name);setText('#detail-category',p.category.toUpperCase()+' · SẢN PHẨM');
     setText('#detail-retail-price',money(p.retail));setText('#detail-group-price',money(p.group));setText('#detail-group-min',`Áp dụng khi nhóm đạt ít nhất ${p.minMembers} thành viên`);
     setText('#detail-summary',p.description);
-  const breadcrumbName =
-  document.querySelector('.breadcrumb span:last-child');
-
-if (breadcrumbName) {
-  breadcrumbName.textContent = p.name;
-}
+    const breadcrumbName = document.querySelector('.breadcrumb span:last-child');
+    if (breadcrumbName) breadcrumbName.textContent = p.name;
     const im=document.getElementById('detail-product-image');if(im){im.src=p.image;im.alt=p.name;}
     const desc=document.querySelector('.details-description');
     if(desc){
@@ -280,7 +442,10 @@ if (breadcrumbName) {
     if(list){
       list.innerHTML=currentGroups.map(g=>{
         const state=groupState(g),n=groupCount(g),joined=g.members.includes(uid);
-        return `<article class="available-group"><div class="group-row"><div><strong>${g.isDemo?'Nhóm cộng đồng':'Nhóm '+safe(g.id.slice(-6).toUpperCase())}</strong><span class="group-state state-${state}">${state==='open'?'Đang mở':state==='success'?'Đủ thành viên':'Đã hết hạn'}</span></div><b>${n}/${g.need}</b></div><div class="mini-track"><span style="width:${Math.min(100,n/g.need*100)}%"></span></div><div class="group-row group-foot"><small>${safe(timeLeft(g))} · ${joined?'Bạn đã tham gia':'Giá nhóm '+money(p.group)}</small>${joined?'<a href="profile.html" class="group-action-link">Đã tham gia ✓</a>':state==='open'?`<button type="button" data-join-group="${safe(g.id)}" class="group-action-link">Tham gia nhóm →</button>`:'<span class="muted">Đã đóng</span>'}</div>${!g.isDemo && joined && state==='open'?`<button type="button" class="simulate-member" data-simulate-member="${safe(g.id)}">+ Mô phỏng 1 thành viên mới (demo)</button>`:''}</article>`;
+        const gRegionCode = g.regionCode || DEMO_GROUP_REGION[p.id] || 'hcm';
+        const gRegionObj = LOCATIONS.find(l => l.code === gRegionCode);
+        const isNear = currentLocation.code !== 'all' && gRegionCode === currentLocation.code;
+        return `<article class="available-group"><div class="group-row"><div><strong>${g.isDemo?'Nhóm cộng đồng':'Nhóm '+safe(g.id.slice(-6).toUpperCase())}</strong>${isNear?'<span class="badge-near-you">📍 Gần bạn</span>':''}<span class="group-state state-${state}">${state==='open'?'Đang mở':state==='success'?'Đủ thành viên':'Đã hết hạn'}</span></div><b>${n}/${g.need}</b></div><div class="mini-track"><span style="width:${Math.min(100,n/g.need*100)}%"></span></div><div class="group-row group-foot"><small>${gRegionObj?safe(gRegionObj.name)+' · ':''}${safe(timeLeft(g))} · ${joined?'Bạn đã tham gia':'Giá nhóm '+money(p.group)}</small>${joined?'<a href="profile.html" class="group-action-link">Đã tham gia ✓</a>':state==='open'?`<button type="button" data-join-group="${safe(g.id)}" class="group-action-link">Tham gia nhóm →</button>`:'<span class="muted">Đã đóng</span>'}</div>${!g.isDemo && joined && state==='open'?`<button type="button" class="simulate-member" data-simulate-member="${safe(g.id)}">+ Mô phỏng 1 thành viên mới (demo)</button>`:''}</article>`;
       }).join('')||'<p class="muted">Chưa có nhóm nào. Hãy tạo nhóm mới để bắt đầu.</p>';
     }
     const join=document.getElementById('join-group-btn');if(join){join.dataset.joinGroup=open[0]?.id||'';join.disabled=!open.length;join.textContent=open.length?'Tham gia nhóm':'Chưa có nhóm đang mở';}
@@ -306,6 +471,20 @@ if (breadcrumbName) {
     document.getElementById('cart-subtotal').textContent=money(readyTotal);
     document.getElementById('cart-ready-count').textContent=ready+' sản phẩm sẵn sàng';
     const n=document.getElementById('cart-pending-note');if(n)n.textContent=pending?`${pending} mục mua chung đang chờ đủ thành viên hoặc đã hết hạn, không tính vào tiền tạm tính.`:'Các sản phẩm sẵn sàng được tính trong tạm tính.';
+
+    let etaEl = document.getElementById('cart-location-eta');
+    const summaryBox = document.querySelector('.cart-summary');
+    if (summaryBox) {
+      if (!etaEl) {
+        etaEl = document.createElement('div');
+        etaEl.id = 'cart-location-eta';
+        etaEl.className = 'shipping-eta-box';
+        const checkoutBtn = document.getElementById('cart-checkout');
+        if (checkoutBtn) summaryBox.insertBefore(etaEl, checkoutBtn);
+      }
+      etaEl.innerHTML = `📍 Khu vực đã chọn: <strong>${safe(currentLocation.name)}</strong>`;
+    }
+
     const a=document.getElementById('cart-checkout');if(a){a.classList.toggle('is-disabled',ready===0);a.setAttribute('aria-disabled',String(ready===0));a.textContent=ready?'Tiếp tục xác nhận đơn hàng →':'Chưa có sản phẩm sẵn sàng';}
     refreshHeader();
   };
@@ -316,6 +495,27 @@ if (breadcrumbName) {
     if(!ready.length){document.getElementById('checkout-form').hidden=true;list.innerHTML='<div class="empty-panel"><h2>Chưa có sản phẩm có thể xác nhận</h2><p>Giỏ hàng mua lẻ hoặc nhóm đã đủ thành viên mới có thể chuyển sang bước này.</p><a class="btn btn-outline" href="cart.html">Quay về giỏ hàng</a></div>';return;}
     let total=0;list.innerHTML=ready.map(it=>{const p=product(it.productId);const price=it.kind==='retail'?p.retail:p.group;total+=price*it.quantity;return `<div class="checkout-line"><span>${safe(p.name)} <small>× ${it.quantity} · ${it.kind==='retail'?'Mua lẻ':'Mua chung'}</small></span><strong>${money(price*it.quantity)}</strong></div>`;}).join('')+`<div class="checkout-total"><span>Tạm tính hàng hóa</span><strong>${money(total)}</strong></div><p class="muted">Phí vận chuyển và thanh toán thực tế chưa tích hợp trong bản demo.</p>`;
     const p=currentProfile();for(const key of ['name','phone','address','email']){const inp=document.querySelector(`[name="${key}"]`);if(inp&&p[key])inp.value=p[key];}
+
+    const addrInput = document.querySelector('[name="address"]');
+    if (addrInput && currentLocation.code !== 'all') {
+      if (!addrInput.value.trim()) {
+        addrInput.value = currentLocation.name;
+      } else if (!normalizeSearchText(addrInput.value).includes(normalizeSearchText(currentLocation.name))) {
+        addrInput.value = addrInput.value.trim() + ', ' + currentLocation.name;
+      }
+    }
+    const checkoutForm = document.getElementById('checkout-form');
+    if (checkoutForm) {
+      let coEta = document.getElementById('checkout-location-eta');
+      if (!coEta) {
+        coEta = document.createElement('div');
+        coEta.id = 'checkout-location-eta';
+        coEta.className = 'shipping-eta-box';
+        const methodNote = checkoutForm.querySelector('.method-note');
+        if (methodNote) checkoutForm.insertBefore(coEta, methodNote);
+      }
+      coEta.innerHTML = `📍 Khu vực nhận hàng: <strong>${safe(currentLocation.name)}</strong>`;
+    }
   };
   const renderProfile=()=>{
     if(page!=='profile.html')return;
@@ -331,39 +531,33 @@ if (breadcrumbName) {
     if(orderbox)orderbox.innerHTML=orders.length?orders.slice().reverse().map(o=>`<article class="order-item"><div class="group-row"><b>Đơn #${safe(o.id)}</b><span class="group-state state-open">Đơn demo · Chưa xử lý</span></div><small>${safe(o.date)} · ${o.items.length} dòng sản phẩm</small><strong>${money(o.total)}</strong></article>`).join(''):'<p class="muted">Chưa có đơn hàng demo nào được xác nhận.</p>';
   };
   document.addEventListener('click',e=>{
-   
-const target = e.target.closest('button,a');
-if (!target) return;
+    const target = e.target.closest('button,a');
+    if (!target) return;
 
-if (target.matches('[data-filter]')) {
-  setCategory(target.dataset.filter);
-}
+    if (target.matches('[data-open-location]')) {
+      openLocationModal();
+      return;
+    }
 
-// Đặt lại khoảng giá mua chung
-if (target.matches('#catalog-range-clear')) {
-  const params = new URLSearchParams(location.search);
+    if (target.matches('[data-filter]')) {
+      setCategory(target.dataset.filter);
+    }
 
-  params.delete('groupMin');
-  params.delete('groupMax');
+    if (target.matches('#catalog-range-clear')) {
+      const params = new URLSearchParams(location.search);
+      params.delete('groupMin');
+      params.delete('groupMax');
+      const query = params.toString();
+      history.replaceState(null, '', location.pathname + (query ? '?' + query : ''));
+      renderCatalog();
+      return;
+    }
 
-  const query = params.toString();
-
-  history.replaceState(
-    null,
-    '',
-    location.pathname + (query ? '?' + query : '')
-  );
-
-  renderCatalog();
-  return;
-}
-
-// Hiển thị tất cả sản phẩm
-if (target.matches('#clear-filters')) {
-  history.replaceState(null, '', location.pathname);
-  renderCatalog();
-  document.getElementById('catalog-q').value = '';
-}
+    if (target.matches('#clear-filters')) {
+      history.replaceState(null, '', location.pathname);
+      renderCatalog();
+      document.getElementById('catalog-q').value = '';
+    }
 
     if(target.matches('[data-add-cart]'))addCart(target.dataset.addCart);
     if(target.matches('[data-add-detail-cart]')){
@@ -412,86 +606,44 @@ if (target.matches('#clear-filters')) {
     if(target.matches('#cart-checkout')&&target.getAttribute('aria-disabled')==='true')e.preventDefault();
   });
  
-  // Xử lý khi người dùng thay đổi lựa chọn sắp xếp giá
   document.addEventListener('change', e => {
     if (e.target.id !== 'catalog-sort') return;
-
     const params = new URLSearchParams(location.search);
-
     if (e.target.value === 'default') {
       params.delete('sort');
     } else {
       params.set('sort', e.target.value);
     }
-
     const query = params.toString();
-
-    history.replaceState(
-      null,
-      '',
-      location.pathname + (query ? '?' + query : '')
-    );
-
+    history.replaceState(null, '', location.pathname + (query ? '?' + query : ''));
     renderCatalog();
   });
 
-  // Xử lý các biểu mẫu: tìm kiếm, hồ sơ và xác nhận đơn hàng
   document.addEventListener('submit', e => {
-
-if (e.target.id === 'catalog-price-range') {
-  e.preventDefault();
-
-  const minText =
-    document.getElementById('catalog-group-min').value.trim();
-  const maxText =
-    document.getElementById('catalog-group-max').value.trim();
-
-  const valid = text =>
-    text === '' ||
-    (/^\d+$/.test(text) &&
-      Number.isSafeInteger(Number(text)));
-
-  if (!valid(minText) || !valid(maxText) ||
-      (minText !== '' && maxText !== '' &&
-       Number(minText) > Number(maxText))) {
-    flash('Khoảng giá không hợp lệ.', 'error');
-    return;
-  }
-
-  const params = new URLSearchParams(location.search);
-
-  minText
-    ? params.set('groupMin', minText)
-    : params.delete('groupMin');
-
-  maxText
-    ? params.set('groupMax', maxText)
-    : params.delete('groupMax');
-
-  const query = params.toString();
-
-  history.replaceState(
-    null, '',
-    location.pathname + (query ? '?' + query : '')
-  );
-
-  renderCatalog();
-  return;
-}
+    if (e.target.id === 'catalog-price-range') {
+      e.preventDefault();
+      const minText = document.getElementById('catalog-group-min').value.trim();
+      const maxText = document.getElementById('catalog-group-max').value.trim();
+      const valid = text => text === '' || (/^\d+$/.test(text) && Number.isSafeInteger(Number(text)));
+      if (!valid(minText) || !valid(maxText) || (minText !== '' && maxText !== '' && Number(minText) > Number(maxText))) {
+        flash('Khoảng giá không hợp lệ.', 'error');
+        return;
+      }
+      const params = new URLSearchParams(location.search);
+      minText ? params.set('groupMin', minText) : params.delete('groupMin');
+      maxText ? params.set('groupMax', maxText) : params.delete('groupMax');
+      const query = params.toString();
+      history.replaceState(null, '', location.pathname + (query ? '?' + query : ''));
+      renderCatalog();
+      return;
+    }
 
     if (e.target.id === 'catalog-search') {
       e.preventDefault();
       let q = document.getElementById('catalog-q').value.trim();
       const params = new URLSearchParams(location.search);
-
       q ? params.set('q', q) : params.delete('q');
-
-      history.replaceState(
-        null,
-        '',
-        location.pathname + (params.toString() ? '?' + params.toString() : '')
-      );
-
+      history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params.toString() : ''));
       renderCatalog();
     }
 
@@ -499,19 +651,16 @@ if (e.target.id === 'catalog-price-range') {
       e.preventDefault();
       const f = e.target;
       const values = Object.fromEntries(new FormData(f));
-
       if (!values.name?.trim()) {
         flash('Vui lòng nhập tên hiển thị.', 'error');
         return;
       }
-
       const profile = {
         name: values.name.trim(),
         email: (values.email || '').trim(),
         phone: (values.phone || '').trim(),
         address: (values.address || '').trim()
       };
-
       put('profile', profile);
       updateAvatar();
       renderProfile();
@@ -521,40 +670,26 @@ if (e.target.id === 'catalog-price-range') {
     if (e.target.id === 'checkout-form') {
       e.preventDefault();
       const f = e.target;
-
       if (!f.reportValidity()) return;
-
       const ready = cart.filter(item =>
         item.kind === 'retail' ||
-        groups.some(g =>
-          g.id === item.groupId && groupState(g) === 'success'
-        )
+        groups.some(g => g.id === item.groupId && groupState(g) === 'success')
       );
-
       if (!ready.length) {
         flash('Không có sản phẩm đủ điều kiện xác nhận.', 'error');
         return;
       }
-
       const values = Object.fromEntries(new FormData(f));
-
-      if (
-        !values.name?.trim() ||
-        !values.phone?.trim() ||
-        !values.address?.trim()
-      ) {
+      if (!values.name?.trim() || !values.phone?.trim() || !values.address?.trim()) {
         flash('Vui lòng nhập đầy đủ thông tin nhận hàng.', 'error');
         return;
       }
-
       const total = ready.reduce((sum, it) => {
         const p = product(it.productId);
         return sum + (it.kind === 'retail' ? p.retail : p.group) * it.quantity;
       }, 0);
-
       const id = 'WB' + String(Date.now()).slice(-9);
       const orders = get('orders', []);
-
       orders.push({
         id,
         date: new Date().toLocaleString('vi-VN'),
@@ -567,21 +702,16 @@ if (e.target.id === 'catalog-price-range') {
         },
         status: 'demo'
       });
-
       put('orders', orders);
-
       cart = cart.filter(it => !ready.includes(it));
       saveCart();
-
       put('profile', {
         ...currentProfile(),
         name: values.name.trim(),
         phone: values.phone.trim(),
         address: values.address.trim()
       });
-
       showDialog(`<span class="dialog-icon">✓</span><h2>Đã lưu đơn hàng demo</h2><p>Mã đơn <strong>${safe(id)}</strong> với tổng tiền hàng <strong>${money(total)}</strong> đã được lưu trên trình duyệt. Đây là bước mô phỏng xác nhận đặt hàng, <strong>chưa phát sinh giao dịch, thu tiền hoặc giao hàng thực tế</strong>.</p><a href="profile.html" class="btn btn-primary">Xem lịch sử đơn demo</a>`);
-
       renderCheckout();
       refreshHeader();
     }
@@ -594,7 +724,8 @@ if (e.target.id === 'catalog-price-range') {
   window.addEventListener('storage', e => {
     if (e.key?.startsWith(storagePrefix)) {
       groups = get('groups', seedGroups());
-     cart = readCart();
+      cart = readCart();
+      updateLocationUI();
       refreshHeader();
       refreshProductProgress();
       renderDetail();
@@ -603,6 +734,8 @@ if (e.target.id === 'catalog-price-range') {
     }
   });
 
+  injectHeaderLocationBtn();
+  updateLocationUI();
   refreshHeader();
   refreshProductProgress();
   renderCatalog();
@@ -610,4 +743,14 @@ if (e.target.id === 'catalog-price-range') {
   renderCart();
   renderCheckout();
   renderProfile();
+  if (!get('location', null)) {
+    let shouldPrompt = true;
+    try {
+      if (sessionStorage.getItem('webuy_location_prompted')) shouldPrompt = false;
+      else sessionStorage.setItem('webuy_location_prompted', '1');
+    } catch (error) {
+      console.warn('WeBuy: không thể ghi nhận lần mở popup địa điểm trong phiên này.', error);
+    }
+    if (shouldPrompt) window.setTimeout(openLocationModal, 0);
+  }
 })();

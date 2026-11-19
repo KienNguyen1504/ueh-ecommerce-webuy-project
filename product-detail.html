@@ -3,15 +3,17 @@
  <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
-  <meta content="#0B7D5B" name="theme-color"/>
+  <meta content="#0D6B47" name="theme-color"/>
   <meta content="WeBuy - Nền tảng mua chung với giá theo nhóm, dễ tìm hiểu và minh bạch." name="description"/>
   <title>Chi tiết sản phẩm | WeBuy</title>
   <link href="images/logo-mark.png" rel="icon" type="image/png"/>
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="css/styles.css" rel="stylesheet"/>
   <link href="css/app.css" rel="stylesheet"/>
+  <link href="css/webuy-theme.css" rel="stylesheet"/>
+  <link href="css/rewards.css" rel="stylesheet"/>
  </head>
  <body>
   <a class="skip-link" href="#main">
@@ -126,11 +128,6 @@
        <div class="detail-actions">
         <!-- Nút Tham gia nhóm (Mặc định ẩn) -->
         <button class="btn btn-primary btn-purchase" id="join-group-btn" type="button"></button>
-         Tham gia nhóm
-         <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24">
-          <path d="M5 12h14m-6-6 6 6-6 6"></path>
-         </svg>
-        </button>
         <div class="detail-secondary-actions">
          <!-- Nút Tạo nhóm (Mặc định hiện) -->
          <button class="btn btn-outline" id="create-group-btn" type="button">Tạo nhóm</button>
@@ -218,6 +215,9 @@
   
   <script defer src="js/catalog-data.js"></script>
   <script defer src="js/app.js"></script>
+  <!-- Tính năng 11: Xu WeBuy (điểm danh, trò chơi) -->
+  <script defer="" src="js/rewards-art.js"></script>
+  <script defer="" src="js/rewards.js"></script>
 
   <!-- SCRIPT KIỂM TRÀ VÀ LƯU TRẠNG THÁI TỰ ĐỘNG -->
   <script>
