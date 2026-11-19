@@ -16,8 +16,10 @@
   <link href="css/app.css" rel="stylesheet"/>
   <link href="css/webuy-theme.css" rel="stylesheet"/>
   <link href="css/rewards.css" rel="stylesheet"/>
+  <link href="css/about-page.css" rel="stylesheet"/>
+  <script>document.documentElement.classList.add("ab-js")</script>
  </head>
- <body>
+ <body class="about-v2">
   <a class="skip-link" href="#main">
    Bỏ qua &dstrok;iều hướng
   </a>
@@ -106,316 +108,245 @@
    </div>
   </header>
   <main id="main">
-   <section class="page-title-section about-page-title">
-    <div class="container">
-     <div class="breadcrumb">
-      <a href="index.html">
-       Trang chủ
-      </a>
-      <span>
-       /
-      </span>
-      <span>
-       Giới thiệu
-      </span>
-     </div>
-     <div class="about-hero-grid">
+
+   <!-- ===== 1. HERO ===== -->
+   <section class="ab-hero">
+    <div class="ab-wrap">
+     <nav class="ab-crumb" aria-label="Đường dẫn">
+      <a href="index.html">Trang chủ</a><span>/</span><span>Giới thiệu</span>
+     </nav>
+     <div class="ab-hero-grid">
       <div>
-       <p class="eyebrow">
-        <span>
-        </span>
-        Ch&agrave;o bạn, ch&uacute;ng m&igrave;nh l&agrave; WeBuy
-       </p>
-       <h1>
-        Về
-        <em>
-         WeBuy.
-        </em>
-        <br/>
-        Mua c&ugrave;ng nhau,
-        <br/>
-        tốt hơn mỗi ng&agrave;y.
+       <p class="ab-eyebrow">Chào bạn, chúng mình là WeBuy</p>
+       <h1 aria-label="Cùng nhau mua, cùng nhau được lợi.">
+        <span class="ab-line" aria-hidden="true"><span style="--d:.05s">Cùng nhau mua,</span></span>
+        <span class="ab-line is-hl" aria-hidden="true"><span style="--d:.2s">cùng nhau</span></span>
+        <span class="ab-line" aria-hidden="true"><span style="--d:.35s">được <span class="ab-hl">lợi.</span></span></span>
        </h1>
-       <p>
-        WeBuy l&agrave; &yacute; tưởng nền tảng mua chung gi&uacute;p kết nối những người c&oacute; nhu cầu mua một sản phẩm v&agrave; tiếp cận mức gi&aacute; ưu &dstrok;&atilde;i theo số th&agrave;nh vi&ecirc;n tham gia.
-       </p>
-       <a class="btn btn-primary" href="products.html">
-        Kh&aacute;m ph&aacute; sản phẩm
-        <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24">
-         <path d="M5 12h14m-6-6 6 6-6 6">
-         </path>
-        </svg>
-       </a>
+       <p class="ab-hero-text">WeBuy là nền tảng mua chung kết nối những người cùng nhu cầu, để mỗi người đều tiếp cận mức giá ưu đãi theo số thành viên tham gia. Rõ ràng về giá, dễ rủ bạn bè, an tâm theo dõi từng bước.</p>
+       <div class="ab-hero-cta">
+        <a class="ab-btn ab-btn-main" href="products.html">Khám phá sản phẩm
+         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        <a class="ab-btn ab-btn-line" href="#quy-trinh">Xem cách mua chung</a>
+       </div>
       </div>
-      <div class="about-photo-frame">
-       <img alt="Hai bạn trẻ trao &dstrok;ổi về sản phẩm qua &dstrok;iện thoại" src="images/about-lifestyle.webp"/>
-       <span class="about-photo-sticker">
-        WeBuy
-        <b>
-         together
-        </b>
-        ✳
-       </span>
+
+      <div class="ab-collage" data-tilt>
+       <div class="ab-arch"><img src="images/webuy-group.webp" alt="Nhóm bạn tương tác tự nhiên trong hoạt động mua sắm chung" data-parallax="0.08"/></div>
+       <div class="ab-chip c1"><img src="images/product-01.webp" alt="Balo canvas Everyday"/></div>
+       <div class="ab-chip c2"><img src="images/product-07.webp" alt="Tai nghe không dây"/></div>
+       <div class="ab-chip c3"><img src="images/product-06.webp" alt="Bình giữ nhiệt"/></div>
+       <div class="ab-spin" aria-hidden="true">
+        <svg viewBox="0 0 120 120"><defs><path id="abCircle" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs>
+         <text><textPath href="#abCircle">MUA CHUNG • GIÁ TỐT HƠN • </textPath></text></svg>
+        <b>✳</b>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="ab-wrap">
+     <div class="ab-stats" id="ab-stats">
+      <div class="ab-stat"><strong><span data-count="4" data-stat="steps">0</span></strong><span>Bước mua hàng đơn giản</span></div>
+      <div class="ab-stat"><strong><span data-count="8" data-stat="products">0</span><small>+</small></strong><span>Sản phẩm trong mỗi danh mục</span></div>
+      <div class="ab-stat"><strong><span data-count="3">0</span></strong><span>Thành viên là đủ để mở mức giá nhóm ở nhiều sản phẩm</span></div>
+      <div class="ab-stat"><strong><span data-count="21" data-stat="save">0</span><small>%</small></strong><span>Mức giảm cao nhất so với giá lẻ</span></div>
+     </div>
+    </div>
+    <div class="ab-band" aria-hidden="true"><div class="ab-band-track">
+     <span>Mua chung</span><span>Giá tốt hơn</span><span>Minh bạch</span><span>Rủ bạn bè</span><span>Cùng nhau lợi hơn</span>
+     <span>Mua chung</span><span>Giá tốt hơn</span><span>Minh bạch</span><span>Rủ bạn bè</span><span>Cùng nhau lợi hơn</span>
+    </div></div>
+   </section>
+
+   <!-- ===== 2. CÂU CHUYỆN ===== -->
+   <section class="ab-section ab-story">
+    <div class="ab-wrap">
+     <div class="ab-story-row">
+      <div class="ab-story-media ab-reveal ab-reveal-left">
+       <div class="ab-frame"><img src="images/webuy-group.webp" alt="Nhóm bạn tương tác tự nhiên trong hoạt động mua sắm chung" style="object-position:50% 50%" data-parallax="0.1"/></div>
+       <div class="ab-sticker">Mua chung<b>cùng bạn bè</b></div>
+      </div>
+      <div class="ab-story-copy ab-reveal ab-reveal-right">
+       <p class="ab-eyebrow">Câu chuyện của WeBuy</p>
+       <h2 class="ab-h2">Một nhu cầu rất <em>đời thường</em>, một cách mua thông minh hơn.</h2>
+       <p>Ai cũng từng muốn mua một món đồ tốt nhưng thấy giá lẻ hơi cao. Và ai cũng có một người bạn cùng muốn món đó. WeBuy ra đời từ chính khoảnh khắc ấy: gom những nhu cầu giống nhau lại để cùng hưởng mức giá tốt hơn.</p>
+       <p>Chúng mình không muốn mua chung là chuyện phức tạp. Mọi thứ cần rõ ràng, dễ hiểu và đủ thân thiện để bạn rủ bạn bè tham gia chỉ với một đường liên kết.</p>
+       <ul class="ab-ticks">
+        <li>Giá lẻ, giá nhóm và số người cần có được hiển thị tách bạch</li>
+        <li>Tạo nhóm mới hoặc vào nhóm đang mở chỉ trong vài thao tác</li>
+        <li>Theo dõi tiến độ nhóm theo thời gian thực trên giao diện</li>
+       </ul>
+      </div>
+     </div>
+
+     <div class="ab-story-row is-flip">
+      <div class="ab-story-media ab-reveal ab-reveal-right">
+       <div class="ab-tiles">
+        <div class="ab-tile"><em>BALO</em><img src="images/product-01.webp" alt="Balo canvas"/></div>
+        <div class="ab-tile"><em>ÁO THUN</em><img src="images/product-02.webp" alt="Áo thun cotton"/></div>
+        <div class="ab-tile"><em>GIA DỤNG</em><img src="images/product-03.webp" alt="Đèn bàn"/></div>
+        <div class="ab-tile"><em>TRANG SỨC</em><img src="images/product-04.webp" alt="Dây chuyền"/></div>
+       </div>
+      </div>
+      <div class="ab-story-copy ab-reveal ab-reveal-left">
+       <p class="ab-eyebrow">Mua gì cũng có bạn đồng hành</p>
+       <h2 class="ab-h2">Từ góc học tập đến <em>tủ đồ</em> hằng ngày.</h2>
+       <p>Balo, áo thun, đèn bàn, trang sức hay phụ kiện công nghệ. Danh mục WeBuy xoay quanh những món đồ gần gũi mà nhiều người cùng cần, nên rất dễ tìm được người mua chung.</p>
+       <p>Mỗi sản phẩm đều có bậc giá nhóm riêng. Càng đủ người, giá càng dễ chạm ngưỡng ưu đãi, và bạn luôn biết mình đang ở đâu trên thanh tiến độ.</p>
+       <a class="ab-btn ab-btn-line" href="products.html" style="margin-top:10px">Xem toàn bộ sản phẩm
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
       </div>
      </div>
     </div>
    </section>
-   <section class="section about-values" id="gia-tri">
-    <div class="container">
-     <div class="section-header">
-      <div>
-       <p class="eyebrow">
-        <span>
-        </span>
-        Gi&aacute; trị ch&uacute;ng m&igrave;nh theo &dstrok;uổi
-       </p>
-       <h2>
-        Mua sắm r&otilde; r&agrave;ng. Kết nối tự nhi&ecirc;n.
-       </h2>
-       <p class="section-desc">
-        Kh&ocirc;ng chỉ ch&uacute; trọng gi&aacute; tốt, WeBuy hướng tới một trải nghiệm mua chung dễ hiểu v&agrave; dễ tin tưởng.
-       </p>
-      </div>
+
+   <!-- ===== 3. GIÁ TRỊ ===== -->
+   <section class="ab-section ab-values" id="gia-tri">
+    <div class="ab-wrap">
+     <div class="ab-values-head ab-reveal">
+      <p class="ab-eyebrow is-light">Giá trị WeBuy</p>
+      <h2 class="ab-h2">Mua sắm <em>rõ ràng</em>. Kết nối tự nhiên.</h2>
+      <p class="ab-lead">Không chỉ chú trọng giá tốt, WeBuy hướng tới trải nghiệm mua chung dễ hiểu và dễ tin tưởng. Rê chuột vào từng thẻ để khám phá.</p>
+      <span class="ab-motto">“Đồng lòng mua chung, cùng nhau được lợi”</span>
      </div>
-     <div class="value-grid">
-      <div class="value-card">
-       <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-        <path d="m12 2 8 4v6c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-4Z">
-        </path>
-        <path d="m9 12 2 2 4-4">
-        </path>
-       </svg>
-       <h3>
-        Minh bạch về gi&aacute;
-       </h3>
-       <p>
-        Hiển thị ri&ecirc;ng gi&aacute; mua lẻ, gi&aacute; nh&oacute;m v&agrave; số th&agrave;nh vi&ecirc;n cần thiết &dstrok;ể hưởng ưu &dstrok;&atilde;i.
-       </p>
-      </div>
-      <div class="value-card">
-       <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-        <circle cx="8" cy="8" r="3">
-        </circle>
-        <path d="M2 20v-2a6 6 0 0 1 12 0v2">
-        </path>
-        <path d="M17 5a3 3 0 0 1 0 6m0 5a5 5 0 0 1 5 4">
-        </path>
-       </svg>
-       <h3>
-        Kết nối &dstrok;&uacute;ng nhu cầu
-       </h3>
-       <p>
-        Người mua c&oacute; thể lập nh&oacute;m, chọn nh&oacute;m &dstrok;ang mở hoặc nhận gợi &yacute; gh&eacute;p nh&oacute;m ph&ugrave; hợp.
-       </p>
-      </div>
-      <div class="value-card">
-       <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-        <path d="M9 15a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2">
-        </path>
-        <path d="M15 9a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2">
-        </path>
-       </svg>
-       <h3>
-        Chia sẻ thuận tiện
-       </h3>
-       <p>
-        Li&ecirc;n kết mời nh&oacute;m gi&uacute;p qu&aacute; tr&igrave;nh rủ bạn b&egrave; mua c&ugrave;ng trở n&ecirc;n dễ d&agrave;ng hơn.
-       </p>
-      </div>
-     </div>
-    </div>
-   </section>
-   <section class="section who-section">
-    <div class="container">
-     <div class="section-header">
-      <div>
-       <p class="eyebrow">
-        <span>
-        </span>
-        D&agrave;nh cho nhiều c&aacute;ch sống
-       </p>
-       <h2>
-        Ai c&oacute; thể mua chung?
-       </h2>
-       <p class="section-desc">
-        Mua chung c&oacute; thể bắt &dstrok;ầu từ nhu cầu rất b&igrave;nh thường của mỗi người.
-       </p>
-      </div>
-     </div>
-     <div class="audience-grid">
-      <div class="audience">
-       <span>
-        01 / STUDENTS
-       </span>
-       <h3>
-        Sinh vi&ecirc;n
-       </h3>
-       <p>
-        C&ugrave;ng bạn c&ugrave;ng lớp hoặc ở chung trọ mua những m&oacute;n &dstrok;ồ cần thiết với gi&aacute; theo nh&oacute;m.
-       </p>
-      </div>
-      <div class="audience">
-       <span>
-        02 / YOUNG WORKERS
-       </span>
-       <h3>
-        Người &dstrok;i l&agrave;m trẻ
-       </h3>
-       <p>
-        Kết nối &dstrok;ồng nghiệp v&agrave; bạn b&egrave; c&oacute; nhu cầu mua sắm gần giống nhau.
-       </p>
-      </div>
-      <div class="audience">
-       <span>
-        03 / FAMILIES
-       </span>
-       <h3>
-        Người quản l&yacute; chi ti&ecirc;u gia &dstrok;&igrave;nh
-       </h3>
-       <p>
-        Chủ &dstrok;ộng so s&aacute;nh lựa chọn mua lẻ v&agrave; mua theo nh&oacute;m trước khi quyết &dstrok;ịnh.
-       </p>
-      </div>
-     </div>
-    </div>
-   </section>
-   <section class="section about-process" id="quy-trinh">
-    <div class="container">
-     <div class="section-header">
-      <div>
-       <p class="eyebrow">
-        <span>
-        </span>
-        Hướng dẫn mua chung
-       </p>
-       <h2>
-        Bốn bước &dstrok;ể mua c&ugrave;ng nhau
-       </h2>
-       <p class="section-desc">
-        Quy tr&igrave;nh m&ocirc; tả nghiệp vụ dự kiến của nền tảng; phi&ecirc;n bản hiện tại l&agrave; giao diện t&itilde;nh.
-       </p>
-      </div>
-     </div>
-     <div class="process-grid">
-      <article>
-       <span class="step-count">
-        01
-       </span>
-       <div class="step-icon">
-        <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-         <circle cx="11" cy="11" r="7">
-         </circle>
-         <path d="m20 20-4-4">
-         </path>
-        </svg>
-       </div>
-       <h3>
-        Chọn sản phẩm
-       </h3>
-       <p>
-        Xem danh mục, sản phẩm, gi&aacute; lẻ v&agrave; bậc gi&aacute; mua chung.
-       </p>
+     <div class="ab-vgrid">
+      <article class="ab-vcard ab-reveal" style="--d:0s" tabindex="0" role="button" aria-expanded="false">
+       <div class="bg"><img src="images/value-collaboration.png" alt="Nhóm bạn cùng xem và chia sẻ sản phẩm"/></div>
+       <span class="ab-vnum">01</span><span class="ab-vplus">+</span>
+       <div class="ab-vmarq" aria-hidden="true"><span><i>Cộng hưởng</i><i>Cộng hưởng</i><i>Cộng hưởng</i><i>Cộng hưởng</i></span></div>
+       <div class="ab-vbody"><h3>Cộng hưởng</h3><p>Sức mua tập thể tạo nên giá trị. Mỗi thành viên góp sức để nhóm tiếp cận mức giá tốt hơn.</p></div>
       </article>
-      <article>
-       <span class="step-count">
-        02
-       </span>
-       <div class="step-icon">
-        <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-         <circle cx="8" cy="8" r="3">
-         </circle>
-         <path d="M2 20v-2a6 6 0 0 1 12 0v2">
-         </path>
-         <path d="M17 5a3 3 0 0 1 0 6m0 5a5 5 0 0 1 5 4">
-         </path>
-        </svg>
-       </div>
-       <h3>
-        &Dstrok;&abreve;ng nhập v&agrave; tham gia
-       </h3>
-       <p>
-        Tạo nh&oacute;m mới hoặc tham gia một nh&oacute;m &dstrok;&atilde; mở.
-       </p>
+      <article class="ab-vcard ab-reveal" style="--d:.1s" tabindex="0" role="button" aria-expanded="false">
+       <div class="bg"><img src="images/value-connection.png" alt="Nhóm bạn cùng xem sản phẩm trên điện thoại"/></div>
+       <span class="ab-vnum">02</span><span class="ab-vplus">+</span>
+       <div class="ab-vmarq" aria-hidden="true"><span><i>Gắn kết</i><i>Gắn kết</i><i>Gắn kết</i><i>Gắn kết</i></span></div>
+       <div class="ab-vbody"><h3>Gắn kết</h3><p>Kết nối những người chung nhu cầu. Bạn bè, đồng nghiệp và gia đình có thể cùng chọn món phù hợp.</p></div>
       </article>
-      <article>
-       <span class="step-count">
-        03
-       </span>
-       <div class="step-icon">
-        <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-         <path d="m12 2 8 4v6c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-4Z">
-         </path>
-         <path d="m9 12 2 2 4-4">
-         </path>
-        </svg>
-       </div>
-       <h3>
-        Thanh to&aacute;n &amp; theo d&otilde;i
-       </h3>
-       <p>
-        Thanh to&aacute;n giữ chỗ; theo d&otilde;i th&agrave;nh vi&ecirc;n hợp lệ v&agrave; thời gian nh&oacute;m.
-       </p>
-      </article>
-      <article>
-       <span class="step-count">
-        04
-       </span>
-       <div class="step-icon">
-        <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-         <path d="m4 12 5 5L20 6">
-         </path>
-        </svg>
-       </div>
-       <h3>
-        Nhận kết quả nh&oacute;m
-       </h3>
-       <p>
-        &Dstrok;ủ &dstrok;iều kiện th&igrave; xử l&yacute; giao h&agrave;ng; thất bại th&igrave; xử l&yacute; ho&agrave;n tiền theo ch&iacute;nh s&aacute;ch.
-       </p>
+      <article class="ab-vcard ab-reveal" style="--d:.2s" tabindex="0" role="button" aria-expanded="false">
+       <div class="bg"><img src="images/value-trust-4k.png" alt="Biểu tượng bảo vệ và tin cậy giao dịch"/></div>
+       <span class="ab-vnum">03</span><span class="ab-vplus">+</span>
+       <div class="ab-vmarq" aria-hidden="true"><span><i>Tin cậy</i><i>Tin cậy</i><i>Tin cậy</i><i>Tin cậy</i></span></div>
+       <div class="ab-vbody"><h3>Tin cậy</h3><p>Minh bạch thông tin trong từng giao dịch. Giá, điều kiện và tiến độ luôn được hiển thị rõ ràng.</p></div>
       </article>
      </div>
-     <div class="policy-box">
-      <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-       <path d="m12 2 8 4v6c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-4Z">
-       </path>
-       <path d="m9 12 2 2 4-4">
-       </path>
-      </svg>
-      <p>
-       <strong>
-        Về th&ocirc;ng tin thanh to&aacute;n:
-       </strong>
-       Trong bản giao diện học tập n&agrave;y, thao t&aacute;c &dstrok;ặt h&agrave;ng v&agrave; ho&agrave;n tiền chưa &dstrok;ược kết nối với dịch vụ thanh to&aacute;n thực. C&aacute;c &dstrok;iều kiện v&agrave; thời gian xử l&yacute; chỉ mang t&iacute;nh m&ocirc; tả nghiệp vụ dự kiến.
-      </p>
-     </div>
     </div>
    </section>
-   <section class="section contact-section" id="lien-he">
-    <div class="container">
-     <div class="contact-band">
-      <div>
-       <p class="eyebrow eyebrow-light">
-        <span>
-        </span>
-        Li&ecirc;n hệ
-       </p>
-       <h2>
-        C&ugrave;ng WeBuy kh&aacute;m ph&aacute; c&aacute;ch mua mới.
-       </h2>
-       <p>
-        WeBuy l&agrave; dự &aacute;n học tập ph&aacute;t triển giao diện v&agrave; m&ocirc; h&igrave;nh mua chung. Th&ocirc;ng tin li&ecirc;n hệ ch&iacute;nh thức sẽ &dstrok;ược nh&oacute;m cập nhật sau khi thống nhất.
-       </p>
+
+   <!-- ===== 4. THỬ MUA CHUNG ===== -->
+   <section class="ab-section ab-sim" id="thu-mua-chung">
+    <div class="ab-wrap">
+     <div class="ab-reveal" style="margin-bottom:40px;max-width:720px">
+      <p class="ab-eyebrow">Thử ngay, không cần đăng nhập</p>
+      <h2 class="ab-h2">Bạn rủ thêm <em>một người</em>, giá thay đổi thế nào?</h2>
+      <p class="ab-lead">Chọn một sản phẩm rồi bấm thêm thành viên để xem nhóm đến gần mức giá ưu đãi ra sao. Giá lấy từ dữ liệu sản phẩm của WeBuy.</p>
+     </div>
+     <div class="ab-sim-card ab-reveal ab-reveal-zoom" id="ab-sim">
+      <div class="ab-sim-visual"><span class="ab-sim-badge" id="ab-sim-badge">NHÓM ĐANG MỞ</span><img id="ab-sim-img" src="images/product-01.webp" alt="Sản phẩm mua chung"/></div>
+      <div class="ab-sim-ctrl">
+       <div class="ab-pick" id="ab-pick" role="group" aria-label="Chọn sản phẩm"></div>
+       <h3 id="ab-sim-name">Balo canvas Everyday</h3>
+       <div class="ab-sim-cat" id="ab-sim-cat">Balo &amp; túi ví</div>
+       <div class="ab-price-row"><span class="ab-price" id="ab-price">299.000₫</span><span class="ab-old" id="ab-old"></span><span class="ab-save" id="ab-save"></span></div>
+       <div class="ab-seats" id="ab-seats" aria-hidden="true"></div>
+       <div class="ab-bar"><i id="ab-bar"></i></div>
+       <div class="ab-sim-msg" id="ab-msg" aria-live="polite"></div>
+       <div class="ab-sim-act">
+        <button class="ab-btn ab-btn-main" type="button" id="ab-add">Thêm thành viên</button>
+        <button class="ab-btn ab-btn-line" type="button" id="ab-reset">Làm lại</button>
+       </div>
       </div>
-      <a class="btn btn-cream" href="products.html">
-       Kh&aacute;m ph&aacute; sản phẩm
-       <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24">
-        <path d="M5 12h14m-6-6 6 6-6 6">
-        </path>
-       </svg>
-      </a>
      </div>
     </div>
    </section>
+
+   <!-- ===== 5. QUY TRÌNH ===== -->
+   <section class="ab-section ab-process" id="quy-trinh">
+    <div class="ab-wrap">
+     <div class="ab-reveal" style="max-width:720px">
+      <p class="ab-eyebrow">Hướng dẫn mua chung</p>
+      <h2 class="ab-h2">Bốn bước để <em>mua cùng nhau</em></h2>
+      <p class="ab-lead">Quy trình mô tả nghiệp vụ dự kiến của nền tảng; phiên bản hiện tại là giao diện tĩnh.</p>
+     </div>
+     <div class="ab-proc" id="ab-proc">
+      <div class="ab-steps" role="tablist" aria-label="Các bước mua chung">
+       <button class="ab-step is-on" type="button" role="tab" aria-selected="true" data-i="0"><span class="n">01</span><strong>Chọn sản phẩm</strong><span class="arr"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span><i></i></button>
+       <button class="ab-step" type="button" role="tab" aria-selected="false" data-i="1"><span class="n">02</span><strong>Đăng nhập và tham gia</strong><span class="arr"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span><i></i></button>
+       <button class="ab-step" type="button" role="tab" aria-selected="false" data-i="2"><span class="n">03</span><strong>Thanh toán và theo dõi</strong><span class="arr"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span><i></i></button>
+       <button class="ab-step" type="button" role="tab" aria-selected="false" data-i="3"><span class="n">04</span><strong>Nhận kết quả nhóm</strong><span class="arr"><svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span><i></i></button>
+      </div>
+      <div class="ab-stage">
+       <div class="ab-pane is-on" role="tabpanel">
+        <div class="ab-pane-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></div>
+        <h3>Chọn sản phẩm</h3><p>Xem danh mục, sản phẩm, giá lẻ và các bậc giá mua chung. So sánh trước khi quyết định, mọi thông tin đều nằm ngay trên thẻ sản phẩm.</p>
+        <div class="tags"><span>Giá lẻ</span><span>Giá nhóm</span><span>Số người cần</span></div>
+       </div>
+       <div class="ab-pane" role="tabpanel">
+        <div class="ab-pane-ico"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><path d="M2 20v-2a6 6 0 0 1 12 0v2"/><path d="M17 5a3 3 0 0 1 0 6m0 5a5 5 0 0 1 5 4"/></svg></div>
+        <h3>Đăng nhập và tham gia</h3><p>Tạo nhóm mới hoặc tham gia một nhóm đã mở. Gửi liên kết mời để rủ thêm bạn bè cùng mua một cách nhanh chóng.</p>
+        <div class="tags"><span>Tạo nhóm</span><span>Vào nhóm mở</span><span>Liên kết mời</span></div>
+       </div>
+       <div class="ab-pane" role="tabpanel">
+        <div class="ab-pane-ico"><svg viewBox="0 0 24 24"><path d="m12 2 8 4v6c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>Thanh toán và theo dõi</h3><p>Thanh toán giữ chỗ, sau đó theo dõi số thành viên hợp lệ và thời gian còn lại của nhóm ngay trên giao diện.</p>
+        <div class="tags"><span>Giữ chỗ</span><span>Tiến độ nhóm</span><span>Đếm ngược</span></div>
+       </div>
+       <div class="ab-pane" role="tabpanel">
+        <div class="ab-pane-ico"><svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg></div>
+        <h3>Nhận kết quả nhóm</h3><p>Đủ điều kiện thì xử lý giao hàng; nếu nhóm không thành công thì xử lý hoàn tiền theo chính sách dự kiến.</p>
+        <div class="tags"><span>Giao hàng</span><span>Hoàn tiền</span><span>Minh bạch</span></div>
+       </div>
+      </div>
+     </div>
+     <div class="ab-policy ab-reveal">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4v6c0 5-3.3 8.8-8 10-4.7-1.2-8-5-8-10V6l8-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== 6. AI MUA CHUNG ===== -->
+   <section class="ab-section ab-who">
+    <div class="ab-wrap">
+     <div class="ab-who-head ab-reveal">
+      <div>
+       <p class="ab-eyebrow">Dành cho nhiều cách sống</p>
+       <h2 class="ab-h2" style="margin:0">Ai có thể <em>mua chung?</em></h2>
+      </div>
+      <p class="ab-lead" style="max-width:420px">Mua chung bắt đầu từ nhu cầu rất bình thường của mỗi người.</p>
+     </div>
+     <div class="ab-wgrid">
+      <div class="ab-wcard ab-reveal" style="--d:0s"><span class="big">01</span>
+       <div><small>01 / STUDENTS</small><h3>Sinh viên</h3><p>Cùng bạn cùng lớp hoặc ở chung trọ mua những món đồ cần thiết với giá theo nhóm.</p></div>
+       <a href="products.html">Xem món cho sinh viên <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div>
+      <div class="ab-wcard ab-reveal" style="--d:.12s"><span class="big">02</span>
+       <div><small>02 / YOUNG WORKERS</small><h3>Người đi làm trẻ</h3><p>Kết nối đồng nghiệp và bạn bè có nhu cầu mua sắm gần giống nhau.</p></div>
+       <a href="products.html">Rủ đồng nghiệp <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div>
+      <div class="ab-wcard ab-reveal" style="--d:.24s"><span class="big">03</span>
+       <div><small>03 / FAMILIES</small><h3>Người quản lý chi tiêu gia đình</h3><p>Chủ động so sánh lựa chọn mua lẻ và mua theo nhóm trước khi quyết định.</p></div>
+       <a href="products.html">So sánh giá <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></div>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== 7. CTA / LIÊN HỆ ===== -->
+   <section class="ab-section ab-cta" id="lien-he">
+    <div class="ab-wrap">
+     <div class="ab-cta-band ab-reveal ab-reveal-zoom">
+      <div>
+       <p class="ab-eyebrow is-light">Liên hệ</p>
+       <h2>Tham gia cùng <em>WeBuy</em> khám phá cách mua mới.</h2>
+       <p>WeBuy là dự án học tập phát triển giao diện và mô hình mua chung. Thông tin liên hệ chính thức sẽ được nhóm cập nhật sau khi thống nhất.</p>
+       <a class="ab-btn ab-btn-lime" href="products.html">Khám phá sản phẩm
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+      </div>
+      <div class="ab-cta-pics" aria-hidden="true">
+       <img src="images/product-02.webp" alt=""/><img src="images/product-05.webp" alt=""/><img src="images/product-08.webp" alt=""/>
+      </div>
+     </div>
+    </div>
+   </section>
+
+   <!-- Lightbox -->
   </main>
   <footer class="site-footer">
    <div class="container footer-upper">
@@ -500,6 +431,7 @@
   </script>
   <script defer="" src="js/app.js">
   </script>
+  <script defer="" src="js/about-page.js"></script>
   <!-- Tính năng 11: Xu WeBuy (điểm danh, trò chơi) -->
   <script defer="" src="js/rewards-art.js"></script>
   <script defer="" src="js/rewards.js"></script>
