@@ -79,7 +79,7 @@ body.about-v2{background:#fff;overflow-x:hidden}
 .ab-stat>span{display:block;margin-top:10px;font-size:13px;line-height:1.5;color:#cfe9dc}
 
 /* marquee band */
-.ab-band{background:var(--orange);color:#fff;overflow:hidden;white-space:nowrap;padding:16px 0;transform:rotate(-1.2deg);margin:-6px -20px 0;position:relative;z-index:3}
+.ab-band{background:var(--orange);color:#fff;overflow:hidden;white-space:nowrap;padding:16px 0;margin:0 calc(50% - 50vw);width:100vw;position:relative;z-index:3}
 .ab-band-track{display:inline-flex;animation:abMarq 32s linear infinite}
 .ab-band span{font-size:clamp(18px,2.4vw,28px);font-weight:800;letter-spacing:-.01em;padding:0 22px;display:inline-flex;align-items:center;gap:44px}
 .ab-band span:after{content:'✳';color:var(--lime);font-size:1.1em}
