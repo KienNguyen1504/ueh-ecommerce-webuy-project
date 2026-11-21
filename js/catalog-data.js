@@ -109,3 +109,29 @@ window.WEBUY_PRODUCTS = [
     "badge": "Nổi bật"
   }
 ];
+
+/* Kết nối sản phẩm Seller Center với Kênh người mua */
+try {
+  const sellerProducts = JSON.parse(
+    localStorage.getItem('webuy_seller_v1_products') || '[]'
+  );
+
+  if (Array.isArray(sellerProducts)) {
+    const publishedProducts = sellerProducts
+      .filter(p => p.status === 'published')
+      .map(p => ({
+        ...p,
+        id: String(p.id),
+        price: Number(p.retail),
+        retail: Number(p.retail),
+        group: Number(p.group),
+        minMembers: Number(p.minMembers),
+        initialMembers: 0,
+        badge: 'Từ người bán'
+      }));
+
+    window.WEBUY_PRODUCTS.push(...publishedProducts);
+  }
+} catch (error) {
+  console.warn('Không thể tải sản phẩm người bán:', error);
+}
