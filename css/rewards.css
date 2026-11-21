@@ -8,6 +8,7 @@
  *   4. Trang chính của popup (số dư, điểm danh, thẻ trò chơi)
  *   5. Màn Chúc mừng và Thể lệ
  *   6. Trò chơi Gom nhóm 15 giây
+ *   6b. Trò chơi Vịt bay săn xu
  *   7. Trang Hồ sơ
  *   8. Trang Thanh toán
  *   9. Màn hình nhỏ và giảm chuyển động
@@ -474,6 +475,34 @@ body.wbr-lock { overflow: hidden; }
 .wbr-buddy small { margin-top: -4px; padding: 1px 7px; white-space: nowrap; background: var(--wbr-cream); border: 2px solid var(--wbr-ink); border-radius: 10px; font: 700 11px/1.4 var(--wbr-body); color: var(--wbr-ink); }
 .wbr-pop { position: absolute; z-index: 2; white-space: nowrap; pointer-events: none; font: 800 22px/1 var(--wbr-display); color: var(--wbr-lime); text-shadow: 0 3px 0 var(--wbr-ink); animation: wbr-pop 0.9s ease-out forwards; }
 
+/* ============ 6b. Trò chơi Vịt bay săn xu ============ */
+/* Thẻ dẫn vào trò chơi: nền cam, hai kệ hàng trang trí bên phải */
+.wbr-fly-card { margin-top: 18px; background: var(--wbr-orange); }
+.wbr-fly-card .wbr-game-name { color: #fff; }
+.wbr-fly-card .wbr-game-sub { color: var(--wbr-ink); }
+.wbr-fly-card .wbr-game-text p { color: var(--wbr-ink); font-weight: 600; }
+.wbr-fly-card .wbr-kicker { background: var(--wbr-cream); }
+.wbr-fly-shelf { position: absolute; width: 46px; background: var(--wbr-cream); border: 3px solid var(--wbr-ink); }
+.wbr-fly-shelf::after { content: ''; position: absolute; left: -7px; right: -7px; height: 16px; background: var(--wbr-lime); border: 3px solid var(--wbr-ink); }
+.wbr-fly-shelf-1 { right: 104px; top: -3px; height: 74px; border-top: 0; }
+.wbr-fly-shelf-1::after { bottom: -3px; }
+.wbr-fly-shelf-2 { right: 40px; bottom: -3px; height: 96px; border-bottom: 0; }
+.wbr-fly-shelf-2::after { top: -3px; }
+.wbr-fly-demo { right: 112px; bottom: 74px; }
+.wbr-fly-card .wbr-badge { top: auto; bottom: 110px; right: 14px; }
+
+.wbr-popup[data-view="fly"] .wbr-head-game { padding-bottom: 22px; }
+
+/* Sân chơi: canvas phủ kín, chạm vào đâu cũng vỗ cánh */
+.wbr-fly-field { cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+.wbr-fly-field canvas { position: absolute; inset: 0; display: block; }
+.wbr-fly-field .wbr-field-hint { bottom: auto; top: 18px; z-index: 1; }
+.wbr-fly-field .wbr-field-hint[hidden] { display: none; }
+.wbr-fly-field .wbr-count { z-index: 1; }
+.wbr-fly-count { font-size: 24px; }
+.wbr-fly-best { margin: -8px 16px 22px !important; text-align: center; font-size: 13px; font-weight: 600; color: var(--wbr-muted); }
+.wbr-fly-best b { color: var(--wbr-green); }
+
 /* ============ 7. Trang Hồ sơ ============ */
 .wbr-wallet {
   position: relative;
@@ -554,6 +583,8 @@ body.wbr-lock { overflow: hidden; }
   .wbr-section-row h3 { font-size: 22px; }
   .wbr-game-name { font-size: 38px; }
   .wbr-demo-1 { display: none; }
+  .wbr-fly-shelf-1 { right: 76px; }
+  .wbr-fly-demo { right: 84px; }
   .wbr-congrats { font-size: 48px; }
   .wbr-reward-amount { font-size: 72px; }
   .wbr-reward { min-height: 0; padding-top: 84px; }
