@@ -362,6 +362,21 @@
     eq(w.WeBuyRewards.getState().balance, 300 - use, 'Số dư còn lại');
     return `Dùng ${use} xu, giảm ${fmt(use * 100)}`;
   });
+  tc('TC37', 'Xu WeBuy', 'Chơi Vịt bay săn xu một lượt rồi đóng popup', 'Lượt Vịt bay về 0, nhận ít nhất 3 xu, lượt Gom nhóm vẫn còn', async () => {
+    const w = await load('../index.html');
+    await click(w, '.wbr-chip');
+    await click(w, '[data-wbr="fly"]');
+    ok($(w, '[data-wbr-fly-canvas]'), 'Không thấy sân chơi Vịt bay');
+    await sleep(2400); // chờ đếm ngược 3-2-1 để lượt chơi được tính
+    eq(w.WeBuyRewards.flyInfo().left, 0, 'Số lượt Vịt bay còn lại');
+    eq(w.WeBuyRewards.playInfo().left, 1, 'Số lượt Gom nhóm còn lại');
+    w.WeBuyRewards.close(); // kết thúc sớm, nhận xu an ủi
+    await sleep(250);
+    ok(w.WeBuyRewards.getState().balance >= 3, 'Không nhận được xu tối thiểu');
+    await click(w, '[data-wbr="hub"]');
+    ok(!$(w, '[data-wbr="fly"]'), 'Nút Bay thôi vẫn bấm được');
+    return 'Hết lượt Vịt bay, nhận ít nhất 3 xu, Gom nhóm còn 1 lượt';
+  });
 
   /* ---- Chay va hien thi ket qua ---- */
   const tbody = document.getElementById('results');

@@ -11,6 +11,7 @@
  *   5. Giao diện chung     - thông báo, chip xu, nút nổi
  *   6. Popup               - trang chính, màn Chúc mừng, Thể lệ
  *   7. Trò chơi            - Gom nhóm 15 giây
+ *   7b. Trò chơi           - Vịt bay săn xu (kiểu Flappy Bird)
  *   8. Trang Hồ sơ         - khối "Xu của tôi"
  *   9. Trang Thanh toán    - dùng xu trừ tiền đơn hàng
  *  10. Khởi động
@@ -42,6 +43,21 @@
     buddySize: 64    // kích thước nhân vật (px)
   };
 
+  // Trò chơi "Vịt bay săn xu": chú vịt bay qua các kệ hàng, qua mỗi kệ được xu
+  const FLY = {
+    xuPerShelf: 2,   // qua mỗi cặp kệ hàng được 2 xu
+    minXu: 3,        // thưởng an ủi khi chưa qua kệ nào
+    maxXu: 30,       // thưởng tối đa mỗi lượt (qua 15 kệ là đạt)
+    gap: 150,        // khoảng trống giữa kệ trên và kệ dưới (px)
+    shelfWidth: 58,  // độ rộng một kệ (px)
+    spacing: 210,    // khoảng cách giữa hai cặp kệ liên tiếp (px)
+    speed: 150,      // tốc độ chạy ngang lúc đầu (px mỗi giây), tăng dần theo số kệ đã qua
+    gravity: 1500,   // gia tốc rơi (px/giây²)
+    flap: -430,      // vận tốc bay lên mỗi lần chạm (px/giây)
+    maxFall: 560,    // tốc độ rơi tối đa (px/giây)
+    duckSize: 46     // kích thước chú vịt (px)
+  };
+
   const XU_VALUE = 100;            // 1 xu = 100đ
   const MAX_DISCOUNT_PERCENT = 10; // mỗi đơn dùng xu tối đa 10% tiền hàng
   const MIN_XU_USE = 10;           // mỗi đơn dùng ít nhất 10 xu
@@ -66,6 +82,9 @@
       lastCheckin: null,  // ngày điểm danh gần nhất, dạng 'YYYY-MM-DD'
       playDate: null,     // ngày đang đếm lượt chơi
       playsUsed: 0,       // số lượt đã chơi trong ngày playDate
+      flyDate: null,      // ngày đang đếm lượt chơi Vịt bay
+      flyUsed: 0,         // số lượt Vịt bay đã chơi trong ngày flyDate
+      flyBest: 0,         // số kệ nhiều nhất từng bay qua
       bonusDate: null,    // ngày được tặng lượt chơi thưởng
       groupCount: null,   // số nhóm mua đã tham gia ở lần kiểm tra trước
       autoShown: null,    // ngày popup đã tự mở
@@ -84,6 +103,8 @@
     if (!Number.isInteger(state.balance) || state.balance < 0) state.balance = 0;
     if (!Number.isInteger(state.streakDay) || state.streakDay < 0 || state.streakDay > 7) state.streakDay = 0;
     if (!Number.isInteger(state.playsUsed) || state.playsUsed < 0) state.playsUsed = 0;
+    if (!Number.isInteger(state.flyUsed) || state.flyUsed < 0) state.flyUsed = 0;
+    if (!Number.isInteger(state.flyBest) || state.flyBest < 0) state.flyBest = 0;
     if (!Array.isArray(state.history)) state.history = [];
     return state;
   }
@@ -189,6 +210,22 @@
     saveState();
   }
 
+  /* Lượt chơi Vịt bay: đếm riêng với Gom nhóm, cũng 1 lượt miễn phí mỗi ngày
+     và cũng được tặng thêm 1 lượt khi tạo/tham gia nhóm mua */
+  function flyInfo() {
+    const now = today();
+    const used = state.flyDate === now ? state.flyUsed : 0;
+    const total = 1 + (state.bonusDate === now ? 1 : 0);
+    return { used, total, left: Math.max(0, total - used) };
+  }
+
+  function useFly() {
+    const now = today();
+    if (state.flyDate !== now) { state.flyDate = now; state.flyUsed = 0; }
+    state.flyUsed += 1;
+    saveState();
+  }
+
   // Đếm số nhóm mua người dùng đang tham gia, đọc từ dữ liệu js/app.js đã lưu sẵn
   function countMyGroups() {
     try {
@@ -206,7 +243,7 @@
 
     if (count > state.groupCount && state.bonusDate !== today()) {
       state.bonusDate = today();
-      toast('Bạn vừa vào nhóm mua: tặng thêm 1 lượt chơi Gom nhóm hôm nay!');
+      toast('Bạn vừa vào nhóm mua: tặng thêm 1 lượt Gom nhóm và 1 lượt Vịt bay hôm nay!');
     }
     state.groupCount = count;
     saveState();
@@ -247,7 +284,7 @@
   // Còn phần thưởng chưa nhận trong hôm nay hay không (để hiện chấm báo)
   function hasPending() {
     const c = getCheckin();
-    return (!c.claimedToday && !c.blocked) || playInfo().left > 0;
+    return (!c.claimedToday && !c.blocked) || playInfo().left > 0 || flyInfo().left > 0;
   }
 
   /* Chip xu trên Header, đặt trước nút giỏ hàng */
@@ -301,7 +338,7 @@
    * =================================================================== */
   let overlay = null;     // lớp nền mờ chứa popup
   let popup = null;       // khung popup
-  let view = 'hub';       // 'hub' | 'reward' | 'rules' | 'game'
+  let view = 'hub';       // 'hub' | 'reward' | 'rules' | 'game' | 'fly'
   let rewardInfo = null;  // nội dung màn Chúc mừng
   let lastFocus = null;   // phần tử đang focus trước khi mở popup
 
@@ -325,6 +362,7 @@
       if (action === 'close') closePopup();
       if (action === 'checkin') doCheckin();
       if (action === 'play') startGame();
+      if (action === 'fly') startFly();
       if (action === 'rules') showView('rules');
       if (action === 'hub') leaveToHub();
     });
@@ -344,7 +382,9 @@
   function closePopup() {
     if (!isOpen()) return;
     if (game && game.running) { finishGame(); return; } // đang chơi dở: kết thúc lượt và trả thưởng
+    if (fly && fly.started) { finishFly(); return; }
     cancelGame();
+    cancelFly();
     overlay.hidden = true;
     document.body.classList.remove('wbr-lock');
     if (lastFocus && lastFocus.focus) lastFocus.focus();
@@ -352,7 +392,9 @@
 
   function leaveToHub() {
     if (game && game.running) { finishGame(); return; }
+    if (fly && fly.started) { finishFly(); return; }
     cancelGame();
+    cancelFly();
     showView('hub');
   }
 
@@ -368,6 +410,7 @@
     if (view === 'reward') popup.innerHTML = rewardHtml();
     if (view === 'rules') popup.innerHTML = rulesHtml();
     if (view === 'game') popup.innerHTML = gameHtml();
+    if (view === 'fly') popup.innerHTML = flyHtml();
     popup.dataset.view = view;
   }
 
@@ -406,7 +449,15 @@
         : `Bạn đang ở Ngày ${info.day}. Bỏ lỡ một ngày là chuỗi về Ngày 1 đó nha!`;
     }
 
-    const playTag = plays.left > 0 ? `Còn ${plays.left} lượt hôm nay` : 'Hết lượt hôm nay';
+    const flies = flyInfo();
+    const totalLeft = plays.left + flies.left;
+    const playTag = totalLeft > 0 ? `Còn ${totalLeft} lượt hôm nay` : 'Hết lượt hôm nay';
+    const flyButton = flies.left > 0
+      ? '<button type="button" class="wbr-btn wbr-btn-lime" data-wbr="fly">Bay thôi</button>'
+      : '<button type="button" class="wbr-btn wbr-btn-lime" disabled>Hết lượt</button>';
+    const flyHint = flies.left > 0
+      ? `Chạm để vịt vỗ cánh, qua mỗi kệ hàng +${FLY.xuPerShelf} xu.`
+      : 'Tạo hoặc tham gia một nhóm mua để nhận thêm lượt.';
     const playButton = plays.left > 0
       ? '<button type="button" class="wbr-btn wbr-btn-orange" data-wbr="play">Chơi ngay</button>'
       : '<button type="button" class="wbr-btn wbr-btn-orange" disabled>Hết lượt</button>';
@@ -459,6 +510,20 @@
         <span class="wbr-demo wbr-demo-3 wbr-hop">${Art.buddy('vit', 58)}</span>
       </section>
 
+      <section class="wbr-game-card wbr-fly-card">
+        <span class="wbr-fly-shelf wbr-fly-shelf-1" aria-hidden="true"></span>
+        <span class="wbr-fly-shelf wbr-fly-shelf-2" aria-hidden="true"></span>
+        <div class="wbr-game-text">
+          <span class="wbr-kicker">TRÒ CHƠI MỚI</span>
+          <strong class="wbr-game-name">Vịt bay</strong>
+          <strong class="wbr-game-sub">săn xu</strong>
+          <p>${flyHint}</p>
+          ${flyButton}
+        </div>
+        <span class="wbr-badge" aria-hidden="true"><small>TỚI</small>${FLY.maxXu} xu</span>
+        <span class="wbr-demo wbr-fly-demo wbr-hop">${Art.buddy('vit', 62)}</span>
+      </section>
+
       <footer class="wbr-foot">
         <button type="button" class="wbr-link" data-wbr="rules">Thể lệ xu</button>
         <a class="wbr-link" href="profile.html#my-coins">Xem xu ở Hồ sơ</a>
@@ -488,12 +553,17 @@
 
   function rewardHtml() {
     const plays = playInfo();
+    const flies = flyInfo();
     const confetti = CONFETTI.map(([x, y, color, rot]) =>
       `<i class="wbr-confetti wbr-confetti-${color}" style="left:${x}%;top:${y}%;transform:rotate(${rot}deg)"></i>`).join('');
-    const actions = plays.left > 0
-      ? `<button type="button" class="wbr-btn wbr-btn-lime wbr-pulse" data-wbr="play">Chơi Gom nhóm, săn thêm xu</button>
-         <button type="button" class="wbr-link wbr-link-light" data-wbr="hub">Để sau</button>`
-      : '<button type="button" class="wbr-btn wbr-btn-lime" data-wbr="hub">Tuyệt vời!</button>';
+    let actions = '<button type="button" class="wbr-btn wbr-btn-lime" data-wbr="hub">Tuyệt vời!</button>';
+    if (plays.left > 0) {
+      actions = `<button type="button" class="wbr-btn wbr-btn-lime wbr-pulse" data-wbr="play">Chơi Gom nhóm, săn thêm xu</button>
+         <button type="button" class="wbr-link wbr-link-light" data-wbr="hub">Để sau</button>`;
+    } else if (flies.left > 0) {
+      actions = `<button type="button" class="wbr-btn wbr-btn-lime wbr-pulse" data-wbr="fly">Chơi Vịt bay, săn thêm xu</button>
+         <button type="button" class="wbr-link wbr-link-light" data-wbr="hub">Để sau</button>`;
+    }
 
     return `
       <div class="wbr-reward">
@@ -523,6 +593,7 @@
         <li><b>Xu WeBuy</b> là điểm thưởng tặng khi điểm danh và chơi trò chơi. Xu không quy đổi thành tiền mặt, không mua bán, không chuyển cho người khác.</li>
         <li><b>Điểm danh</b> mỗi ngày một lần theo chuỗi 7 ngày: ${CHECKIN_REWARDS.join(', ')} xu. Bỏ lỡ một ngày, chuỗi bắt đầu lại từ Ngày 1; xu đã nhận vẫn giữ nguyên.</li>
         <li><b>Gom nhóm ${GAME.seconds} giây</b>: mỗi ngày một lượt miễn phí, nhận từ ${GAME.minXu} đến ${GAME.maxXu} xu. Tạo hoặc tham gia một nhóm mua trong ngày được tặng thêm một lượt.</li>
+        <li><b>Vịt bay săn xu</b>: mỗi ngày một lượt miễn phí (tính riêng với Gom nhóm), qua mỗi kệ hàng được ${FLY.xuPerShelf} xu, nhận từ ${FLY.minXu} đến ${FLY.maxXu} xu. Tạo hoặc tham gia một nhóm mua trong ngày cũng được tặng thêm một lượt.</li>
         <li><b>Một ngày</b> tính từ 00:00 đến 23:59 theo giờ trên thiết bị. Lượt chưa dùng không cộng dồn sang ngày sau.</li>
         <li><b>Dùng xu</b> để trừ tiền khi thanh toán: 1 xu = ${money(XU_VALUE)}, mỗi đơn dùng tối thiểu ${MIN_XU_USE} xu và tối đa ${MAX_DISCOUNT_PERCENT}% tiền hàng.</li>
         <li><b>Bản thử nghiệm</b>: xu lưu trên trình duyệt này, sẽ mất khi xóa dữ liệu trình duyệt và không có giá trị thanh toán thật.</li>
@@ -759,6 +830,267 @@
   }
 
   /* ===================================================================
+   * 7b. TRÒ CHƠI "VỊT BAY SĂN XU" (kiểu Flappy Bird)
+   * Chú vịt bay qua các cặp kệ hàng. Chạm sân chơi (hoặc nhấn Space / ↑) để vỗ cánh.
+   * Qua mỗi cặp kệ được FLY.xuPerShelf xu; chạm kệ hoặc rơi xuống đất là hết lượt.
+   * Vẽ bằng <canvas> + requestAnimationFrame, vận tốc tính theo thời gian thực
+   * nên chạy mượt như nhau trên máy nhanh và máy chậm.
+   * =================================================================== */
+  let fly = null;
+  let duckImg = null; // ảnh chú vịt, tạo một lần từ hình SVG trong rewards-art.js
+
+  function flyHtml() {
+    return `
+      <header class="wbr-head wbr-head-game">
+        <span class="wbr-blob wbr-blob-lime" aria-hidden="true"></span>
+        <div class="wbr-head-row">
+          <button type="button" class="wbr-round" data-wbr="hub" aria-label="Kết thúc và quay lại">${ICON_BACK}</button>
+          <h2 class="wbr-title wbr-title-small" id="wbr-title">Vịt bay săn xu</h2>
+          <button type="button" class="wbr-round" data-wbr="close" aria-label="Đóng">${ICON_CLOSE}</button>
+        </div>
+        <div class="wbr-hud">
+          <span class="wbr-timer wbr-fly-count"><span data-wbr-fly-passed>0</span>&nbsp;kệ</span>
+          <span class="wbr-timebar" title="Tiến tới ${FLY.maxXu} xu"><i data-wbr-fly-bar style="width:0%"></i></span>
+          <span class="wbr-score">${Art.coin(26)}<span data-wbr-fly-score>+0</span></span>
+        </div>
+      </header>
+
+      <div class="wbr-field wbr-fly-field" data-wbr-fly-field>
+        <canvas data-wbr-fly-canvas aria-label="Sân chơi Vịt bay săn xu. Chạm, nhấn phím cách hoặc mũi tên lên để vỗ cánh."></canvas>
+        <p class="wbr-field-hint" data-wbr-fly-hint>Chạm sân chơi, nhấn Space hoặc ↑ để vỗ cánh</p>
+        <strong class="wbr-count" data-wbr-count aria-live="assertive">3</strong>
+      </div>
+      <p class="wbr-fly-best">Kỷ lục của bạn: <b>${state.flyBest} kệ</b> · qua mỗi kệ +${FLY.xuPerShelf} xu, tối đa ${FLY.maxXu} xu</p>`;
+  }
+
+  function startFly() {
+    if (flyInfo().left <= 0) { toast('Bạn đã dùng hết lượt Vịt bay hôm nay. Tạo hoặc tham gia nhóm mua để nhận thêm lượt.'); return; }
+    cancelGame();
+    cancelFly();
+    showView('fly');
+
+    if (!duckImg) {
+      duckImg = new Image();
+      duckImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(Art.buddy('vit', 112).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '));
+    }
+
+    const field = popup.querySelector('[data-wbr-fly-field]');
+    const canvas = popup.querySelector('[data-wbr-fly-canvas]');
+    const w = field.clientWidth, h = field.clientHeight;
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * ratio);
+    canvas.height = Math.round(h * ratio);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(ratio, ratio);
+
+    fly = {
+      field, canvas, ctx, w, h,
+      ground: h - 40,                 // mặt đất: phần đất màu kem ở đáy sân
+      duck: { x: Math.round(w * 0.28), y: h * 0.42, vy: 0 },
+      shelves: [],
+      passed: 0,
+      started: false,  // đã qua đếm ngược, lượt chơi đã được tính
+      waiting: true,   // vịt đang lơ lửng chờ cú chạm đầu tiên
+      over: false,
+      lastFrame: 0, frameId: 0, countTimer: 0, endTimer: 0, time: 0
+    };
+
+    field.addEventListener('pointerdown', e => { e.preventDefault(); flap(); });
+
+    const countEl = popup.querySelector('[data-wbr-count]');
+    let count = 3;
+    fly.lastFrame = performance.now();
+    fly.frameId = requestAnimationFrame(flyLoop); // vẽ sân ngay cả lúc đếm ngược
+    fly.countTimer = setInterval(() => {
+      count -= 1;
+      if (count > 0) { countEl.textContent = count; return; }
+      clearInterval(fly.countTimer);
+      countEl.remove();
+      useFly();          // lượt chơi được tính từ lúc trò chơi thật sự bắt đầu
+      fly.started = true;
+    }, 700);
+  }
+
+  // Vỗ cánh: đặt lại vận tốc bay lên (không cộng dồn) để dễ điều khiển
+  function flap() {
+    if (!fly || !fly.started || fly.over) return;
+    if (fly.waiting) {
+      fly.waiting = false;
+      const hint = popup.querySelector('[data-wbr-fly-hint]');
+      if (hint) hint.hidden = true;
+    }
+    fly.duck.vy = FLY.flap;
+  }
+
+  function addShelf(x) {
+    const minTop = 40, maxTop = fly.ground - FLY.gap - 40;
+    const prev = fly.shelves.length ? fly.shelves[fly.shelves.length - 1].top : (minTop + maxTop) / 2;
+    // Khoảng trống không lệch quá 120px so với cặp kệ trước để luôn bay qua được
+    const top = Math.max(minTop, Math.min(maxTop, prev + (Math.random() * 240 - 120)));
+    fly.shelves.push({ x, top, passed: false });
+  }
+
+  function flyLoop(now) {
+    if (!fly) return;
+    const dt = Math.min(0.033, (now - fly.lastFrame) / 1000);
+    fly.lastFrame = now;
+    fly.time += dt;
+    const d = fly.duck;
+
+    if (!fly.over) {
+      if (!fly.started || fly.waiting) {
+        d.y = fly.h * 0.42 + Math.sin(fly.time * 4) * 8;      // lơ lửng nhấp nhô
+      } else {
+        d.vy = Math.min(FLY.maxFall, d.vy + FLY.gravity * dt);
+        d.y += d.vy * dt;
+        if (d.y < 16) { d.y = 16; d.vy = 0; }
+
+        // Kệ chạy sang trái, nhanh dần theo số kệ đã qua (tối đa gấp 1,6 lần)
+        const speed = FLY.speed * Math.min(1.6, 1 + fly.passed * 0.04);
+        for (const s of fly.shelves) s.x -= speed * dt;
+        if (fly.shelves.length && fly.shelves[0].x < -FLY.shelfWidth - 10) fly.shelves.shift();
+        if (!fly.shelves.length || fly.shelves[fly.shelves.length - 1].x < fly.w - FLY.spacing) addShelf(fly.w + 20);
+
+        for (const s of fly.shelves) {
+          if (!s.passed && s.x + FLY.shelfWidth < d.x - FLY.duckSize * 0.3) {
+            s.passed = true;
+            fly.passed += 1;
+            updateFlyHud();
+            if (flyXu() >= FLY.maxXu) { fly.over = true; fly.endTimer = setTimeout(finishFly, 500); break; }
+          }
+        }
+
+        if (!fly.over && flyHit()) {
+          fly.over = true;
+          fly.field.classList.add('is-shake');
+          fly.endTimer = setTimeout(finishFly, 700);
+        }
+      }
+    } else if (d.y < fly.ground - FLY.duckSize * 0.35) {
+      d.vy = Math.min(FLY.maxFall, d.vy + FLY.gravity * dt); // vịt rơi xuống sau khi va chạm
+      d.y = Math.min(fly.ground - FLY.duckSize * 0.35, d.y + d.vy * dt);
+    }
+
+    drawFly();
+    fly.frameId = requestAnimationFrame(flyLoop);
+  }
+
+  // Va chạm: coi vịt là hình tròn nhỏ hơn hình vẽ một chút để chơi "dễ thở" hơn
+  function flyHit() {
+    const d = fly.duck, r = FLY.duckSize * 0.36;
+    if (d.y + r >= fly.ground) return true;
+    for (const s of fly.shelves) {
+      const nearX = Math.max(s.x, Math.min(d.x, s.x + FLY.shelfWidth));
+      const dx = nearX - d.x;
+      if (Math.abs(dx) >= r) continue;
+      const topY = Math.min(d.y, s.top);                       // điểm gần nhất trên kệ trên
+      const botY = Math.max(d.y, s.top + FLY.gap);             // điểm gần nhất trên kệ dưới
+      if (Math.hypot(dx, topY - d.y) < r || Math.hypot(dx, botY - d.y) < r) return true;
+    }
+    return false;
+  }
+
+  function flyXu() { return Math.min(FLY.maxXu, fly.passed * FLY.xuPerShelf); }
+
+  function updateFlyHud() {
+    popup.querySelector('[data-wbr-fly-passed]').textContent = fly.passed;
+    popup.querySelector('[data-wbr-fly-score]').textContent = '+' + flyXu();
+    popup.querySelector('[data-wbr-fly-bar]').style.width = (flyXu() / FLY.maxXu * 100) + '%';
+  }
+
+  const C = { orange: '#FD550A', green: '#015D47', lime: '#E0F354', cream: '#FFF6E5', ink: '#0B2A22', line: '#D9CDB4' };
+
+  function drawFly() {
+    const { ctx, w, h, ground } = fly;
+    ctx.clearRect(0, 0, w, h);
+
+    // Vòng nét đứt trang trí giống sân Gom nhóm, trôi chậm về bên trái
+    ctx.save();
+    ctx.strokeStyle = 'rgba(224, 243, 84, 0.3)'; ctx.lineWidth = 3; ctx.setLineDash([10, 8]);
+    const ox = -((fly.time * 20) % (w + 300));
+    ctx.beginPath(); ctx.arc(w + 150 + ox, h * 0.35, 120, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(w * 0.5 + 150 + ox, h * 0.7, 70, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+
+    for (const s of fly.shelves) {
+      drawShelf(s.x, 0, s.top, true);
+      drawShelf(s.x, s.top + FLY.gap, ground - s.top - FLY.gap + 6, false);
+    }
+
+    // Mặt đất màu kem, có vạch chạy để tạo cảm giác đang bay
+    ctx.fillStyle = C.cream; ctx.fillRect(0, ground, w, h - ground);
+    ctx.fillStyle = C.ink; ctx.fillRect(0, ground, w, 3);
+    ctx.fillStyle = C.line;
+    const off = fly.started && !fly.waiting && !fly.over ? (fly.time * 150) % 28 : 0;
+    for (let x = -off; x < w; x += 28) ctx.fillRect(x, ground + 14, 14, 5);
+
+    // Chú vịt nghiêng theo hướng bay
+    const d = fly.duck;
+    const angle = fly.waiting || !fly.started ? 0 : Math.max(-0.45, Math.min(1.2, d.vy / 600));
+    if (duckImg && duckImg.complete) {
+      ctx.save();
+      ctx.translate(d.x, d.y); ctx.rotate(angle);
+      const size = FLY.duckSize, hgt = size * 62 / 56;
+      ctx.drawImage(duckImg, -size / 2, -hgt / 2, size, hgt);
+      ctx.restore();
+    }
+  }
+
+  // Một kệ hàng: thân kem viền đậm, có hộp hàng nhỏ, đầu kệ màu chanh phía khoảng trống
+  function drawShelf(x, y, height, fromTop) {
+    if (height <= 0) return;
+    const { ctx } = fly, w = FLY.shelfWidth;
+    ctx.save();
+    ctx.lineWidth = 3; ctx.strokeStyle = C.ink;
+    ctx.fillStyle = C.cream;
+    ctx.fillRect(x + 4, y, w - 8, height); ctx.strokeRect(x + 4, y, w - 8, height);
+    // Các tầng kệ và hộp hàng
+    ctx.fillStyle = C.orange;
+    for (let i = 1; i * 34 < height - 18; i++) {
+      const ly = fromTop ? y + height - 18 - i * 34 : y + 18 + i * 34;
+      ctx.beginPath(); ctx.moveTo(x + 4, ly); ctx.lineTo(x + w - 4, ly); ctx.stroke();
+      ctx.fillRect(x + 12, ly - 14, 14, 14); ctx.strokeRect(x + 12, ly - 14, 14, 14);
+    }
+    // Đầu kệ
+    const capY = fromTop ? y + height - 18 : y;
+    ctx.fillStyle = C.lime;
+    ctx.fillRect(x, capY, w, 18); ctx.strokeRect(x, capY, w, 18);
+    ctx.restore();
+  }
+
+  function finishFly() {
+    if (!fly) return;
+    const passed = fly.passed;
+    const reward = Math.max(FLY.minXu, flyXu());
+    const reachedMax = flyXu() >= FLY.maxXu;
+    stopFlyLoop();
+    fly = null;
+    if (passed > state.flyBest) { state.flyBest = passed; saveState(); }
+    addXu(reward, `Vịt bay săn xu · qua ${passed} kệ`);
+    showReward({
+      amount: reward,
+      lead: reachedMax ? `Vịt bay qua ${passed} kệ, đạt mức xu tối đa!`
+        : passed > 0 ? `Vịt bay qua ${passed} kệ hàng, bạn nhận được` : 'Vịt chưa qua kệ nào, tặng bạn xu an ủi',
+      sub: `Kỷ lục của bạn: ${state.flyBest} kệ`
+    });
+  }
+
+  function stopFlyLoop() {
+    if (!fly) return;
+    cancelAnimationFrame(fly.frameId);
+    clearInterval(fly.countTimer);
+    clearTimeout(fly.endTimer);
+  }
+
+  // Hủy khi chưa bắt đầu (đang đếm ngược): không trừ lượt, không cộng xu
+  function cancelFly() {
+    stopFlyLoop();
+    fly = null;
+  }
+
+  /* ===================================================================
    * 8. TRANG HỒ SƠ: khối "Xu của tôi" (cần <div id="profile-coins"> trong profile.html)
    * =================================================================== */
   let showAllHistory = false;
@@ -930,6 +1262,12 @@
   document.addEventListener('keydown', e => {
     if (!isOpen()) return;
     if (e.key === 'Escape') { closePopup(); return; }
+    // Vịt bay: phím cách hoặc mũi tên lên để vỗ cánh
+    if (view === 'fly' && fly && (e.key === ' ' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      if (!e.repeat) flap();
+      return;
+    }
     // Giữ tiêu điểm bàn phím bên trong popup
     if (e.key === 'Tab') {
       const items = [...popup.querySelectorAll('button:not([disabled]), a[href], input:not([disabled])')];
@@ -961,6 +1299,7 @@
     getCheckin,
     claimCheckin,
     playInfo,
+    flyInfo,
     addXu,
     spendXu,
     maxXuForOrder,
