@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đơn hàng &amp; thanh toán mô phỏng | WeBuy</title>
+  <link rel="icon" type="image/png" href="images/logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="wb-page" data-require-auth="orders">
+  <header class="wb-topbar">
+    <a class="wb-brand" href="index.html" aria-label="WeBuy - Trang chủ">
+      <img src="images/logo-mark.png" alt="" width="40" height="40">
+      <span>We<span>Buy</span></span>
+    </a>
+    <a class="wb-back" href="profile.html">← Hồ sơ của tôi</a>
+    <a class="header-avatar wb-btn wb-btn-ghost" href="profile.html"><span data-avatar>WB</span><span class="avatar-caption">Tài khoản</span></a>
+  </header>
+
+  <main class="wb-main" id="pay-root" aria-live="polite">
+    <div class="wb-skeleton"></div><div class="wb-skeleton"></div><div class="wb-skeleton"></div>
+  </main>
+
+  <script src="js/catalog-data.js"></script>
+  <script src="js/api-config.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/auth-ui.js"></script>
+  <script src="js/payment-demo.js"></script>
+</body>
+</html>
