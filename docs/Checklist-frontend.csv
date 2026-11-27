@@ -1,0 +1,12 @@
+﻿Dòng Excel,Hạng mục,Trạng thái,Kết quả kiểm tra
+24,Điểm danh và hai mini game,Đạt,"TC31–37, 74, 81. Chuỗi bảy ngày = 140 xu. Hai game tính lượt riêng, thưởng 5–30 xu."
+25,Dùng Xu tại checkout,Đạt,"TC36, 75. Đơn 299.000đ dùng 299 xu còn 269.100đ. Gửi hai lần và hủy hai lần đều chỉ ghi một lần trừ và một lần hoàn."
+26,Trung tâm thông báo,Đạt,"TC76. Nhắc điểm danh, cập nhật Xu và trạng thái nhóm. Trạng thái đọc và xóa giữ sau tải lại."
+27,Test trợ lý và Rewards,Đạt,"TC62–75, 79, 81. 12 câu hỏi, ảnh sai định dạng hoặc quá 8 MB, ngày lùi và popup. Ở 390 px, ảnh tải lỗi vẫn lọc nhóm được."
+28,Đăng ký người bán,Đạt,"TC80. Kiểm tra trường trống, email, điện thoại và điều khoản. Hồ sơ và tên cửa hàng giữ sau tải lại."
+29,Đăng bán và quản lý sản phẩm,Đạt,TC80. Nháp → đăng → ẩn → hiện. Kiểm tra điều kiện giá và số người. Catalog và trang cửa hàng cùng đọc sản phẩm đã đăng.
+30,Dashboard và nhóm của cửa hàng,Đạt,TC80. Tạo nhóm rồi thêm thành viên. Số nhóm mở và đủ người cập nhật. Liên kết có mã nhóm.
+31,Địa điểm và header,Đạt,"TC29–30, 78, 81. Chọn Đà Nẵng. Nhãn và bộ lọc khớp sau tải lại. Esc đóng địa điểm trước khi mở Xu."
+32,Chính sách và FAQ,Đạt,"policy.html, faq.html. Có mục lục, liên kết chân trang và quy định hoàn Xu khớp thao tác hủy đơn."
+33,Bàn giao source và demo,Bàn giao cục bộ,README có kịch bản 5 phút. Đã kiểm tra link và tài nguyên cục bộ. Thay đổi trong thư mục giải nén chưa có commit/PR hoặc bản triển khai Pages.
+Bổ sung,"Chia sẻ, chat, hạn chốt và menu",Đạt,"TC48, 77. Hai tab trao đổi tin, nhóm khác có lịch sử riêng. Menu có cùng cỡ chữ 15 px ở bốn viewport."

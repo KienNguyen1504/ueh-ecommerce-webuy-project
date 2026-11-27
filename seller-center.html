@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/seller-center.css">
   <script defer src="js/seller-center.js"></script>
 </head>
@@ -53,7 +54,7 @@
             <div class="sc-field sc-full"><label for="sc-reg-description">Mô tả cửa hàng</label><textarea id="sc-reg-description" name="description" maxlength="600" rows="3" placeholder="Giới thiệu ngắn về cửa hàng..."></textarea></div>
             <div class="sc-field sc-full"><label for="sc-reg-logo">Logo / ảnh đại diện (không bắt buộc)</label><input id="sc-reg-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp"><small class="sc-help">Ảnh JPG, PNG hoặc WebP; dung lượng gốc tối đa 5 MB.</small><small class="sc-error" data-error-for="logo"></small></div>
           </div>
-          <label class="sc-check"><input id="sc-reg-terms" name="terms" type="checkbox" required><span>Tôi đồng ý với <strong>điều khoản sử dụng demo</strong> và hiểu dữ liệu chỉ được lưu trên trình duyệt này. *</span></label>
+          <label class="sc-check"><input id="sc-reg-terms" name="terms" type="checkbox" required><span>Tôi đồng ý với <a href="policy.html#seller">điều khoản sử dụng demo</a> và hiểu dữ liệu chỉ được lưu trên trình duyệt này. *</span></label>
           <small class="sc-error" data-error-for="terms"></small>
           <div class="sc-form-actions"><button type="submit" class="sc-btn sc-btn-primary">Hoàn tất đăng ký →</button></div>
         </form>
@@ -91,6 +92,7 @@
 
         <section id="sc-view-overview" class="sc-view" aria-labelledby="sc-overview-title">
           <div class="sc-heading"><div><span class="sc-eyebrow">TỔNG QUAN CỬA HÀNG</span><h1 id="sc-overview-title">Xin chào, <span id="sc-welcome-name">người bán</span> 👋</h1><p>Quản lý sản phẩm và theo dõi tiến độ các nhóm mua liên quan đến cửa hàng.</p></div><button class="sc-btn sc-btn-primary" type="button" data-sc-go="editor">+ Đăng sản phẩm mới</button></div>
+          <a class="sc-text-btn" id="sc-public-store" href="seller-store.html">Xem trang cửa hàng →</a>
           <div class="sc-stats" aria-label="Thống kê cửa hàng">
             <article class="sc-stat"><span>Tổng sản phẩm</span><strong id="sc-stat-total">0</strong><small>Đã lưu trong cửa hàng</small></article>
             <article class="sc-stat"><span>Đang hiển thị</span><strong id="sc-stat-visible">0</strong><small>Hiển thị ở Kênh người mua</small></article>

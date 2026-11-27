@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="#0D6B47" name="theme-color"/>
+  <meta content="noindex" name="robots"/>
+  <title>Style guide | WeBuy</title>
+  <link href="images/logo-mark.png" rel="icon" type="image/png"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="css/tokens.css" rel="stylesheet"/>
+  <link href="css/seller-center.css" rel="stylesheet"/>
+  <link href="css/styles.css" rel="stylesheet"/>
+  <link href="css/app.css" rel="stylesheet"/>
+  <link href="css/webuy-theme.css" rel="stylesheet"/>
+  <link href="css/fx.css" rel="stylesheet"/>
+  <link href="css/features.css" rel="stylesheet"/>
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+   /* Bố cục riêng của trang style guide (không dùng ở trang khác) */
+   body{background:var(--color-bg-soft)}
+   .sg-top{background:var(--green);color:#fff;padding:40px 0 34px}
+   .sg-top h1{color:#fff;margin:6px 0 8px;font-size:var(--fs-3xl)}
+   .sg-top p{margin:0;color:#d7ecdf;max-width:720px}
+   .sg-top .eyebrow{color:var(--lime)}
+   .sg-nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
+   .sg-nav .container{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+   .sg-nav a{flex:0 0 auto;padding:7px 14px;border-radius:var(--r-pill);font-size:14px;font-weight:700;color:var(--green-dark)}
+   .sg-nav a:hover{background:var(--soft-lime)}
+   .sg-sec{padding:var(--space-10) 0 var(--space-4)}
+   .sg-sec>.container>h2{font-size:var(--fs-2xl);margin:0 0 6px;color:var(--green-dark)}
+   .sg-sec>.container>p.sg-lead{margin:0 0 var(--space-6);color:var(--muted)}
+   .sg-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--space-6);box-shadow:var(--shadow-sm);margin-bottom:var(--space-4)}
+   .sg-card h3{margin:0 0 var(--space-3);font-size:var(--fs-lg);color:var(--ink)}
+   .sg-row{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center}
+   .sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:var(--space-3)}
+   .sg-sw{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line);background:#fff}
+   .sg-sw i{display:block;height:74px}
+   .sg-sw div{padding:8px 10px;font-size:12px;line-height:1.45;color:var(--body)}
+   .sg-sw b{display:block;font-size:13px;color:var(--ink)}
+   code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--green-dark)}
+   .sg-type p{margin:0 0 6px}
+   .sg-scale{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:flex-end}
+   .sg-scale span{display:block;background:var(--orange);border-radius:4px}
+   .sg-scale small{display:block;margin-top:6px;font-size:12px;color:var(--muted)}
+   .sg-box{width:120px;height:80px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;color:var(--muted)}
+   .sg-demo-card{max-width:280px}
+   .sg-modal{position:relative;max-width:420px;background:#fff;border-radius:var(--r-lg);padding:28px;box-shadow:0 24px 74px rgba(0,0,0,.18);border:1px solid var(--line)}
+   .sg-modal h4{margin:8px 0 8px;font-size:22px;color:var(--ink)}
+   .sg-modal p{margin:0 0 14px;font-size:14px;color:var(--muted);line-height:1.7}
+   .sg-toast{position:static;opacity:1;transform:none;display:inline-block;max-width:none}
+   .sg-table{width:100%;border-collapse:collapse;font-size:14px}
+   .sg-table th,.sg-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+   .sg-table th{background:var(--soft-lime);color:var(--green-dark);font-size:13px}
+   .sg-ok{color:var(--green);font-weight:700}
+   .sg-footer-mini{background:var(--green);color:#fff;border-radius:var(--r-lg);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 40px;align-items:center}
+   .sg-footer-mini a{color:#d7ecdf;font-size:14px}
+   .sg-footer-mini a:hover{color:var(--lime)}
+   .sg-ring{position:relative;width:68px;height:68px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow)}
+   .sg-ring svg{position:absolute;inset:6px;width:56px;height:56px;transform:rotate(-90deg)}
+   .sg-ring circle{fill:none;stroke-width:5}
+   .sg-ring b{position:relative;font-size:15px;color:var(--green-dark)}
+   .sg-header{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+   .sg-header .site-header{position:relative}
+   @media(max-width:599px){.sg-card{padding:var(--space-4)}}
+  </style>
+ </head>
+ <body>
+  <a class="skip-link" href="#main">Bỏ qua điều hướng</a>
+  <header class="sg-top">
+   <div class="container">
+    <p class="eyebrow"><span></span>Visual System · WeBuy</p>
+    <h1>Style guide giao diện</h1>
+    <p>Một nguồn token dùng chung <code style="background:#fff">css/tokens.css</code> cho Kênh người mua, Seller Center và Xu WeBuy. Trang này minh họa màu, chữ, khoảng cách và 10 component đang dùng thật trên site (cùng class CSS, không có logic JS riêng).</p>
+   </div>
+  </header>
+  <nav class="sg-nav" aria-label="Mục lục style guide">
+   <div class="container">
+    <a href="#kiem-ke">Kiểm kê</a><a href="#mau">Màu</a><a href="#chu">Chữ</a><a href="#khoang-cach">Khoảng cách · bo góc · bóng</a><a href="#component">Component</a><a href="#chuyen-dong">Chuyển động</a>
+   </div>
+  </nav>
+
+  <main id="main">
+   <!-- ===== Kiểm kê ===== -->
+   <section class="sg-sec" id="kiem-ke">
+    <div class="container">
+     <h2>Kiểm kê giao diện</h2>
+     <p class="sg-lead">Các vùng đã rà soát và thống nhất về cùng bộ token (xanh đậm #0D6B47 · lime #D9FF4F · cam #FF6B00 · Reddit Sans).</p>
+     <div class="sg-card" style="overflow-x:auto">
+      <table class="sg-table">
+       <thead><tr><th>Vùng</th><th>File / class</th><th>Trước khi thống nhất</th><th>Sau</th></tr></thead>
+       <tbody>
+        <tr><td><b>Header</b></td><td><code>.site-header</code> · css/webuy-theme.css</td><td>styles.css khai báo token riêng (Inter/Playfair, cam #FF8A00) bị ghi đè lại</td><td class="sg-ok">Dùng token chung, thêm mục Danh mục + lối tắt Yêu thích</td></tr>
+        <tr><td><b>Banner / hero</b></td><td><code>.hero3d</code> · css/home.css</td><td>Mã màu ghi cứng trong CSS và thuộc tính style của HTML</td><td class="sg-ok">Hero cam + cảnh 3D, màu qua biến</td></tr>
+        <tr><td><b>Thẻ sản phẩm</b></td><td><code>.product-card</code>, <code>.fp-card</code>, <code>.near-card</code></td><td>3 kiểu bo góc/bóng khác nhau</td><td class="sg-ok">Bo góc --r-lg, bóng --shadow-*, nút công cụ chung</td></tr>
+        <tr><td><b>Modal</b></td><td><code>.app-modal</code>, <code>.cmp-dialog</code>, Xu WeBuy</td><td>Xu WeBuy dùng bảng màu và font riêng (Baloo 2, #FD550A)</td><td class="sg-ok">Bí danh --wbr-* trỏ về token chung, font Reddit Sans</td></tr>
+        <tr><td><b>Footer</b></td><td><code>.site-footer</code></td><td>Nền #073d31 ghi cứng</td><td class="sg-ok">Nền --green, chữ phụ #d7ecdf</td></tr>
+        <tr><td><b>Seller Center</b></td><td><code>.sc-*</code> · css/seller-center.css</td><td>Khai báo :root riêng (--sc-green, --sc-dark…)</td><td class="sg-ok">--sc-* là bí danh của token chung</td></tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== Màu ===== -->
+   <section class="sg-sec" id="mau">
+    <div class="container">
+     <h2>Màu</h2>
+     <p class="sg-lead">Màu chính dùng biến vai trò (<code>--color-*</code>); biến cũ (<code>--green</code>, <code>--lime</code>, <code>--orange</code>…) vẫn giữ để CSS cũ chạy đúng.</p>
+     <div class="sg-grid">
+      <div class="sg-sw"><i style="background:var(--wb-green-700)"></i><div><b>Xanh đậm #0D6B47</b><code>--color-primary</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-green-800)"></i><div><b>Xanh hover #0A5A3B</b><code>--color-primary-hover</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-green-900)"></i><div><b>Xanh rất đậm #08472F</b><code>--color-primary-strong</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-lime-500)"></i><div><b>Lime #D9FF4F</b><code>--color-accent</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-lime-100)"></i><div><b>Lime nhạt #F4FFD9</b><code>--color-accent-soft</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-orange-500)"></i><div><b>Cam #FF6B00</b><code>--color-cta</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-orange-600)"></i><div><b>Cam hover #E85F00</b><code>--color-cta-hover</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-cream)"></i><div><b>Kem #FFF6E8</b><code>--color-bg-warm</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-ink)"></i><div><b>Chữ tiêu đề #10281F</b><code>--color-text</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-muted)"></i><div><b>Chữ phụ #5F7068</b><code>--color-text-muted</code></div></div>
+      <div class="sg-sw"><i style="background:var(--wb-line)"></i><div><b>Viền #E3EBDB</b><code>--color-border</code></div></div>
+      <div class="sg-sw"><i style="background:var(--color-heart)"></i><div><b>Tim yêu thích #E5484D</b><code>--color-heart</code></div></div>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== Chữ ===== -->
+   <section class="sg-sec" id="chu">
+    <div class="container">
+     <h2>Chữ – Reddit Sans</h2>
+     <p class="sg-lead">Một họ chữ cho toàn site; cỡ chữ co giãn theo màn hình bằng <code>clamp()</code>.</p>
+     <div class="sg-card sg-type">
+      <p style="font-size:var(--fs-hero);font-weight:800;letter-spacing:-.035em;line-height:1.1;color:var(--ink)">Giá tốt hơn khi mua chung</p><code>--fs-hero · 800</code>
+      <p style="font-size:var(--fs-3xl);font-weight:800;color:var(--ink);margin-top:16px">Tiêu đề trang</p><code>--fs-3xl · 800</code>
+      <p style="font-size:var(--fs-2xl);font-weight:800;color:var(--ink);margin-top:16px">Tiêu đề khối</p><code>--fs-2xl · 800</code>
+      <p style="font-size:var(--fs-lg);font-weight:700;color:var(--ink);margin-top:16px">Tiêu đề thẻ</p><code>--fs-lg · 700</code>
+      <p style="font-size:var(--fs-md);color:var(--body);margin-top:16px">Đoạn nội dung: chọn món bạn cần, vào nhóm đang mở hoặc rủ bạn bè.</p><code>--fs-md · 400 · --lh-body</code>
+      <p style="font-size:var(--fs-sm);color:var(--muted);margin-top:16px">Chữ phụ, ghi chú điều kiện giá nhóm.</p><code>--fs-sm · --color-text-muted</code>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== Khoảng cách, bo góc, bóng ===== -->
+   <section class="sg-sec" id="khoang-cach">
+    <div class="container">
+     <h2>Khoảng cách · bo góc · bóng</h2>
+     <p class="sg-lead">Khoảng cách theo bước 4px; bóng có ánh xanh nhẹ thay cho bóng đen.</p>
+     <div class="sg-card">
+      <h3>Khoảng cách</h3>
+      <div class="sg-scale">
+       <div><span style="width:4px;height:24px"></span><small>--space-1</small></div>
+       <div><span style="width:8px;height:24px"></span><small>--space-2</small></div>
+       <div><span style="width:12px;height:24px"></span><small>--space-3</small></div>
+       <div><span style="width:16px;height:24px"></span><small>--space-4</small></div>
+       <div><span style="width:24px;height:24px"></span><small>--space-6</small></div>
+       <div><span style="width:32px;height:24px"></span><small>--space-8</small></div>
+       <div><span style="width:48px;height:24px"></span><small>--space-12</small></div>
+       <div><span style="width:64px;height:24px"></span><small>--space-16</small></div>
+      </div>
+     </div>
+     <div class="sg-card">
+      <h3>Bo góc &amp; bóng</h3>
+      <div class="sg-row">
+       <div class="sg-box" style="border-radius:var(--r-sm)">--r-sm 12</div>
+       <div class="sg-box" style="border-radius:var(--r-md)">--r-md 16</div>
+       <div class="sg-box" style="border-radius:var(--r-lg)">--r-lg 20</div>
+       <div class="sg-box" style="border-radius:var(--r-pill)">--r-pill</div>
+       <div class="sg-box" style="border-radius:var(--r-md);box-shadow:var(--shadow-sm)">--shadow-sm</div>
+       <div class="sg-box" style="border-radius:var(--r-md);box-shadow:var(--shadow)">--shadow</div>
+       <div class="sg-box" style="border-radius:var(--r-md);box-shadow:var(--shadow-lg)">--shadow-lg</div>
+      </div>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== Component ===== -->
+   <section class="sg-sec" id="component">
+    <div class="container">
+     <h2>Component</h2>
+     <p class="sg-lead">10 component dùng lại; rê chuột hoặc Tab để xem trạng thái hover/focus.</p>
+
+     <div class="sg-card">
+      <h3>1. Nút</h3>
+      <div class="sg-row">
+       <button class="btn btn-primary fx-press" type="button">Nút chính (cam)</button>
+       <button class="btn btn-outline fx-press" type="button">Nút viền xanh</button>
+       <button class="btn btn-cream fx-press" type="button">Nút lime</button>
+       <button class="btn btn-white-line fx-press" type="button">Nút phụ</button>
+       <button class="btn btn-primary" disabled type="button">Đã tắt</button>
+      </div>
+      <p class="muted" style="margin:12px 0 0;font-size:13px"><code>.btn</code> + <code>.btn-primary | .btn-outline | .btn-cream | .btn-white-line</code>, thêm <code>.fx-press</code> để có phản hồi nhấn.</p>
+     </div>
+
+     <div class="sg-card">
+      <h3>2. Header (thu nhỏ)</h3>
+      <div class="sg-header">
+       <header class="site-header">
+        <div class="container header-inner">
+         <a aria-label="WeBuy - Trang chủ" class="brand" href="index.html"><img alt="" class="brand-mark" src="images/logo-mark.png"/><span class="brand-text"><span class="brand-name">We<span>Buy</span></span><span class="brand-line">Mua chung · Giá tốt hơn</span></span></a>
+         <nav aria-label="Ví dụ điều hướng" class="primary-nav"><a class="nav-item is-active" href="index.html">Trang chủ</a><a class="nav-item" href="products.html">Sản phẩm</a><a class="nav-item" href="about.html">Giới thiệu</a></nav>
+         <div class="header-actions">
+          <a class="header-wish" aria-label="Yêu thích: 2 sản phẩm" href="profile.html#yeu-thich"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20.3s-7.4-4.4-9.2-9.1C1.5 7.7 3.7 4.6 7 4.6c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.3 0 5.5 3.1 4.2 6.6-1.8 4.7-9.2 9.1-9.2 9.1z"></path></svg><span class="wish-counter">2</span></a>
+          <a aria-label="Giỏ hàng" class="header-cart" href="cart.html"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.3 11.5a2 2 0 0 0 2 1.6H19a2 2 0 0 0 2-1.6L22 8H6"></path><circle cx="10" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle></svg><span class="cart-counter">1</span></a>
+         </div>
+        </div>
+       </header>
+      </div>
+     </div>
+
+     <div class="sg-row" style="align-items:stretch;gap:var(--space-4)">
+      <div class="sg-card" style="flex:1 1 300px">
+       <h3>3. Thẻ sản phẩm (tilt 3D + nút yêu thích / so sánh)</h3>
+       <article class="product-card fx-tilt sg-demo-card">
+        <div class="product-photo fx-skeleton"><img alt="Ảnh minh họa Balo canvas Everyday" height="400" src="images/product-01.webp" width="400"/><span class="tag tag-top">Được quan tâm</span></div>
+        <div class="card-tools">
+         <button aria-label="Ví dụ nút yêu thích (đang bật)" aria-pressed="true" class="tool-btn wish-btn is-on fx-press" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 20.3s-7.4-4.4-9.2-9.1C1.5 7.7 3.7 4.6 7 4.6c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.3 0 5.5 3.1 4.2 6.6-1.8 4.7-9.2 9.1-9.2 9.1z"></path></svg></button>
+         <button aria-label="Ví dụ nút so sánh" aria-pressed="false" class="tool-btn compare-btn fx-press" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h12l-3-3M20 17H8l3 3"></path></svg></button>
+        </div>
+        <div class="product-details">
+         <div class="product-category">Balo &amp; túi ví</div>
+         <h3>Balo canvas Everyday</h3>
+         <div class="prices"><span class="price-row-label">Giá mua lẻ</span><strong class="retail">299.000đ</strong></div>
+         <div class="prices group-price-row"><span class="price-row-label">Giá mua chung</span><strong class="group-price">249.000đ</strong></div>
+         <p class="tier-condition">Áp dụng từ 3 thành viên hợp lệ</p>
+         <div class="progress-track"><span style="width:67%"></span></div>
+         <a class="card-detail fx-icon" href="product-detail.html?id=1">Xem chi tiết <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+        </div>
+       </article>
+      </div>
+      <div class="sg-card" style="flex:1 1 300px">
+       <h3>4. Chip lọc &amp; ô danh mục</h3>
+       <div class="sg-row" role="group" aria-label="Ví dụ chip lọc">
+        <button class="cat-filter is-selected" type="button" aria-pressed="true" style="width:120px"><span class="cat-filter-img cat-filter-all" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg></span><span class="cat-filter-name">Tất cả</span><span class="cat-filter-count">24 sản phẩm</span></button>
+        <button class="cat-filter" type="button" aria-pressed="false" style="width:120px"><span class="cat-filter-img" aria-hidden="true"><img alt="" height="64" src="images/product-17.webp" width="64"/></span><span class="cat-filter-name">Thiết bị điện tử</span><span class="cat-filter-count">4 sản phẩm</span></button>
+       </div>
+       <div class="catalog-active" style="margin-top:14px"><button class="active-chip" type="button">Danh mục: Sắc đẹp <span aria-hidden="true">×</span></button><button class="active-chip" type="button">Tên: “kem” <span aria-hidden="true">×</span></button></div>
+       <h3 style="margin-top:22px">5. Ô nhập &amp; tìm kiếm</h3>
+       <form class="catalog-search" onsubmit="return false" role="search" style="margin:0"><label class="sr-only" for="sg-q">Tìm sản phẩm</label><input id="sg-q" placeholder="Tìm balo, áo thun, son…" type="search"/><button class="btn btn-primary fx-press" type="submit">Tìm kiếm</button></form>
+       <div class="form-field" style="margin-top:12px"><label for="sg-name">Tên hiển thị *</label><input id="sg-name" placeholder="Khách WeBuy"/></div>
+      </div>
+     </div>
+
+     <div class="sg-row" style="align-items:stretch;gap:var(--space-4)">
+      <div class="sg-card" style="flex:1 1 300px">
+       <h3>6. Nhãn, giá &amp; trạng thái</h3>
+       <div class="sg-row">
+        <span class="tag tag-top" style="position:static">Nổi bật</span>
+        <span class="group-state state-open">Đang mở</span>
+        <span class="group-state state-success">Đủ thành viên</span>
+        <span class="group-state state-expired">Đã hết hạn</span>
+        <span class="cmp-best">Thấp nhất</span>
+       </div>
+       <div class="sg-row" style="margin-top:14px;align-items:baseline"><strong class="group-price">249.000đ</strong><span class="retail">299.000đ</span></div>
+      </div>
+      <div class="sg-card" style="flex:1 1 300px">
+       <h3>7. Tiến độ nhóm</h3>
+       <div class="sg-row">
+        <div style="flex:1 1 180px"><div class="progress-track"><span style="width:67%"></span></div><p class="muted" style="margin:6px 0 0;font-size:13px">2/3 thành viên · <code>.progress-track</code></p></div>
+        <div class="sg-ring" role="img" aria-label="3 trên 4 thành viên"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="18" stroke="#EAF2D6"></circle><circle cx="22" cy="22" r="18" stroke="#FF6B00" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset=".25"></circle></svg><b>3/4</b></div>
+       </div>
+      </div>
+     </div>
+
+     <div class="sg-row" style="align-items:stretch;gap:var(--space-4)">
+      <div class="sg-card" style="flex:1 1 300px">
+       <h3>8. Modal</h3>
+       <div class="sg-modal" role="group" aria-label="Ví dụ hộp thoại">
+        <span class="dialog-icon">✦</span>
+        <h4>Đã tạo nhóm mua!</h4>
+        <p>Nhóm đang có 1/3 thành viên. Chia sẻ đường dẫn để bạn bè cùng tham gia.</p>
+        <button class="btn btn-primary fx-press" type="button">Theo dõi nhóm của tôi</button>
+       </div>
+      </div>
+      <div class="sg-card" style="flex:1 1 300px">
+       <h3>9. Thông báo (toast)</h3>
+       <div class="sg-row">
+        <div class="app-toast show sg-toast" role="status">Đã thêm Balo canvas Everyday vào giỏ hàng.</div>
+        <div class="app-toast show is-error sg-toast" role="status">Chỉ so sánh tối đa 3 sản phẩm.</div>
+       </div>
+       <h3 style="margin-top:22px">10. Footer &amp; Seller Center</h3>
+       <div class="sg-footer-mini"><span class="brand-name" style="color:#fff;font-size:24px">We<span style="color:var(--lime)">Buy</span></span><a href="index.html">Trang chủ</a><a href="products.html">Sản phẩm mua chung</a><a href="about.html#lien-he">Liên hệ</a></div>
+       <div class="sg-row" style="margin-top:14px"><a class="sc-btn sc-btn-primary" href="seller-center.html">Nút Seller Center</a><a class="sc-btn sc-btn-secondary" href="seller-center.html">Nút phụ Seller Center</a></div>
+      </div>
+     </div>
+    </div>
+   </section>
+
+   <!-- ===== Chuyển động ===== -->
+   <section class="sg-sec" id="chuyen-dong">
+    <div class="container">
+     <h2>Chuyển động &amp; micro-interaction</h2>
+     <p class="sg-lead">Bộ class trong <code>css/fx.css</code> + <code>js/fx.js</code>. Mobile giảm cường độ, tắt khi bật “giảm chuyển động” trong hệ điều hành.</p>
+     <div class="sg-card" style="overflow-x:auto">
+      <table class="sg-table">
+       <thead><tr><th>Class / token</th><th>Tác dụng</th></tr></thead>
+       <tbody>
+        <tr><td><code>.fx-tilt</code></td><td>Thẻ nghiêng 3D theo con trỏ (tối đa <code>--tilt-max</code> = 7°, mobile 4°) + ánh sáng lướt; focus bàn phím nhấc thẻ như khi rê chuột.</td></tr>
+        <tr><td><code>.fx-press</code></td><td>Nút lún nhẹ khi nhấn (thuộc tính <code>scale</code>, không phá transform sẵn có).</td></tr>
+        <tr><td><code>.fx-icon</code></td><td>Mũi tên trượt sang phải khi hover/focus.</td></tr>
+        <tr><td><code>.fx-skeleton</code></td><td>Khung ảnh có hiệu ứng chờ, ảnh hiện dần khi tải xong; ảnh lỗi hiện chữ thay thế.</td></tr>
+        <tr><td><code>.fx-pop</code></td><td>Icon tim / so sánh nảy khi bật.</td></tr>
+        <tr><td><code>--ease</code>, <code>--dur</code>, <code>--motion-scale</code></td><td>Đường cong và thời lượng chung; <code>--motion-scale</code> = 1 (desktop) · 0,45 (mobile) · 0 (giảm chuyển động).</td></tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </section>
+  </main>
+  <script defer src="js/fx.js"></script>
+ </body>
+</html>

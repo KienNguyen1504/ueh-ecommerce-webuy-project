@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0D6B47">
+  <title>Đấu giá ngược | WeBuy</title><link rel="icon" href="images/logo-mark.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="css/tokens.css" rel="stylesheet"><link href="css/styles.css" rel="stylesheet"><link href="css/app.css" rel="stylesheet"><link href="css/webuy-theme.css" rel="stylesheet"><link href="css/fx.css" rel="stylesheet"><link href="css/rewards.css" rel="stylesheet"><link href="css/advanced-features.css" rel="stylesheet">
+</head>
+<body>
+  <div class="announcement"><div class="container announcement-inner"><span>✳ WeBuy — Mua chung, giá tốt hơn mỗi ngày</span><a href="about.html#quy-trinh">Khám phá cách mua chung →</a></div></div>
+  <header class="site-header"><div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="WeBuy - Trang chủ"><img class="brand-mark" src="images/logo-mark.png" alt=""><span class="brand-text"><span class="brand-name">We<span>Buy</span></span><span class="brand-line">Mua chung · Giá tốt hơn</span></span></a>
+    <nav class="primary-nav" aria-label="Điều hướng chính"><a class="nav-item" href="index.html">Trang chủ</a><a class="nav-item" href="products.html">Sản phẩm</a><a class="nav-item" href="about.html">Giới thiệu</a></nav>
+    <div class="header-actions"><form action="products.html" class="header-search" method="get" role="search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg><label class="sr-only" for="bidding-search">Tìm sản phẩm</label><input id="bidding-search" name="q" type="search" placeholder="Tìm món bạn thích..."><button type="submit" aria-label="Tìm kiếm">→</button></form><a class="header-cart" href="cart.html" aria-label="Giỏ hàng">🛒</a><a class="header-avatar" href="profile.html"><span class="avatar-circle">WB</span><span class="avatar-caption">Tài khoản</span></a></div>
+  </div></header>
+  <main class="feature-page"><div class="container">
+    <section class="feature-hero"><span class="eyebrow">ĐẤU GIÁ NGƯỢC</span><h1>Tìm mức giá phù hợp cho nhu cầu của bạn</h1><p>Tạo yêu cầu mua chung, nhận các báo giá minh họa và chọn phương án phù hợp.</p><span class="demo-pill">DEMO – BÁO GIÁ MÔ PHỎNG</span></section>
+    <div class="bid-tabs" role="tablist" aria-label="Luồng đấu giá ngược">
+      <button id="bid-tab-buyer" class="is-active" type="button" role="tab" aria-selected="true" aria-controls="bid-form-panel">Người mua: Tạo yêu cầu</button>
+      <button id="bid-tab-seller" type="button" role="tab" aria-selected="false" aria-controls="bid-seller-panel">Người bán: Gửi báo giá <span class="demo-pill">DEMO</span></button>
+      <button id="bid-tab-compare" type="button" role="tab" aria-selected="false" aria-controls="bid-compare-panel">Người mua: Chọn báo giá</button>
+    </div>
+    <div class="bid-layout">
+      <section class="bid-panel" id="bid-form-panel" role="tabpanel" aria-labelledby="bid-tab-buyer">
+        <h2>Tạo yêu cầu mua chung</h2><p>Điền nhu cầu mua, số người dự kiến, giá mục tiêu và hạn cuối để người bán gửi đề xuất.</p>
+        <form id="bid-form" novalidate>
+          <label class="bid-field">Loại sản phẩm<input name="productType" type="text" minlength="2" maxlength="100" placeholder="Ví dụ: balo laptop, bình giữ nhiệt" required></label>
+          <label class="bid-field">Danh mục<select name="category" id="bid-category"><option value="">Chưa xác định / khác</option></select></label>
+          <label class="bid-field">Số người dự kiến<input name="people" type="number" min="2" max="99" step="1" placeholder="Ví dụ: 5" required></label>
+          <label class="bid-field">Giá mục tiêu / sản phẩm (VNĐ)<input name="targetPrice" type="number" min="1000" step="1000" placeholder="Ví dụ: 250000" required></label>
+          <label class="bid-field">Hạn chót nhận báo giá<input name="deadline" type="datetime-local" required></label>
+          <p id="bid-form-error" class="bid-form-error" role="alert" hidden></p>
+          <button class="btn btn-primary" type="submit">Tạo yêu cầu mua</button>
+        </form>
+      </section>
+
+      <section class="bid-panel" id="bid-seller-panel" role="tabpanel" aria-labelledby="bid-tab-seller" hidden>
+        <div class="bid-panel-heading"><div><h2>Người bán gửi báo giá</h2><p>Chọn một yêu cầu đang mở, nhập thông tin cửa hàng và mức giá đề xuất. Báo giá trong bài demo được lưu trên trình duyệt này.</p></div><span class="demo-pill">NGƯỜI BÁN · DEMO</span></div>
+        <div id="bid-seller-requests" class="bid-request-list"></div>
+      </section>
+
+      <section class="bid-panel" id="bid-compare-panel" role="tabpanel" aria-labelledby="bid-tab-compare" hidden>
+        <div class="bid-panel-heading"><div><h2>So sánh và chọn báo giá</h2><p>Người mua xem các đề xuất, so sánh giá và chọn một phương án. Khi chọn, yêu cầu sẽ được khóa.</p></div><span class="demo-pill">BÁO GIÁ MÔ PHỎNG</span></div>
+        <div id="bid-requests" class="bid-request-list"></div>
+      </section>
+    </div>
+  </div></main>
+  <footer class="site-footer"><div class="container footer-bottom"><nav class="help-links" aria-label="Hỗ trợ"><a href="policy.html">Chính sách</a><a href="faq.html">Câu hỏi thường gặp</a></nav><span>© 2026 WeBuy · Giao diện phục vụ đồ án học tập.</span><span>Đấu giá ngược · Báo giá mô phỏng</span></div></footer>
+  <div class="app-toast" id="app-toast" role="status" aria-live="polite"></div>
+  <script defer src="js/catalog-data.js"></script><script defer src="js/app.js"></script><script defer src="js/rewards-art.js"></script><script defer src="js/rewards.js"></script><script defer src="js/reverse-bidding.js"></script><script defer src="js/image-search.js"></script><script defer src="js/weby-assistant.js"></script><script defer src="js/notifications.js"></script>
+  <script defer src="js/feature-shell.js"></script>
+  <script defer src="js/image-fallback.js"></script>
+<div id="app-dialog-root"></div></body></html>

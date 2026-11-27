@@ -12,10 +12,14 @@
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="css/tokens.css" rel="stylesheet"/>
   <link href="css/styles.css" rel="stylesheet"/>
   <link href="css/app.css" rel="stylesheet"/>
   <link href="css/webuy-theme.css" rel="stylesheet"/>
+  <link href="css/fx.css" rel="stylesheet"/>
+  <link href="css/features.css" rel="stylesheet"/>
   <link href="css/rewards.css" rel="stylesheet"/>
+  <link href="css/advanced-features.css" rel="stylesheet"/>
  </head>
  <body>
   <a class="skip-link" href="#main">
@@ -141,95 +145,62 @@
    </section>
    <section class="section products-page-section">
     <div class="container">
-     <div class="filter-bar">
-      <div class="filter-tabs">
-       <button class="filter-chip is-selected" data-filter="all" type="button">
-        Tất cả
-       </button>
-       <button class="filter-chip" data-filter="balo" type="button">
-        Balo &amp; t&uacute;i v&iacute;
-       </button>
-       <button class="filter-chip" data-filter="ao-thun" type="button">
-        &Aacute;o thun
-       </button>
-       <button class="filter-chip" data-filter="gia-dung" type="button">
-        Thiết bị gia dụng
-       </button>
-       <button class="filter-chip" data-filter="trang-suc" type="button">
-        Trang sức
-       </button>
-      </div>      
-<label class="sr-only" for="catalog-sort">
-  Sắp xếp sản phẩm
-</label>
+     <!-- Toàn bộ danh mục: sinh từ WEBUY_CATEGORIES (js/catalog-render.js), lọc qua data-filter (js/app.js) -->
+     <section class="catalog-cats" id="tat-ca-danh-muc" tabindex="-1" aria-labelledby="all-cats-title">
+      <div class="catalog-cats-head">
+       <h2 id="all-cats-title">Toàn bộ danh mục</h2>
+       <p>Chọn danh mục để lọc; kết hợp được với tìm tên, khoảng giá và sắp xếp.</p>
+      </div>
+      <div class="catalog-cat-grid filter-tabs" id="catalog-cat-grid" role="group" aria-label="Lọc theo danh mục">
+       <button class="filter-chip is-selected" data-filter="all" type="button">Tất cả</button>
+      </div>
+     </section>
 
-
-<select id="catalog-sort" class="catalog-sort">
-  <option value="default">Sắp xếp: Mặc định</option>
-  <option value="price-asc">Giá mua lẻ: Thấp đến cao</option>
-  <option value="price-desc">Giá mua lẻ: Cao đến thấp</option>
-  <option value="group-asc">Giá mua chung: Thấp đến cao</option>
-  <option value="group-desc">Giá mua chung: Cao đến thấp</option>
-</select>
-      <span class="filter-info" id="catalog-count">
-       &Dstrok;ang hiển thị 8 sản phẩm
-      </span>
+     <div class="catalog-toolbar">
+      <form class="catalog-search" id="catalog-search" role="search">
+       <label class="sr-only" for="catalog-q">Tìm sản phẩm</label>
+       <input id="catalog-q" name="q" placeholder="Tìm balo, áo thun, sổ tay..." type="search"/>
+       <button class="btn btn-primary fx-press" type="submit">Tìm kiếm</button>
+      </form>
+      <form id="catalog-price-range" class="catalog-price-range">
+       <strong>Khoảng giá mua chung (VNĐ)</strong>
+       <label class="sr-only" for="catalog-group-min">Giá mua chung tối thiểu</label>
+       <input id="catalog-group-min" type="number" min="0" step="1000" placeholder="₫ TỪ" inputmode="numeric">
+       <span aria-hidden="true">—</span>
+       <label class="sr-only" for="catalog-group-max">Giá mua chung tối đa</label>
+       <input id="catalog-group-max" type="number" min="0" step="1000" placeholder="₫ ĐẾN" inputmode="numeric">
+       <button type="submit" class="btn btn-primary fx-press">Áp dụng</button>
+       <button type="button" id="catalog-range-clear">Xóa khoảng giá</button>
+      </form>
+      <div class="catalog-sortbox">
+       <label for="catalog-sort">Sắp xếp</label>
+       <select id="catalog-sort" class="catalog-sort">
+        <option value="default">Mặc định</option>
+        <option value="price-asc">Giá mua lẻ: thấp đến cao</option>
+        <option value="price-desc">Giá mua lẻ: cao đến thấp</option>
+        <option value="group-asc">Giá mua chung: thấp đến cao</option>
+        <option value="group-desc">Giá mua chung: cao đến thấp</option>
+       </select>
+      </div>
      </div>
-     <form class="catalog-search" id="catalog-search" role="search">
-      <label class="sr-only" for="catalog-q">
-       T&igrave;m sản phẩm
-      </label>
-      <input id="catalog-q" name="q" placeholder="T&igrave;m balo, &aacute;o thun, trang sức..." type="search"/>
-      <button class="btn btn-primary" type="submit">
-       T&igrave;m kiếm
-      </button>
-     </form>
-    
-<form id="catalog-price-range" class="catalog-price-range">
-  <strong>Khoảng giá mua chung (VNĐ)</strong>
 
-  <label class="sr-only" for="catalog-group-min">
-    Giá mua chung tối thiểu
-  </label>
-  <input
-    id="catalog-group-min"
-    type="number"
-    min="0"
-    step="1000"
-    placeholder="₫ TỪ"
-  >
+     <div class="catalog-status">
+      <span class="filter-info" id="catalog-count" role="status">Đang hiển thị sản phẩm</span>
+      <div class="catalog-active" id="catalog-active" aria-label="Bộ lọc đang áp dụng"></div>
+      <button type="button" id="catalog-reset-all" class="catalog-reset fx-press" hidden>Đặt lại bộ lọc</button>
+     </div>
 
-  <span>—</span>
-
-  <label class="sr-only" for="catalog-group-max">
-    Giá mua chung tối đa
-  </label>
-  <input
-    id="catalog-group-max"
-    type="number"
-    min="0"
-    step="1000"
-    placeholder="₫ ĐẾN"
-  >
-
-  <button type="submit" class="btn btn-primary">
-    Áp dụng
-  </button>
-
-  <button type="button" id="catalog-range-clear">
-    Đặt lại
-  </button>
-</form>
-
-     <p class="empty-search" hidden="" id="empty-search">
-      Chưa t&igrave;m thấy sản phẩm ph&ugrave; hợp.
-      <button id="clear-filters" type="button">
-       Hiển thị tất cả
-      </button>
-     </p>
+     <div class="empty-search" hidden id="empty-search">
+      <span class="empty-search-ico" aria-hidden="true">🔍</span>
+      <div>
+       <strong>Chưa tìm thấy sản phẩm phù hợp.</strong>
+       <p>Thử bỏ bớt điều kiện lọc, đổi từ khóa hoặc mở rộng khoảng giá.</p>
+      </div>
+      <button id="clear-filters" type="button">Đặt lại &amp; xem tất cả</button>
+     </div>
      <div class="product-grid" id="product-grid" aria-live="polite">
       <!-- Thẻ sản phẩm được tạo động bởi js/catalog-render.js từ dữ liệu chung. -->
-      </div>
+     </div>
     </div>
    </section>
   </main>
@@ -299,7 +270,7 @@
      </a>
     </div>
    </div>
-   <div class="container footer-bottom">
+   <div class="container footer-bottom"><nav class="help-links" aria-label="Hỗ trợ"><a href="policy.html">Chính sách</a><a href="faq.html">Câu hỏi thường gặp</a></nav>
     <span>
      &copy; 2026 WeBuy. Giao diện phục vụ &dstrok;ồ &aacute;n học tập.
     </span>
@@ -314,11 +285,20 @@
   </div>
   <script defer="" src="js/catalog-data.js">
   </script>
+  <script defer src="js/wishlist.js"></script>
+  <script defer src="js/compare.js"></script>
+  <script defer src="js/fx.js"></script>
    <script defer src="js/catalog-render.js"></script>
   <script defer="" src="js/app.js">
   </script>
   <!-- Tính năng 11: Xu WeBuy (điểm danh, trò chơi) -->
   <script defer="" src="js/rewards-art.js"></script>
   <script defer="" src="js/rewards.js"></script>
- </body>
+ 
+  <script defer src="js/image-search.js"></script>
+  <script defer src="js/image-fallback.js"></script>
+  <script defer src="js/weby-assistant.js"></script>
+  <script defer src="js/notifications.js"></script>
+  <script defer src="js/feature-shell.js"></script>
+</body>
 </html>

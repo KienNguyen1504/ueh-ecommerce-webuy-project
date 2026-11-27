@@ -1,5 +1,5 @@
 /* WeBuy Seller Center: CSS riêng, không ảnh hưởng Kênh người mua. */
-:root { --sc-green:#0d6b47; --sc-dark:#083c31; --sc-ink:#193c30; --sc-muted:#678075; --sc-bg:#f5f8f6; --sc-border:#dceae2; --sc-soft:#eaf6ef; --sc-red:#b83232; --sc-radius:17px; }
+/* Token: css/tokens.css (bí danh --sc-*) */
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body { margin:0; font-family:'Reddit Sans',system-ui,-apple-system,'Segoe UI',sans-serif; background:var(--sc-bg); color:var(--sc-ink); }

@@ -1,6 +1,6 @@
 /* Liên kết Kênh người bán, bổ sung không đụng layout/menu mua hàng hiện tại. */
 .primary-nav .seller-entry {
-  color: #0d6b47;
+  color: var(--green);
   border-radius: 9px;
   font-weight: 700;
   white-space: nowrap;

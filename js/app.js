@@ -2,12 +2,45 @@
 (() => {
   'use strict';
   const products = window.WEBUY_PRODUCTS || [];
+  const lan = window.WeBuyLan;
   const storagePrefix = 'webuy_demo_v2_';
-  const CATEGORIES = { 'all':'Tất cả', 'balo':'Balo & túi ví', 'ao-thun':'Áo thun', 'gia-dung':'Thiết bị gia dụng', 'trang-suc':'Trang sức' };
+  /* Danh mục lấy từ cùng nguồn dữ liệu (js/catalog-data.js); dự phòng 4 danh mục cũ nếu thiếu. */
+  const CATEGORY_LIST = Array.isArray(window.WEBUY_CATEGORIES) && window.WEBUY_CATEGORIES.length
+    ? window.WEBUY_CATEGORIES
+    : [{id:'balo',name:'Balo & túi ví'},{id:'ao-thun',name:'Áo thun'},{id:'gia-dung',name:'Thiết bị gia dụng'},{id:'trang-suc',name:'Trang sức'}];
+  const CATEGORIES = { 'all':'Tất cả', ...Object.fromEntries(CATEGORY_LIST.map(c => [c.id, c.name])) };
   const safe = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money = (n) => new Intl.NumberFormat('vi-VN').format(n || 0) + 'đ';
   const get = (key, fallback) => { try { const val = localStorage.getItem(storagePrefix + key); return val ? JSON.parse(val) : fallback; } catch { return fallback; } };
   const put = (key, value) => { try { localStorage.setItem(storagePrefix + key, JSON.stringify(value)); } catch { console.warn('WeBuy demo: không thể lưu dữ liệu trên trình duyệt hiện tại.'); } };
+  // A pending order can be replayed after a reload. All writes are absolute values.
+  function finishOrderWrite() {
+    const change = get('pendingOrder', null);
+    if (!change) return;
+    const orders = get('orders', []);
+    const index = orders.findIndex(o => o.id === change.order.id);
+    if (index < 0) orders.push(change.order);
+    else orders[index] = change.order;
+    localStorage.setItem(storagePrefix + 'orders', JSON.stringify(orders));
+    if (change.cart) localStorage.setItem(storagePrefix + 'cart', JSON.stringify(change.cart));
+    if (change.wallet) localStorage.setItem(storagePrefix + 'rewards', JSON.stringify(change.wallet));
+    localStorage.removeItem(storagePrefix + 'pendingOrder');
+  }
+  function writeOrder(order, remaining, wallet) {
+    localStorage.setItem(storagePrefix + 'pendingOrder', JSON.stringify({order, cart:remaining, wallet}));
+    finishOrderWrite();
+    window.WeBuyRewards?.sync();
+  }
+  async function withOrderLock(action) {
+    try {
+      const run = () => { finishOrderWrite(); action(); };
+      if (navigator.locks) await navigator.locks.request('webuy-demo-orders', run);
+      else run();
+    } catch {
+      flash('Chưa thể hoàn tất thao tác. Hãy kiểm tra dung lượng trình duyệt rồi thử lại.', 'error');
+    }
+  }
+  finishOrderWrite();
   const uid = (() => { let id = get('uid',null); if(!id) { id='u-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);put('uid',id); } return id; })();
   const product = id => products.find(x => x.id === String(id));
   const page = location.pathname.split('/').pop() || 'index.html';
@@ -17,10 +50,28 @@
     el.textContent=message;el.className='app-toast show '+(type==='error'?'is-error':'');
     clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3600);
   };
-  const seedGroups = () => products.map((p,i)=>({id:'demo-'+p.id,productId:p.id,need:p.minMembers,members:[],demoCount:p.initialMembers,endsAt:Date.now()+([18,12,20,9,16,14,17,11][i]*3600000),createdAt:Date.now(),isDemo:true}));
+  const DEMO_GROUP_REGION = {
+    '1': 'hcm', '2': 'hn', '3': 'hcm', '4': 'dn',
+    '5': 'hcm', '6': 'dna', '7': 'hn', '8': 'dn',
+    '9': 'hn', '10': 'hcm', '11': 'dn', '12': 'hcm', '13': 'hn', '14': 'hcm', '15': 'dn', '16': 'hn',
+    '17': 'hcm', '18': 'hn', '19': 'dna', '20': 'dn', '21': 'hcm', '22': 'hn', '23': 'hcm', '24': 'dn'
+  };
+
+  const DEMO_HOURS = [18,12,20,9,16,14,17,11];
+  const seedGroup = (p,i) => ({id:'demo-'+p.id,productId:p.id,need:p.minMembers,members:[],demoCount:p.initialMembers||0,endsAt:Date.now()+DEMO_HOURS[i%DEMO_HOURS.length]*3600000,createdAt:Date.now(),isDemo:true,regionCode:DEMO_GROUP_REGION[p.id] || 'all'});
+  const seedGroups = () => products.filter(p => !p.shopId).map(seedGroup);
   let groups = get('groups', null);
   if(!Array.isArray(groups)){groups=seedGroups();put('groups',groups);}
-  const saveGroups = () => put('groups',groups);
+  else if (!lan) {
+    /* Trình duyệt đã lưu nhóm mẫu của 8 sản phẩm cũ: bổ sung nhóm mẫu cho sản phẩm mới, giữ nguyên nhóm cũ. */
+    let added = false;
+    products.forEach((p,i) => { if(!p.shopId && !groups.some(g => g.id === 'demo-'+p.id)){ groups.push(seedGroup(p,i)); added = true; } });
+    groups.forEach(g => {
+      if (g.isDemo && !g.regionCode) { g.regionCode = DEMO_GROUP_REGION[g.productId] || 'all'; added = true; }
+    });
+    if(added) put('groups', groups);
+  }
+  const saveGroups = () => { put('groups',groups); document.dispatchEvent(new Event('webuy:groups')); };
 
   /* =========================================================
      QUẢN LÝ ĐỊA ĐIỂM KHU VỰC (DANH SÁCH CHÍNH XÁC THEO YÊU CẦU)
@@ -34,12 +85,12 @@
     {
       code: 'hn',
       name: 'TP. Hà Nội',
-      art: `<img src="images/H%C3%80%20N%E1%BB%98I.jpg" alt="TP. Hà Nội">`
+      art: `<img src="images/ha-noi.jpg" alt="TP. Hà Nội">`
     },
     {
       code: 'dn',
       name: 'Đà Nẵng',
-      art: `<img src="images/%C4%90%C3%80%20N%E1%BA%B4NG.jpg" alt="Đà Nẵng">`
+      art: `<img src="images/da-nang.jpg" alt="Đà Nẵng">`
     }
   ];
 
@@ -81,11 +132,6 @@
     { code: 'ag', name: 'An Giang', note: '(sáp nhập Kiên Giang – An Giang)' }
   ];
 
-  const DEMO_GROUP_REGION = {
-    '1': 'hcm', '2': 'hn', '3': 'hcm', '4': 'dn',
-    '5': 'hcm', '6': 'dna', '7': 'hn', '8': 'dn'
-  };
-
   const getCurrentLocation = () => {
     const saved = get('location', null);
     if (saved && saved.code) {
@@ -94,6 +140,7 @@
     return LOCATIONS[0];
   };
 
+  window.WeBuyRegions = LOCATIONS;
   let currentLocation = getCurrentLocation();
 
   const updateLocationUI = () => {
@@ -177,7 +224,7 @@
       });
     };
 
-    root?.addEventListener('click', ev => {
+    modal?.addEventListener('click', ev => {
       const pickBtn = ev.target.closest('[data-pick-loc]');
       if (pickBtn) {
         selectedCode = pickBtn.dataset.pickLoc;
@@ -188,6 +235,7 @@
         const picked = LOCATIONS.find(l => l.code === selectedCode) || LOCATIONS[0];
         put('location', { code: picked.code, name: picked.name });
         updateLocationUI();
+        document.dispatchEvent(new Event('webuy:location'));
         closeDialog();
         flash(`Đã cập nhật khu vực: ${picked.name}`);
         renderCatalog();
@@ -241,6 +289,10 @@
     updateAvatar();
   };
   const detailLink = p => `product-detail.html?id=${encodeURIComponent(p.id)}`;
+  function groupActions(id, member = true) {
+    return `<div class="group-tools"><button type="button" data-share-group="${safe(id)}">Chia sẻ cho bạn bè</button>
+      ${member ? `<button type="button" data-chat-group="${safe(id)}">Chat nhóm</button>` : ''}</div>`;
+  }
   const addCart=(pId,kind='retail',groupId=null,qty=1)=>{
     const p=product(pId);if(!p)return;
     qty=Math.max(1,Math.min(99,Number(qty)||1));
@@ -249,7 +301,37 @@
     else cart.push({productId:p.id,kind,groupId,quantity:qty,addedAt:Date.now()});
     saveCart();flash(`Đã thêm ${p.name} vào giỏ hàng.`);
   };
+  function addGroupToCart(g) {
+    if (!cart.some(x => x.kind === 'group' && x.groupId === g.id)) {
+      cart.push({productId:g.productId,kind:'group',groupId:g.id,quantity:1,addedAt:Date.now()});
+      saveCart();
+    }
+  }
+  async function joinLiveGroup(id) {
+    try {
+      await lan.join(id);
+      const group = groups.find(g => g.id === id);
+      if (!group) return;
+      addGroupToCart(group);
+      renderDetail(); renderCart(); renderProfile();
+      flash('Đã tham gia nhóm. Bạn có thể mở chat nhóm.');
+    } catch (error) { flash(error.message,'error'); lan.refresh(); }
+  }
+  async function createLiveGroup(p, region, hours) {
+    try {
+      const id = await lan.create(p,region,hours);
+      const group = groups.find(g=>g.id===id);
+      if (!group) return;
+      addGroupToCart(group);
+      const url = new URL(detailLink(p),lan.shareOrigin);
+      url.searchParams.set('group',id); url.hash='group-'+id;
+      showDialog(`<h2>Nhóm mua của bạn</h2><p>Mời bạn bè mở liên kết này trên cùng Wi-Fi để tham gia nhóm <strong>${safe(p.name)}</strong>.</p>
+        <div class="share-field"><input id="new-group-link" value="${safe(url.href)}" readonly aria-label="Liên kết mời"><button type="button" data-copy-group="${safe(id)}">Sao chép</button></div>
+        ${groupActions(id)}<a class="btn btn-primary" href="profile.html">Theo dõi nhóm của tôi</a>`);
+    } catch (error) { flash(error.message,'error'); }
+  }
   const joinGroup=(gId)=>{
+    if (lan) return joinLiveGroup(gId);
     const g=groups.find(x=>x.id===gId);if(!g){flash('Không tìm thấy nhóm mua.','error');return;}
     if(Date.now()>g.endsAt){flash('Nhóm đã hết thời gian tham gia.','error');return;}
     if((g.members||[]).includes(uid)){flash('Bạn đã tham gia nhóm này. Xem tại Hồ sơ.');return;}
@@ -259,21 +341,36 @@
     saveCart();flash(groupState(g)==='success'?'Nhóm đã đủ thành viên! Sản phẩm đã sẵn sàng trong giỏ.':'Đã tham gia nhóm! Theo dõi tiến độ trong Hồ sơ.');
     renderDetail();renderCart();renderProfile();refreshProductProgress();
   };
+  const findActivePersonalGroup = pId => groups.find(g =>
+    String(g.productId) === String(pId) && !g.isDemo && groupState(g) === 'open' &&
+    ((g.members || []).includes(uid) || g.createdBy === uid)
+  );
   const createGroup=(pId)=>{
-    const p=product(pId);if(!p)return;
+    const p=product(pId);if(!p){flash('Không tìm thấy sản phẩm để tạo nhóm.','error');return;}
+    /* Demo rule: one active self-created/joined group per product and browser user. */
+    const existing=findActivePersonalGroup(pId);
+    if(existing){
+      flash('Bạn đã có một nhóm mua đang mở cho sản phẩm này. Hãy tiếp tục nhóm hiện tại thay vì tạo trùng.','error');
+      renderDetail();renderProfile();return;
+    }
     const id='group-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);
-    const regionCode = currentLocation.code !== 'all' ? currentLocation.code : 'hcm';
-    groups.push({id,productId:pId,need:p.minMembers,members:[uid],demoCount:0,endsAt:Date.now()+24*3600000,createdAt:Date.now(),isDemo:false,regionCode});
+    const regionCode = currentLocation.code;
+    const selectedHours = Number(document.querySelector('#group-hours')?.value);
+    const hours = [1,6,12,24,48,72,168].includes(selectedHours) ? selectedHours : Number(p.groupDurationHours) || 24;
+    if (lan) return createLiveGroup(p,regionCode,hours);
+    groups.push({id,productId:String(pId),need:p.minMembers,members:[uid],createdBy:uid,demoCount:0,endsAt:Date.now()+hours*3600000,createdAt:Date.now(),isDemo:false,regionCode});
     saveGroups();cart.push({productId:pId,kind:'group',groupId:id,quantity:1,addedAt:Date.now()});saveCart();
     renderDetail();renderProfile();
-    showDialog(`<span class="dialog-icon">✦</span><h2>Đã tạo nhóm mua!</h2><p>Nhóm <strong>${safe(p.name)}</strong> đang có <b>1/${p.minMembers}</b> thành viên. Bản demo cho phép bạn mô phỏng có thêm thành viên tại trang chi tiết sản phẩm. Liên kết chỉ dùng minh họa, chưa thể mời người dùng khác thật sự.</p><div class="share-field"><input value="${safe(new URL(detailLink(p)+'&group='+encodeURIComponent(id),location.href).href)}" id="new-group-link" readonly><button type="button" data-copy-group="${safe(id)}">Sao chép</button></div><p class="muted">Dữ liệu nhóm hiện chỉ lưu trên trình duyệt này, liên kết chưa đồng bộ được giữa các thiết bị.</p><a class="btn btn-primary" href="profile.html">Theo dõi nhóm của tôi</a>`);
+    showDialog(`<span class="dialog-icon">✦</span><h2>Đã tạo nhóm mua!</h2><p>Nhóm <strong>${safe(p.name)}</strong> đang có <b>1/${p.minMembers}</b> thành viên. Bản demo cho phép bạn mô phỏng có thêm thành viên tại trang chi tiết sản phẩm. Liên kết chỉ dùng minh họa, chưa thể mời người dùng khác thật sự.</p><div class="share-field"><input value="${safe(new URL(detailLink(p)+'&group='+encodeURIComponent(id),location.href).href)}" id="new-group-link" readonly><button type="button" data-copy-group="${safe(id)}">Sao chép</button></div><p class="muted">Dữ liệu nhóm hiện chỉ lưu trên trình duyệt này, liên kết chưa đồng bộ được giữa các thiết bị.</p>${groupActions(id)}<a class="btn btn-primary" href="profile.html">Theo dõi nhóm của tôi</a>`);
   };
+  let dialogOpener;
   const showDialog=content=>{
+    dialogOpener = document.activeElement;
     const root=document.getElementById('app-dialog-root');if(!root)return;
     root.innerHTML=`<div class="app-modal-backdrop"><section class="app-modal" role="dialog" aria-modal="true" aria-label="Thông tin nhóm mua"><button type="button" class="modal-close" data-close-dialog aria-label="Đóng">×</button>${content}</section></div>`;
     root.querySelector('[data-close-dialog]')?.focus();
   };
-  const closeDialog=()=>{const root=document.getElementById('app-dialog-root');if(root)root.innerHTML='';};
+  const closeDialog=()=>{const root=document.getElementById('app-dialog-root');if(root?.firstChild){root.replaceChildren(); dialogOpener?.focus();}};
   const refreshProductProgress=()=>{
     document.querySelectorAll('article.product-card[data-product-id]').forEach(card=>{
       const p=product(card.dataset.productId);if(!p)return;
@@ -419,6 +516,12 @@ const normalizeSearchText = (text) =>
     document.title=p.name+' | WeBuy';setText('#detail-title',p.name);setText('#detail-category',p.category.toUpperCase()+' · SẢN PHẨM');
     setText('#detail-retail-price',money(p.retail));setText('#detail-group-price',money(p.group));setText('#detail-group-min',`Áp dụng khi nhóm đạt ít nhất ${p.minMembers} thành viên`);
     setText('#detail-summary',p.description);
+    const storeLink = document.getElementById('detail-store');
+    if (storeLink && p.shopId) {
+      storeLink.hidden = false;
+      storeLink.href = 'seller-store.html?id=' + encodeURIComponent(p.shopId);
+      storeLink.textContent = 'Xem cửa hàng · ' + (JSON.parse(localStorage.getItem('webuy_seller_v1_shop') || '{}')?.storeName || 'Người bán');
+    }
     const breadcrumbName = document.querySelector('.breadcrumb span:last-child');
     if (breadcrumbName) breadcrumbName.textContent = p.name;
     const im=document.getElementById('detail-product-image');if(im){im.src=p.image;im.alt=p.name;}
@@ -432,7 +535,7 @@ const normalizeSearchText = (text) =>
     const table=document.getElementById('dynamic-tiers');if(table){table.innerHTML=`<h2>So sánh giá theo hình thức mua</h2><table class="tier-table"><thead><tr><th>Hình thức</th><th>Điều kiện</th><th>Giá / sản phẩm</th></tr></thead><tbody><tr><td>Mua lẻ</td><td>1 người</td><td>${money(p.retail)}</td></tr><tr class="is-tier"><td>Mua chung</td><td>Từ ${p.minMembers} người</td><td>${money(p.group)}</td></tr></tbody></table><p class="table-note">Giá mua chung chỉ áp dụng khi nhóm đủ số thành viên trong thời hạn. Đây là dữ liệu demo.</p>`;}
     const currentGroups=groups.filter(g=>g.productId===p.id).sort((a,b)=>(groupState(a)==='open'?0:1)-(groupState(b)==='open'?0:1));
     const open=currentGroups.filter(g=>groupState(g)==='open');
-    const mainGroup=open[0]||currentGroups[0];
+    const mainGroup=currentGroups.find(g => g.id === params.get('group')) || open[0] || currentGroups[0];
     if(mainGroup){
       setText('#group-preview-count',`${groupCount(mainGroup)}/${mainGroup.need} thành viên`);
       const progress=document.getElementById('group-preview-progress');if(progress)progress.style.width=Math.min(100,groupCount(mainGroup)/mainGroup.need*100)+'%';
@@ -445,10 +548,28 @@ const normalizeSearchText = (text) =>
         const gRegionCode = g.regionCode || DEMO_GROUP_REGION[p.id] || 'hcm';
         const gRegionObj = LOCATIONS.find(l => l.code === gRegionCode);
         const isNear = currentLocation.code !== 'all' && gRegionCode === currentLocation.code;
-        return `<article class="available-group"><div class="group-row"><div><strong>${g.isDemo?'Nhóm cộng đồng':'Nhóm '+safe(g.id.slice(-6).toUpperCase())}</strong>${isNear?'<span class="badge-near-you">📍 Gần bạn</span>':''}<span class="group-state state-${state}">${state==='open'?'Đang mở':state==='success'?'Đủ thành viên':'Đã hết hạn'}</span></div><b>${n}/${g.need}</b></div><div class="mini-track"><span style="width:${Math.min(100,n/g.need*100)}%"></span></div><div class="group-row group-foot"><small>${gRegionObj?safe(gRegionObj.name)+' · ':''}${safe(timeLeft(g))} · ${joined?'Bạn đã tham gia':'Giá nhóm '+money(p.group)}</small>${joined?'<a href="profile.html" class="group-action-link">Đã tham gia ✓</a>':state==='open'?`<button type="button" data-join-group="${safe(g.id)}" class="group-action-link">Tham gia nhóm →</button>`:'<span class="muted">Đã đóng</span>'}</div>${!g.isDemo && joined && state==='open'?`<button type="button" class="simulate-member" data-simulate-member="${safe(g.id)}">+ Mô phỏng 1 thành viên mới (demo)</button>`:''}</article>`;
+        return `<article class="available-group" id="group-${safe(g.id)}"><div class="group-row"><div><strong>${g.isDemo?'Nhóm cộng đồng':'Nhóm '+safe(g.id.slice(-6).toUpperCase())}</strong>${isNear?'<span class="badge-near-you">📍 Gần bạn</span>':''}<span class="group-state state-${state}">${state==='open'?'Đang mở':state==='success'?'Đủ thành viên':'Đã hết hạn'}</span></div><b>${n}/${g.need}</b></div><div class="mini-track"><span style="width:${Math.min(100,n/g.need*100)}%"></span></div><div class="group-row group-foot"><small>${gRegionObj?safe(gRegionObj.name)+' · ':''}${safe(timeLeft(g))} · ${joined?'Bạn đã tham gia':'Giá nhóm '+money(p.group)}</small>${joined?'<a href="profile.html" class="group-action-link">Đã tham gia ✓</a>':state==='open'?`<button type="button" data-join-group="${safe(g.id)}" class="group-action-link">Tham gia nhóm →</button>`:'<span class="muted">Đã đóng</span>'}${groupActions(g.id, joined)}</div>${!lan && !g.isDemo && joined && state==='open'?`<button type="button" class="simulate-member" data-simulate-member="${safe(g.id)}">+ Mô phỏng 1 thành viên mới (demo)</button>`:''}</article>`;
       }).join('')||'<p class="muted">Chưa có nhóm nào. Hãy tạo nhóm mới để bắt đầu.</p>';
     }
-    const join=document.getElementById('join-group-btn');if(join){join.dataset.joinGroup=open[0]?.id||'';join.disabled=!open.length;join.textContent=open.length?'Tham gia nhóm':'Chưa có nhóm đang mở';}
+    const hours = document.getElementById('group-hours');
+    if (hours && !hours.dataset.ready) { hours.value = String(p.groupDurationHours || 24); hours.dataset.ready = '1'; }
+    const join=document.getElementById('join-group-btn');if(join){
+      const invited = params.get('group');
+      const joinable=open.find(g=>(!invited || g.id===invited) && !(g.members||[]).includes(uid));
+      const joined=currentGroups.find(g=>(g.members||[]).includes(uid));
+      join.dataset.joinGroup=joinable?.id||'';
+      join.disabled=!joinable;
+      join.textContent=joinable?'Tham gia nhóm':joined?(groupState(joined)==='success'?'Đã tham gia nhóm · Đủ người':groupState(joined)==='expired'?'Nhóm đã hết hạn':'Đã tham gia nhóm'):'Chưa có nhóm đang mở';
+      join.title=joinable?'Tham gia nhóm đang mở':joined?'Trạng thái nhóm bạn đã tham gia':'Hiện chưa có nhóm phù hợp để tham gia';
+    }
+    const create=document.getElementById('create-group-btn');if(create){
+      const personal=findActivePersonalGroup(p.id);
+      create.disabled=!!personal;
+      create.textContent=personal?'Bạn đã có nhóm đang mở':'Tạo nhóm';
+      create.title=personal?'Tiếp tục nhóm đang mở trong Hồ sơ':'Tạo nhóm mua mới';
+    }
+    const missingInvite = document.getElementById('missing-group');
+    if (missingInvite) missingInvite.hidden = !params.get('group') || currentGroups.some(g => g.id === params.get('group'));
     const newGroup=params.get('group');if(newGroup&&groups.some(g=>g.id===newGroup)){
       const target=list?.querySelector(`[data-join-group="${CSS.escape(newGroup)}"]`);if(target){target.classList.add('attention-pulse');}
     }
@@ -464,7 +585,7 @@ const normalizeSearchText = (text) =>
       const p=product(item.productId);if(!p)return '';
       const g=groups.find(v=>v.id===item.groupId),status=item.kind==='group'?(g?groupState(g):'expired'):'retail';
       const pending=item.kind==='group'&&status!=='success';
-      return `<article class="cart-item"><a href="${detailLink(p)}"><img src="${safe(p.image)}" alt="${safe(p.name)}"></a><div class="cart-item-main"><a class="cart-item-title" href="${detailLink(p)}">${safe(p.name)}</a><span class="cart-kind">${item.kind==='retail'?'Mua lẻ':'Mua chung · Nhóm '+safe((g?.id||'').slice(-6).toUpperCase())}</span><span class="cart-item-state ${pending?'is-pending':''}">${item.kind==='retail'?'Sẵn sàng xác nhận':status==='success'?'Nhóm đủ thành viên · Sẵn sàng xác nhận':status==='expired'?'Nhóm hết hạn · Chưa đủ thành viên':`Đang chờ đủ thành viên (${groupCount(g)}/${g.need})`}</span><div class="cart-item-bottom"><div class="qty-inline"><button type="button" data-cart-minus="${i}" aria-label="Giảm số lượng" ${item.kind==='group'?'disabled title="Mỗi thành viên giữ một suất trong nhóm"':''}>−</button><span>${item.quantity}</span><button type="button" data-cart-plus="${i}" aria-label="Tăng số lượng" ${item.kind==='group'?'disabled title="Mỗi thành viên giữ một suất trong nhóm"':''}>+</button></div><button class="plain-danger" type="button" data-cart-remove="${i}">Xóa khỏi giỏ</button></div></div><strong class="cart-line-price">${money((item.kind==='retail'?p.retail:p.group)*item.quantity)}</strong></article>`;
+      return `<article class="cart-item"><a href="${detailLink(p)}"><img src="${safe(p.image)}" alt="${safe(p.name)}"></a><div class="cart-item-main"><a class="cart-item-title" href="${detailLink(p)}">${safe(p.name)}</a><span class="cart-kind">${item.kind==='retail'?'Mua lẻ':'Mua chung · Nhóm '+safe((g?.id||'').slice(-6).toUpperCase())}</span><span class="cart-item-state ${pending?'is-pending':''}">${item.kind==='retail'?'Sẵn sàng xác nhận':status==='success'?'Nhóm đủ thành viên · Sẵn sàng xác nhận':status==='expired'?'Nhóm hết hạn · Chưa đủ thành viên':`Đang chờ đủ thành viên (${groupCount(g)}/${g.need})`}</span>${g ? groupActions(g.id) : ''}<div class="cart-item-bottom"><div class="qty-inline"><button type="button" data-cart-minus="${i}" aria-label="Giảm số lượng" ${item.kind==='group'?'disabled title="Mỗi thành viên giữ một suất trong nhóm"':''}>−</button><span>${item.quantity}</span><button type="button" data-cart-plus="${i}" aria-label="Tăng số lượng" ${item.kind==='group'?'disabled title="Mỗi thành viên giữ một suất trong nhóm"':''}>+</button></div><button class="plain-danger" type="button" data-cart-remove="${i}">Xóa khỏi giỏ</button></div></div><strong class="cart-line-price">${money((item.kind==='retail'?p.retail:p.group)*item.quantity)}</strong></article>`;
     }).join('');
     let ready=0,pending=0,readyTotal=0;
     cart.forEach(item=>{const p=product(item.productId),g=groups.find(x=>x.id===item.groupId);if(!p)return;if(item.kind==='retail'||(g&&groupState(g)==='success')){ready++;readyTotal+=(item.kind==='retail'?p.retail:p.group)*item.quantity;}else pending++;});
@@ -488,12 +609,14 @@ const normalizeSearchText = (text) =>
     const a=document.getElementById('cart-checkout');if(a){a.classList.toggle('is-disabled',ready===0);a.setAttribute('aria-disabled',String(ready===0));a.textContent=ready?'Tiếp tục xác nhận đơn hàng →':'Chưa có sản phẩm sẵn sàng';}
     refreshHeader();
   };
-  const renderCheckout=()=>{
+  const renderCheckout=(summaryOnly=false)=>{
     if(page!=='checkout.html')return;
     const list=document.getElementById('checkout-summary');if(!list)return;
     const ready=cart.filter(item=>{let g=groups.find(x=>x.id===item.groupId);return item.kind==='retail'||(g&&groupState(g)==='success');});
-    if(!ready.length){document.getElementById('checkout-form').hidden=true;list.innerHTML='<div class="empty-panel"><h2>Chưa có sản phẩm có thể xác nhận</h2><p>Giỏ hàng mua lẻ hoặc nhóm đã đủ thành viên mới có thể chuyển sang bước này.</p><a class="btn btn-outline" href="cart.html">Quay về giỏ hàng</a></div>';return;}
+    document.getElementById('checkout-form').hidden = !ready.length;
+    if(!ready.length){document.getElementById('checkout-xu')?.replaceChildren();list.innerHTML='<div class="empty-panel"><h2>Chưa có sản phẩm có thể xác nhận</h2><p>Giỏ hàng mua lẻ hoặc nhóm đã đủ thành viên mới có thể chuyển sang bước này.</p><a class="btn btn-outline" href="cart.html">Quay về giỏ hàng</a></div>';return;}
     let total=0;list.innerHTML=ready.map(it=>{const p=product(it.productId);const price=it.kind==='retail'?p.retail:p.group;total+=price*it.quantity;return `<div class="checkout-line"><span>${safe(p.name)} <small>× ${it.quantity} · ${it.kind==='retail'?'Mua lẻ':'Mua chung'}</small></span><strong>${money(price*it.quantity)}</strong></div>`;}).join('')+`<div class="checkout-total"><span>Tạm tính hàng hóa</span><strong>${money(total)}</strong></div><p class="muted">Phí vận chuyển và thanh toán thực tế chưa tích hợp trong bản demo.</p>`;
+    if (summaryOnly) { window.WeBuyRewards?.updateCheckout(); return; }
     const p=currentProfile();for(const key of ['name','phone','address','email']){const inp=document.querySelector(`[name="${key}"]`);if(inp&&p[key])inp.value=p[key];}
 
     const addrInput = document.querySelector('[name="address"]');
@@ -524,17 +647,27 @@ const normalizeSearchText = (text) =>
     const short=document.getElementById('profile-avatar');if(short)short.textContent=(p.name||'WeBuy').trim().split(/\s+/).slice(-2).map(x=>x[0]).join('').toUpperCase();
     const greet=document.getElementById('profile-display-name');if(greet)greet.textContent=p.name||'Khách WeBuy';
     const list=document.getElementById('profile-groups');if(list){
-      const mine=groups.filter(g=>(g.members||[]).includes(uid));
-      list.innerHTML=mine.length?mine.map(g=>{const pr=product(g.productId);const status=groupState(g);return `<div class="activity-line"><img src="${safe(pr.image)}" alt=""><div><a href="${detailLink(pr)}"><strong>${safe(pr.name)}</strong></a><small>Nhóm ${safe(g.id.slice(-6).toUpperCase())} · ${groupCount(g)}/${g.need} thành viên</small><span class="group-state state-${status}">${status==='open'?'Đang chờ thêm người':status==='success'?'Đã đủ thành viên': 'Nhóm hết hạn'}</span></div><a href="${detailLink(pr)}">Chi tiết →</a></div>`;}).join(''):'<p class="muted">Bạn chưa tham gia nhóm nào. <a href="products.html">Khám phá sản phẩm →</a></p>';
+      const mine=groups.filter(g=>(g.members||[]).includes(uid) && product(g.productId));
+      list.innerHTML=mine.length?mine.map(g=>{const pr=product(g.productId);const status=groupState(g);return `<div class="activity-line"><img src="${safe(pr.image)}" alt=""><div><a href="${detailLink(pr)}"><strong>${safe(pr.name)}</strong></a><small>Nhóm ${safe(g.id.slice(-6).toUpperCase())} · ${groupCount(g)}/${g.need} thành viên</small><span class="group-state state-${status}">${status==='open'?'Đang chờ thêm người':status==='success'?'Đã đủ thành viên': 'Nhóm hết hạn'}</span></div>${groupActions(g.id)}<a href="${detailLink(pr)}&group=${encodeURIComponent(g.id)}#group-${encodeURIComponent(g.id)}">Chi tiết →</a></div>`;}).join(''):'<p class="muted">Bạn chưa tham gia nhóm nào. <a href="products.html">Khám phá sản phẩm →</a></p>';
     }
     const orders=get('orders',[]),orderbox=document.getElementById('profile-orders');
-    if(orderbox)orderbox.innerHTML=orders.length?orders.slice().reverse().map(o=>`<article class="order-item"><div class="group-row"><b>Đơn #${safe(o.id)}</b><span class="group-state state-open">Đơn demo · Chưa xử lý</span></div><small>${safe(o.date)} · ${o.items.length} dòng sản phẩm</small><strong>${money(o.total)}</strong></article>`).join(''):'<p class="muted">Chưa có đơn hàng demo nào được xác nhận.</p>';
+    if (orderbox) orderbox.innerHTML = orders.length ? orders.slice().reverse().map(o => {
+      const cancelled = o.status === 'cancelled';
+      const orderGroups = [...new Set(o.items.map(it => it.groupId).filter(Boolean))];
+      return `<article class="order-item"><div class="group-row"><b>Đơn #${safe(o.id)}</b><span class="group-state">${cancelled ? 'Đã hủy' : 'Đơn demo · Chưa xử lý'}</span></div>
+        <small>${safe(o.date)} · ${o.items.length} dòng sản phẩm</small><strong>${money(o.total)}</strong>
+        ${o.xuUsed ? `<small>${cancelled ? 'Đã hoàn' : 'Đã dùng'} ${Number(o.xuUsed)} xu · ${money(o.discount)}</small>` : ''}
+        ${orderGroups.filter(id => groups.some(g => g.id === id && g.members.includes(uid))).map(id => groupActions(id)).join('')}
+        ${cancelled ? '' : `<button class="plain-danger" type="button" data-cancel-order="${safe(o.id)}">Hủy đơn demo</button>`}</article>`;
+    }).join('') : '<p class="muted">Chưa có đơn hàng demo nào được xác nhận.</p>';
+
   };
-  document.addEventListener('click',e=>{
+  document.addEventListener('click',async e=>{
     const target = e.target.closest('button,a');
     if (!target) return;
 
     if (target.matches('[data-open-location]')) {
+      if ([...document.querySelectorAll('[aria-modal="true"],dialog[open]')].some(el=>el.getClientRects().length)) return;
       openLocationModal();
       return;
     }
@@ -553,10 +686,23 @@ const normalizeSearchText = (text) =>
       return;
     }
 
-    if (target.matches('#clear-filters')) {
+    if (target.matches('#clear-filters, #catalog-reset-all')) {
       history.replaceState(null, '', location.pathname);
       renderCatalog();
       document.getElementById('catalog-q').value = '';
+      if (target.id === 'catalog-reset-all') flash('Đã đặt lại toàn bộ bộ lọc.');
+      return;
+    }
+
+    /* Bỏ từng điều kiện lọc đang áp dụng (chip trên products.html) */
+    if (target.matches('[data-clear-param]')) {
+      const params = new URLSearchParams(location.search);
+      target.dataset.clearParam.split(',').forEach(key => params.delete(key));
+      const query = params.toString();
+      history.replaceState(null, '', location.pathname + (query ? '?' + query : ''));
+      renderCatalog();
+      document.getElementById('catalog-reset-all')?.focus();
+      return;
     }
 
     if(target.matches('[data-add-cart]'))addCart(target.dataset.addCart);
@@ -567,16 +713,37 @@ const normalizeSearchText = (text) =>
     }
     if(target.matches('[data-buy-retail]')){addCart(target.dataset.buyRetail,'retail',null,document.getElementById('detail-qty')?.value||1);location.href='cart.html';}
     if(target.matches('[data-join-group]')){if(target.dataset.joinGroup)joinGroup(target.dataset.joinGroup);}
+    if (target.matches('[data-cancel-order]')) {
+      showDialog(`<h2>Hủy đơn demo?</h2><p>Xu đã dùng cho đơn sẽ được hoàn vào ví của bạn.</p>
+        <button type="button" class="btn btn-primary" data-confirm-cancel="${safe(target.dataset.cancelOrder)}">Xác nhận hủy</button>
+        <button type="button" class="btn btn-outline" data-close-dialog>Giữ đơn</button>`);
+    }
+    if (target.matches('[data-confirm-cancel]')) {
+      withOrderLock(() => {
+        const order = get('orders', []).find(o => o.id === target.dataset.confirmCancel);
+        if (order && order.status !== 'cancelled') {
+          writeOrder({...order, status:'cancelled'}, null, window.WeBuyRewards.refund(order));
+        }
+        closeDialog();
+        renderProfile();
+      });
+    }
     if(target.matches('[data-create-group]'))createGroup(target.dataset.createGroup);
     if(target.matches('[data-simulate-member]')){
       const g=groups.find(v=>v.id===target.dataset.simulateMember);
-      if(!g||g.isDemo||!g.members.includes(uid)||groupState(g)!=='open')return;
+      if(lan||!g||g.isDemo||!g.members.includes(uid)||groupState(g)!=='open')return;
       g.demoCount=(g.demoCount||0)+1;saveGroups();renderDetail();renderProfile();refreshProductProgress();renderCart();
       flash(groupState(g)==='success'?'Nhóm demo đã đủ thành viên. Bạn có thể xác nhận mục mua chung trong giỏ.':'Đã mô phỏng thêm 1 thành viên.');
     }
 
     if(target.matches('[data-cart-remove]')){
       const idx=Number(target.dataset.cartRemove),item=cart[idx];
+      if (lan && item?.kind === 'group') {
+        try { await lan.leave(item.groupId); }
+        catch (error) { flash(error.message,'error'); return; }
+        cart = cart.filter(it => it.groupId !== item.groupId);
+        saveCart(); renderCart(); flash('Đã rời nhóm và xóa khỏi giỏ.'); return;
+      }
       if(item?.kind==='group'){const g=groups.find(x=>x.id===item.groupId);if(g){g.members=g.members.filter(x=>x!==uid);saveGroups();}}
       cart.splice(idx,1);saveCart();renderCart();flash('Đã xóa sản phẩm khỏi giỏ.');
     }
@@ -599,8 +766,8 @@ const normalizeSearchText = (text) =>
     if(target.matches('[data-close-dialog]')||e.target.classList?.contains('app-modal-backdrop'))closeDialog();
     if(target.matches('[data-copy-group]')){
       const id=target.dataset.copyGroup,p=product(groups.find(g=>g.id===id)?.productId);if(!p)return;
-      const url=new URL(detailLink(p)+'&group='+encodeURIComponent(id),location.href).href;
-      if(navigator.clipboard?.writeText) navigator.clipboard.writeText(url).then(()=>flash('Đã sao chép đường dẫn (chỉ dùng minh họa trên cùng trình duyệt).')).catch(()=>flash('Hãy sao chép liên kết ở ô bên trên.','error'));
+      const url=document.getElementById('new-group-link')?.value || new URL(detailLink(p)+'&group='+encodeURIComponent(id),location.href).href;
+      if(navigator.clipboard?.writeText) navigator.clipboard.writeText(url).then(()=>flash('Đã sao chép liên kết nhóm.')).catch(()=>flash('Hãy sao chép liên kết ở ô bên trên.','error'));
       else {const input=document.getElementById('new-group-link');input?.select();document.execCommand?.('copy');flash('Đã chọn liên kết để sao chép.');}
     }
     if(target.matches('#cart-checkout')&&target.getAttribute('aria-disabled')==='true')e.preventDefault();
@@ -619,7 +786,7 @@ const normalizeSearchText = (text) =>
     renderCatalog();
   });
 
-  document.addEventListener('submit', e => {
+  document.addEventListener('submit', async e => {
     if (e.target.id === 'catalog-price-range') {
       e.preventDefault();
       const minText = document.getElementById('catalog-group-min').value.trim();
@@ -671,58 +838,64 @@ const normalizeSearchText = (text) =>
       e.preventDefault();
       const f = e.target;
       if (!f.reportValidity()) return;
-      const ready = cart.filter(item =>
-        item.kind === 'retail' ||
-        groups.some(g => g.id === item.groupId && groupState(g) === 'success')
-      );
-      if (!ready.length) {
-        flash('Không có sản phẩm đủ điều kiện xác nhận.', 'error');
-        return;
-      }
       const values = Object.fromEntries(new FormData(f));
       if (!values.name?.trim() || !values.phone?.trim() || !values.address?.trim()) {
         flash('Vui lòng nhập đầy đủ thông tin nhận hàng.', 'error');
         return;
       }
-      const total = ready.reduce((sum, it) => {
-        const p = product(it.productId);
-        return sum + (it.kind === 'retail' ? p.retail : p.group) * it.quantity;
-      }, 0);
-      const id = 'WB' + String(Date.now()).slice(-9);
-      const orders = get('orders', []);
-      orders.push({
-        id,
-        date: new Date().toLocaleString('vi-VN'),
-        items: ready.map(x => ({ ...x })),
-        total,
-        shipping: {
-          name: values.name,
-          phone: values.phone,
-          address: values.address
-        },
-        status: 'demo'
+      if (lan && cart.some(item=>item.kind==='group')) {
+        try { await lan.syncNow(); } catch (error) { flash(error.message,'error'); return; }
+      }
+      await withOrderLock(() => {
+        groups = get('groups', groups);
+        cart = readCart();
+        const ready = cart.filter(item =>
+          item.kind === 'retail' ||
+          groups.some(g => g.id === item.groupId && groupState(g) === 'success')
+        );
+        if (!ready.length) {
+          flash('Không có sản phẩm đủ điều kiện xác nhận.', 'error');
+          return;
+        }
+        const subtotal = ready.reduce((sum, it) => {
+          const p = product(it.productId);
+          return sum + (it.kind === 'retail' ? p.retail : p.group) * it.quantity;
+        }, 0);
+        const id = 'WB-' + (crypto.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2));
+        const rewards = window.WeBuyRewards.orderDiscount(id, subtotal);
+        const { xuUsed, discount, wallet } = rewards;
+        const total = subtotal - discount;
+        const order = { id, date:new Date().toLocaleString('vi-VN'), items:ready, subtotal, xuUsed, discount, total,
+          shipping:{ name:values.name, phone:values.phone, address:values.address }, status:'demo' };
+        const remaining = cart.filter(it => !ready.includes(it));
+        writeOrder(order, remaining, wallet);
+        cart = remaining;
+        put('profile', {
+          ...currentProfile(),
+          name: values.name.trim(),
+          phone: values.phone.trim(),
+          address: values.address.trim()
+        });
+        showDialog(`<span class="dialog-icon">✓</span><h2>Đã lưu đơn hàng demo</h2><p>Mã đơn <strong>${safe(id)}</strong> với tổng sau giảm <strong>${money(total)}</strong> ${xuUsed ? `(đã dùng ${xuUsed} xu, giảm ${money(discount)})` : ''} đã được lưu trên trình duyệt. Đây là bước mô phỏng xác nhận đặt hàng, <strong>chưa phát sinh giao dịch, thu tiền hoặc giao hàng thực tế</strong>.</p><a href="profile.html" class="btn btn-primary">Xem lịch sử đơn demo</a>`);
+        renderCheckout();
+        refreshHeader();
       });
-      put('orders', orders);
-      cart = cart.filter(it => !ready.includes(it));
-      saveCart();
-      put('profile', {
-        ...currentProfile(),
-        name: values.name.trim(),
-        phone: values.phone.trim(),
-        address: values.address.trim()
-      });
-      showDialog(`<span class="dialog-icon">✓</span><h2>Đã lưu đơn hàng demo</h2><p>Mã đơn <strong>${safe(id)}</strong> với tổng tiền hàng <strong>${money(total)}</strong> đã được lưu trên trình duyệt. Đây là bước mô phỏng xác nhận đặt hàng, <strong>chưa phát sinh giao dịch, thu tiền hoặc giao hàng thực tế</strong>.</p><a href="profile.html" class="btn btn-primary">Xem lịch sử đơn demo</a>`);
-      renderCheckout();
-      refreshHeader();
     }
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeDialog();
+    const modal = document.querySelector('#app-dialog-root .app-modal');
+    if (!modal || document.querySelector('dialog[open]')) return;
+    if (e.key === 'Escape') { closeDialog(); return; }
+    if (e.key === 'Tab') {
+      const controls = [...modal.querySelectorAll('button:not(:disabled),input,a[href]')];
+      if (e.shiftKey && document.activeElement === controls[0]) { e.preventDefault(); controls.at(-1)?.focus(); }
+      if (!e.shiftKey && document.activeElement === controls.at(-1)) { e.preventDefault(); controls[0]?.focus(); }
+    }
   });
 
   window.addEventListener('storage', e => {
-    if (e.key?.startsWith(storagePrefix)) {
+    if (['groups','cart','orders','profile','location'].some(key => e.key === storagePrefix + key)) {
       groups = get('groups', seedGroups());
       cart = readCart();
       updateLocationUI();
@@ -731,9 +904,16 @@ const normalizeSearchText = (text) =>
       renderDetail();
       renderCart();
       renderProfile();
+      if (e.key === storagePrefix + 'cart' || e.key === storagePrefix + 'groups') renderCheckout();
     }
   });
 
+  document.addEventListener('webuy:lan-state', () => {
+    groups = get('groups',[]);
+    document.dispatchEvent(new Event('webuy:groups'));
+    refreshProductProgress(); renderDetail(); renderCart(); renderProfile();
+    if (page === 'checkout.html') renderCheckout(true);
+  });
   injectHeaderLocationBtn();
   updateLocationUI();
   refreshHeader();
@@ -746,8 +926,8 @@ const normalizeSearchText = (text) =>
   if (!get('location', null)) {
     let shouldPrompt = true;
     try {
-      if (sessionStorage.getItem('webuy_location_prompted')) shouldPrompt = false;
-      else sessionStorage.setItem('webuy_location_prompted', '1');
+      if (localStorage.getItem('webuy_location_prompted')) shouldPrompt = false;
+      else localStorage.setItem('webuy_location_prompted', '1');
     } catch (error) {
       console.warn('WeBuy: không thể ghi nhận lần mở popup địa điểm trong phiên này.', error);
     }

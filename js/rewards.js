@@ -46,7 +46,7 @@
   // Trò chơi "Vịt bay săn xu": chú vịt bay qua các kệ hàng, qua mỗi kệ được xu
   const FLY = {
     xuPerShelf: 2,   // qua mỗi cặp kệ hàng được 2 xu
-    minXu: 3,        // thưởng an ủi khi chưa qua kệ nào
+    minXu: 5,        // thưởng an ủi khi chưa qua kệ nào
     maxXu: 30,       // thưởng tối đa mỗi lượt (qua 15 kệ là đạt)
     gap: 150,        // khoảng trống giữa kệ trên và kệ dưới (px)
     shelfWidth: 58,  // độ rộng một kệ (px)
@@ -65,7 +65,7 @@
 
   // Popup xu chỉ tự mở khi không có popup nào khác đang hiện (ví dụ Popup địa điểm).
   // Nếu popup khác dùng tên lớp riêng, thêm bộ chọn của nó vào đây.
-  const OTHER_POPUP_SELECTOR = '[role="dialog"], [aria-modal="true"], .app-modal-backdrop';
+  const OTHER_POPUP_SELECTOR = 'dialog[open], [role="dialog"], [aria-modal="true"], .app-modal-backdrop';
 
   const page = location.pathname.split('/').pop() || 'index.html';
   const money = n => new Intl.NumberFormat('vi-VN').format(n || 0) + 'đ';
@@ -145,10 +145,13 @@
   }
 
   function addXu(amount, note) {
-    state.balance += amount;
+    const latest = loadState();
+    state.balance = latest.balance + amount;
+    state.history = latest.history;
     addHistory(note, amount);
     saveState();
     refreshAll();
+    document.dispatchEvent(new Event('webuy:wallet'));
   }
 
   // Trừ xu. Trả về false nếu không đủ xu (số dư không bao giờ âm).
@@ -184,6 +187,7 @@
   }
 
   function claimCheckin() {
+    state = loadState();
     const info = getCheckin();
     if (info.claimedToday || info.blocked) return { ok: false, ...info };
     state.streakDay = info.day;
@@ -198,6 +202,7 @@
   /* Lượt chơi: mỗi ngày 1 lượt miễn phí, thêm 1 lượt thưởng khi tạo/tham gia nhóm mua */
   function playInfo() {
     const now = today();
+    if (state.playDate > now || state.lastCheckin > now) return {used:0,total:0,left:0};
     const used = state.playDate === now ? state.playsUsed : 0;
     const total = 1 + (state.bonusDate === now ? 1 : 0);
     return { used, total, left: Math.max(0, total - used) };
@@ -214,6 +219,7 @@
      và cũng được tặng thêm 1 lượt khi tạo/tham gia nhóm mua */
   function flyInfo() {
     const now = today();
+    if (state.flyDate > now || state.lastCheckin > now) return {used:0,total:0,left:0};
     const used = state.flyDate === now ? state.flyUsed : 0;
     const total = 1 + (state.bonusDate === now ? 1 : 0);
     return { used, total, left: Math.max(0, total - used) };
@@ -372,7 +378,7 @@
 
   function openPopup() {
     ensurePopup();
-    if (isOpen()) return;
+    if (isOpen() || otherPopupOpen()) return;
     lastFocus = document.activeElement;
     overlay.hidden = false;
     document.body.classList.add('wbr-lock'); // khóa cuộn trang phía sau
@@ -676,6 +682,8 @@
   }
 
   function beginGame() {
+    state = loadState();
+    if (!playInfo().left) { cancelGame(); showView('hub'); return; }
     usePlay(); // lượt chơi được tính từ lúc trò chơi thật sự bắt đầu
     for (let i = 0; i < GAME.buddies; i++) spawnBuddy(BUDDY_KINDS[i % BUDDY_KINDS.length]);
     spawnBuddy('le');
@@ -908,6 +916,8 @@
       if (count > 0) { countEl.textContent = count; return; }
       clearInterval(fly.countTimer);
       countEl.remove();
+      state = loadState();
+      if (!flyInfo().left) { cancelFly(); showView('hub'); return; }
       useFly();          // lượt chơi được tính từ lúc trò chơi thật sự bắt đầu
       fly.started = true;
     }, 700);
@@ -1141,8 +1151,7 @@
 
   /* ===================================================================
    * 9. TRANG THANH TOÁN: dùng xu trừ tiền (cần <div id="checkout-xu"> trong checkout.html)
-   * js/app.js vẫn tự lưu đơn như cũ; phần này chỉ đọc tiền hàng trên trang và,
-   * sau khi đơn được lưu, ghi thêm số xu đã dùng vào đơn đó.
+   * Tính phần giảm trước khi app.js ghi đơn, lịch sử và số dư.
    * =================================================================== */
   let useXu = false;
 
@@ -1184,37 +1193,22 @@
       <p class="wbr-pay-note">1 xu = ${money(XU_VALUE)}, tối đa ${MAX_DISCOUNT_PERCENT}% tiền hàng mỗi đơn.</p>`;
   }
 
-  function readOrders() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'orders')) || []; } catch { return []; }
+  function changedWallet(amount, note) {
+    if (!amount) return null;
+    const wallet = loadState();
+    wallet.balance += amount;
+    wallet.history.push({time:Date.now(), note, amount, balance:wallet.balance});
+    wallet.history = wallet.history.slice(-HISTORY_LIMIT);
+    return wallet;
   }
-
-  // Chạy TRƯỚC js/app.js (pha capture) để ghi lại số xu định dùng, rồi xử lý SAU khi app.js lưu đơn xong
-  function onCheckoutSubmit(e) {
-    if (e.target.id !== 'checkout-form') return;
-    const ordersBefore = readOrders().length;
-    const xu = useXu ? maxXuForOrder(checkoutTotal()) : 0;
-
-    setTimeout(() => {
-      const orders = readOrders();
-      if (orders.length > ordersBefore && xu > 0) {
-        const order = orders[orders.length - 1];
-        const discount = xu * XU_VALUE;
-        order.subtotal = order.total; // tiền hàng trước khi trừ xu
-        order.xuUsed = xu;
-        order.discount = discount;
-        order.total = order.total - discount;
-        localStorage.setItem(STORAGE_PREFIX + 'orders', JSON.stringify(orders));
-        spendXu(xu, `Dùng xu cho đơn #${order.id}`);
-
-        // Bổ sung một dòng vào hộp thoại xác nhận của website
-        const dialog = document.querySelector('#app-dialog-root .app-modal p');
-        if (dialog) dialog.insertAdjacentHTML('afterend', `<p class="wbr-dialog-note">Đã dùng <strong>${xu} xu</strong>, giảm <strong>${money(discount)}</strong>. Số tiền còn lại: <strong>${money(order.total)}</strong>.</p>`);
-      }
-      useXu = false;
-      renderCheckoutXu();
-    }, 0);
+  function orderDiscount(id, subtotal) {
+    state = loadState();
+    const xuUsed = useXu ? maxXuForOrder(subtotal) : 0;
+    return {xuUsed, discount:xuUsed * XU_VALUE, wallet:changedWallet(-xuUsed, `Dùng xu cho đơn #${id}`)};
   }
-
+  function refund(order) {
+    return changedWallet(Number(order.xuUsed) || 0, `Hoàn xu cho đơn #${order.id}`);
+  }
   /* ===================================================================
    * 10. KHỞI ĐỘNG
    * =================================================================== */
@@ -1245,9 +1239,7 @@
     if (e.target.closest('[data-wbr-open]')) { openPopup(); return; }
     if (e.target.closest('[data-wbr-hide-fab]')) { hideFab(); return; }
     if (e.target.closest('[data-wbr-more]')) { showAllHistory = true; renderProfileXu(); return; }
-    // Sau mỗi lần bấm (có thể là "Tham gia nhóm"), kiểm tra lượt chơi thưởng.
-    // Chờ 2,5 giây để không đè lên thông báo của js/app.js.
-    setTimeout(checkBonusPlay, 2500);
+
   });
 
   document.addEventListener('change', e => {
@@ -1257,7 +1249,7 @@
     document.getElementById('wbr-use-xu')?.focus(); // vẽ lại xong thì trả tiêu điểm về công tắc
   });
 
-  document.addEventListener('submit', onCheckoutSubmit, true);
+  document.addEventListener('webuy:groups', checkBonusPlay);
 
   document.addEventListener('keydown', e => {
     if (!isOpen()) return;
@@ -1297,6 +1289,10 @@
   window.WeBuyRewards = {
     getState: () => JSON.parse(JSON.stringify(state)),
     getCheckin,
+    orderDiscount,
+    updateCheckout:renderCheckoutXu,
+    refund,
+    sync() { state = loadState(); useXu = false; refreshAll(); document.dispatchEvent(new Event('webuy:wallet')); },
     claimCheckin,
     playInfo,
     flyInfo,

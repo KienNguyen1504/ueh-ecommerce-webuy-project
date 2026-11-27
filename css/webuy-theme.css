@@ -4,25 +4,7 @@
    không đụng tới logic / DOM mà js/app.js đang dùng.
    ========================================================= */
 
-/* ---------- 1. Design tokens ---------- */
-:root{
-  --orange:#FF6B00; --orange-deep:#E85F00;
-  --lime:#D9FF4F;   --soft-lime:#F4FFD9;
-  --green:#0D6B47;  --green-deep:#0A5A3B; --green-dark:#08472F;
-  --cream:#FFF6E8;  --white:#FFFFFF;
-
-  --ink:#10281F; --body:#2B403A; --muted:#5F7068; --line:#E3EBDB;
-  --mint:#F4FFD9; --mint-soft:#FAFFF0; --surface:#F6F8F2;
-
-  --sans:'Reddit Sans',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
-  --serif:var(--sans);
-
-  --r-sm:12px; --r-md:16px; --r-lg:20px; --r-pill:999px;
-  --shadow-sm:0 4px 14px rgba(13,107,71,.07);
-  --shadow:0 12px 32px rgba(13,107,71,.10);
-  --shadow-lg:0 22px 48px rgba(13,107,71,.16);
-  --ease:cubic-bezier(.22,.8,.3,1);
-}
+/* ---------- 1. Design tokens: chuyển sang css/tokens.css (nạp trước file này) ---------- */
 
 /* ---------- 2. Typography ---------- */
 body{font-family:var(--sans);font-size:16px;line-height:1.6;color:var(--body);background:#fff}

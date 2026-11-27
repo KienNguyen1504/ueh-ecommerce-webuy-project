@@ -15,20 +15,9 @@
  */
 
 /* ============ 1. Font, bảng màu, chuyển động ============ */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+/* Font: Reddit Sans nạp ở <head> (thống nhất Visual System) */
 
-:root {
-  --wbr-orange: #FD550A;
-  --wbr-green: #015D47;
-  --wbr-lime: #E0F354;
-  --wbr-cream: #FFF6E5;
-  --wbr-ink: #0B2A22;      /* chữ và viền */
-  --wbr-muted: #3C4F49;    /* chữ phụ */
-  --wbr-line: #D9CDB4;     /* đường kẻ nhạt */
-  --wbr-display: 'Baloo 2', 'Be Vietnam Pro', sans-serif;  /* tiêu đề, số xu, nút */
-  --wbr-body: 'Be Vietnam Pro', Inter, Arial, sans-serif;  /* chữ nội dung */
-  --wbr-sticker: 0 6px 0 var(--wbr-ink);                   /* bóng cứng kiểu hình dán */
-}
+/* Bảng màu --wbr-*: khai báo trong css/tokens.css */
 
 @keyframes wbr-hop {
   0%, 100% { transform: translate(0, 0) rotate(-5deg); }

@@ -97,7 +97,7 @@
   /* Nút nổi: chú vịt quàng khăn giơ hộp quà, kèm chữ "ĐIỂM DANH / SĂN QUÀ" */
   function duck(size) {
     const height = Math.round(size * 184 / 170);
-    const font = "'Baloo 2', 'Be Vietnam Pro', sans-serif";
+    const font = "'Reddit Sans', system-ui, sans-serif";
     return `<svg width="${size}" height="${height}" viewBox="0 0 170 184" aria-hidden="true">
       <circle cx="85" cy="74" r="64" fill="${LIME}" stroke="${INK}" stroke-width="4"/>
       <circle cx="85" cy="74" r="52" fill="none" stroke="${GREEN}" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"/>

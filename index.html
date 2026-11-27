@@ -12,35 +12,20 @@
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="css/tokens.css" rel="stylesheet"/>
   <link href="css/styles.css" rel="stylesheet"/>
   <link href="css/app.css" rel="stylesheet"/>
   <link href="css/webuy-theme.css" rel="stylesheet"/>
+  <link href="css/fx.css" rel="stylesheet"/>
+  <link href="css/features.css" rel="stylesheet"/>
   <link href="css/home.css" rel="stylesheet"/>
   <link href="css/rewards.css" rel="stylesheet"/>
+  <link href="css/advanced-features.css" rel="stylesheet"/>
   <link href="css/seller-entry.css" rel="stylesheet"/>
   <script>document.documentElement.classList.add('js');</script>
  </head>
  <body class="home">
   <a class="skip-link" href="#main">Bỏ qua điều hướng</a>
-
-  <!-- Bộ hình minh họa dùng chung cho banner / thẻ khuyến mãi -->
-  <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
-   <defs>
-    <symbol id="art-bag" viewBox="0 0 200 230">
-     <path d="M62 78V62a38 38 0 0 1 76 0v16" fill="none" stroke="#0D6B47" stroke-width="10" stroke-linecap="round"/>
-     <path d="M26 78h148l14 140a8 8 0 0 1-8 9H20a8 8 0 0 1-8-9L26 78Z" fill="#fff"/>
-     <path d="M26 78h148l3 28H23l3-28Z" fill="#000" opacity=".05"/>
-     <circle cx="62" cy="80" r="7" fill="#0D6B47"/><circle cx="138" cy="80" r="7" fill="#0D6B47"/>
-    </symbol>
-    <symbol id="art-gift" viewBox="0 0 200 200">
-     <rect x="20" y="82" width="160" height="104" rx="12" fill="currentColor"/>
-     <rect x="12" y="56" width="176" height="40" rx="12" fill="currentColor"/>
-     <rect x="12" y="56" width="176" height="40" rx="12" fill="#fff" opacity=".18"/>
-     <rect x="88" y="56" width="24" height="130" fill="var(--rib,#FFF6E8)"/>
-     <path d="M100 56C84 16 40 20 54 46c6 10 28 10 46 10Zm0 0c16-40 60-36 46-10-6 10-28 10-46 10Z" fill="var(--rib,#FFF6E8)"/>
-    </symbol>
-   </defs>
-  </svg>
 
   <div class="announcement">
    <div class="container announcement-inner">
@@ -87,120 +72,196 @@
   </header>
 
   <main id="main">
-   <!-- ============ HERO ============ -->
-   <section class="hero" aria-labelledby="hero-title">
-    <div class="container hero-inner">
-     <h1 id="hero-title">Giá tốt, mua chung, <span>tiết kiệm hơn!</span></h1>
-     <form action="products.html" class="hero-search" method="get" role="search">
-      <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg>
-      <label class="sr-only" for="hero-q">Tìm kiếm sản phẩm</label>
-      <input autocomplete="off" id="hero-q" name="q" placeholder="Tìm sản phẩm, nhóm mua..." type="search"/>
-      <button class="hero-search-btn" type="submit">Tìm kiếm</button>
-     </form>
-    </div>
-   </section>
+   <!-- ============ 1. HERO 3D: chữ + 2 CTA bên trái, cảnh 3D (SVG/CSS perspective) bên phải ============ -->
+   <section class="hero3d" aria-labelledby="hero-title" data-hero>
+    <div class="container hero3d-inner">
+     <div class="hero3d-copy">
+      <p class="hero3d-eyebrow"><span class="hero3d-pulse" aria-hidden="true"></span>Mua chung cho sinh viên &amp; người trẻ</p>
+      <h1 id="hero-title">Giá tốt hơn khi <span class="hl">mua chung</span> cùng nhau</h1>
+      <p class="hero3d-lead">Chọn món bạn cần, vào nhóm đang mở hoặc rủ bạn bè. Nhóm đủ người là áp dụng giá mua chung – giá lẻ và giá nhóm luôn hiển thị rõ ràng.</p>
+      <div class="hero3d-ctas">
+       <a class="btn-hero btn-hero-primary fx-press fx-icon" href="#nhom-sap-du">Xem nhóm
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+       </a>
+       <a class="btn-hero btn-hero-ghost fx-press" href="products.html#tat-ca-danh-muc">Khám phá sản phẩm</a>
+      </div>
+      <form action="products.html" class="hero-search" method="get" role="search">
+       <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg>
+       <label class="sr-only" for="hero-q">Tìm kiếm sản phẩm</label>
+       <input autocomplete="off" id="hero-q" name="q" placeholder="Tìm balo, áo thun, sổ tay..." type="search"/>
+       <button class="hero-search-btn fx-press" type="submit">Tìm</button>
+      </form>
+      <ul class="hero3d-stats" aria-label="Số liệu demo">
+       <li><b data-stat="products">24</b><span>sản phẩm</span></li>
+       <li><b data-stat="categories">6</b><span>danh mục</span></li>
+       <li><b data-stat="saving">-20%</b><span>giá nhóm trung bình</span></li>
+      </ul>
+     </div>
 
-   <!-- ============ DANH MỤC (duy nhất 1 khu vực) ============ -->
-   <section class="cat-section" aria-label="Danh mục sản phẩm">
-    <div class="container">
-     <ul class="cat-strip">
-      <li><a class="cat-card" href="products.html?category=balo"><span class="cat-thumb"><img alt="" height="96" src="images/product-01.webp" width="96"/></span><span class="cat-name">Balo &amp; Túi ví</span></a></li>
-      <li><a class="cat-card" href="products.html?category=ao-thun"><span class="cat-thumb"><img alt="" height="96" src="images/product-02.webp" width="96"/></span><span class="cat-name">Áo thun</span></a></li>
-      <li><a class="cat-card" href="products.html?category=gia-dung"><span class="cat-thumb"><img alt="" height="96" src="images/product-03.webp" width="96"/></span><span class="cat-name">Thiết bị gia dụng</span></a></li>
-      <li><a class="cat-card" href="products.html?category=trang-suc"><span class="cat-thumb"><img alt="" height="96" src="images/product-04.webp" width="96"/></span><span class="cat-name">Trang sức</span></a></li>
-      <li><a class="cat-card cat-all" href="products.html"><span class="cat-thumb"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg></span><span class="cat-name">Tất cả danh mục</span></a></li>
-     </ul>
-    </div>
-   </section>
+     <div class="hero3d-scene" aria-hidden="true">
+      <div class="scene-fit">
+       <div class="scene-stage">
+        <!-- lớp nền xa nhất: quầng sáng + vòng quỹ đạo -->
+        <div class="layer l-blob" style="--z:-170px"><span class="blob-a"></span><span class="blob-ring"></span></div>
+        <div class="layer l-floor" style="--z:-60px"><span></span></div>
 
-   <!-- ============ BANNER CAROUSEL THEO MÙA ============ -->
-   <section class="banner-section reveal" aria-label="Chương trình nổi bật">
-    <div class="container">
-     <div class="carousel banner-carousel" data-carousel="banner" role="region" aria-roledescription="carousel" aria-label="Banner chương trình">
-      <div class="carousel-viewport">
-       <div class="carousel-track">
+        <!-- người mua thật (ảnh đã tách nền), đứng giữa cảnh -->
+        <div class="layer l-people" style="--z:30px">
+         <div class="float" style="--dur:8s;--fy:-6px">
+          <img class="people-cut" alt="" src="images/hero/couple.webp" width="900" height="900" decoding="async" fetchpriority="high"/>
+         </div>
+        </div>
 
-        <article class="banner-slide bs-1212" role="group" aria-roledescription="slide">
-         <div class="bs-copy">
-          <span class="bs-tag">12.12</span>
-          <h2 class="bs-title">Đại tiệc mua chung</h2>
-          <p>Rủ bạn bè cùng chọn món, xem giá mua chung minh bạch trước khi tham gia nhóm.</p>
-          <a class="bs-cta" href="products.html">Khám phá sản phẩm <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+        <!-- thẻ nhóm mua (giao diện thu nhỏ) -->
+        <div class="layer l-card" style="--z:80px">
+         <div class="float" style="--dur:7s;--fy:-5px;--r0:-2deg;--r1:0deg">
+          <div class="mini-group">
+           <div class="mini-top"><img alt="" height="56" src="images/product-01.webp" width="56"/><div><b>Balo canvas Everyday</b><small>Nhóm đang mở · TP.HCM</small></div></div>
+           <div class="mini-avatars"><i class="av av1"></i><i class="av av2"></i><i class="av av-empty">+</i><span>2/3 thành viên</span></div>
+           <div class="mini-track"><span></span></div>
+           <div class="mini-price"><strong>249.000đ</strong><s>299.000đ</s><em>Còn 1 người</em></div>
+          </div>
          </div>
-         <div class="bs-art" aria-hidden="true">
-          <span class="bs-blob"></span>
-          <svg class="bs-bag"><use href="#art-bag"></use></svg>
-          <span class="bs-sticker">12.12</span>
-         </div>
-        </article>
+        </div>
 
-        <article class="banner-slide bs-black" role="group" aria-roledescription="slide">
-         <div class="bs-copy">
-          <span class="bs-tag">Black Friday</span>
-          <h2 class="bs-title">Săn deal cùng cả nhóm</h2>
-          <p>Chọn món bạn thích, lập nhóm và so sánh giá lẻ với giá mua chung ngay trên WeBuy.</p>
-          <a class="bs-cta" href="products.html">Xem giá nhóm <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+        <!-- sản phẩm thật bay quanh người mua -->
+        <div class="layer l-speaker" style="--z:130px">
+         <div class="float" style="--dur:7.2s;--fy:-12px;--r0:8deg;--r1:13deg;--delay:-3.2s">
+          <img class="prod-cut" alt="" src="images/hero/speaker.webp" width="300" height="216" decoding="async"/>
          </div>
-         <div class="bs-art" aria-hidden="true">
-          <span class="bs-disc"></span>
-          <img alt="" class="bs-prod" height="260" loading="lazy" src="images/product-07.webp" width="260"/>
-          <span class="bs-ribbon">Black Friday</span>
-         </div>
-        </article>
+        </div>
 
-        <article class="banner-slide bs-xmas" role="group" aria-roledescription="slide">
-         <div class="bs-copy">
-          <span class="bs-tag">Giáng sinh</span>
-          <h2 class="bs-title">Quà tặng mua chung</h2>
-          <p>Tìm món quà phù hợp cho người thân và cùng bạn bè gom nhóm mua chung.</p>
-          <a class="bs-cta" href="products.html">Chọn quà ngay <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+        <!-- thẻ giá có dây treo -->
+        <div class="layer l-tag-a" style="--z:180px">
+         <div class="float" style="--dur:6s;--fy:-12px;--r0:-14deg;--r1:-8deg;--delay:-2s">
+          <svg class="tag-svg" viewBox="0 0 170 86">
+           <defs><linearGradient id="tagG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12855A"/><stop offset="1" stop-color="#0A5A3B"/></linearGradient></defs>
+           <path d="M2 40c10-14 18-14 24 0" fill="none" stroke="#FFE7C7" stroke-width="2"/>
+           <path d="M44 8h116a6 6 0 0 1 6 6v58a6 6 0 0 1-6 6H44L20 43z" fill="url(#tagG)"/>
+           <path d="M44 8h116a6 6 0 0 1 6 6v6H32z" fill="#fff" opacity=".12"/>
+           <circle cx="38" cy="43" r="6" fill="#FFE7C7"/>
+           <text x="104" y="55" text-anchor="middle" font-size="31" font-weight="800" fill="#D9FF4F" font-family="Reddit Sans, sans-serif">-20%</text>
+          </svg>
          </div>
-         <div class="bs-art" aria-hidden="true">
-          <span class="bs-snow"></span>
-          <svg class="bs-gift" style="color:#D6342C;--rib:#FFF6E8"><use href="#art-gift"></use></svg>
-          <svg class="bs-gift bs-gift-sm" style="color:#F4FFD9;--rib:#0D6B47"><use href="#art-gift"></use></svg>
+        </div>
+        <div class="layer l-tag-b" style="--z:60px">
+         <div class="float" style="--dur:6.8s;--fy:-3px;--r0:4deg;--r1:6deg;--delay:-4s">
+          <div class="price-chip"><small>Giá nhóm</small><b>249k</b><s>299k</s><em>Tiết kiệm 50k</em></div>
          </div>
-        </article>
+        </div>
 
-        <article class="banner-slide bs-save" role="group" aria-roledescription="slide">
-         <div class="bs-copy">
-          <span class="bs-tag">Mua chung</span>
-          <h2 class="bs-title">Mua chung – tiết kiệm hơn</h2>
-          <p>Nhiều người cùng mua, giá mua chung áp dụng khi nhóm đủ thành viên.</p>
-          <a class="bs-cta" href="about.html#quy-trinh">Xem cách mua chung <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
-         </div>
-         <div class="bs-art" aria-hidden="true">
-          <span class="bs-blob"></span>
-          <span class="bs-circ bs-c1"><img alt="" height="150" loading="lazy" src="images/product-01.webp" width="150"/></span>
-          <span class="bs-circ bs-c2"><img alt="" height="150" loading="lazy" src="images/product-02.webp" width="150"/></span>
-          <span class="bs-circ bs-c3"><img alt="" height="150" loading="lazy" src="images/product-06.webp" width="150"/></span>
-         </div>
-        </article>
-
-        <article class="banner-slide bs-member" role="group" aria-roledescription="slide">
-         <div class="bs-copy">
-          <span class="bs-tag">Thành viên</span>
-          <h2 class="bs-title">Quản lý nhóm mua dễ dàng</h2>
-          <p>Theo dõi nhóm đã tham gia, giỏ hàng và đơn demo ngay trong hồ sơ của bạn.</p>
-          <a class="bs-cta" href="profile.html">Xem hồ sơ <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
-         </div>
-         <div class="bs-art" aria-hidden="true">
-          <span class="bs-blob"></span>
-          <svg class="bs-gift" style="color:#FF6B00;--rib:#D9FF4F"><use href="#art-gift"></use></svg>
-          <span class="bs-circ bs-c4"><img alt="" height="150" loading="lazy" src="images/product-04.webp" width="150"/></span>
-         </div>
-        </article>
-
+        <!-- đồng xu 3D bay vòng lặp -->
+        <div class="layer l-coin c1" style="--z:210px"><span class="coin" style="--dur:5s;--delay:0s">₫</span></div>
+        <div class="layer l-coin c2" style="--z:140px"><span class="coin" style="--dur:6.2s;--delay:-2.1s">₫</span></div>
+        <div class="layer l-coin c3" style="--z:90px"><span class="coin" style="--dur:5.6s;--delay:-3.4s">₫</span></div>
+        <div class="layer l-coin c4" style="--z:240px"><span class="coin" style="--dur:7s;--delay:-1s">₫</span></div>
        </div>
       </div>
-      <button aria-label="Banner trước" class="car-btn car-prev" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"></path></svg></button>
-      <button aria-label="Banner tiếp theo" class="car-btn car-next" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg></button>
-      <div class="car-dots" data-dots="banner"></div>
      </div>
     </div>
    </section>
 
-   <!-- ============ SẢN PHẨM NỔI BẬT ============ -->
+   <!-- ============ 2. TẤT CẢ DANH MỤC ============ -->
+   <section class="home-cats" aria-labelledby="cats-title">
+    <div class="container">
+     <div class="section-header">
+      <div>
+       <p class="eyebrow"><span></span>Danh mục</p>
+       <h2 id="cats-title">Mua chung theo danh mục</h2>
+      </div>
+      <a class="section-link fx-icon" href="products.html#tat-ca-danh-muc">Xem toàn bộ danh mục
+       <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+      </a>
+     </div>
+     <ul class="cat-grid" id="home-cat-grid">
+      <li><a class="cat-tile cat-tile-all" href="products.html#tat-ca-danh-muc"><span class="cat-tile-name">Xem tất cả danh mục</span></a></li>
+     </ul>
+    </div>
+   </section>
+
+   <!-- ============ 2b. BANNER KHUYẾN MÃI: carousel lớn + 2 banner phụ (kiểu sàn TMĐT) ============ -->
+   <section class="promo-section" aria-label="Chương trình khuyến mãi">
+    <div class="container promo-board">
+     <div class="promo-main" data-promo role="region" aria-roledescription="carousel" aria-label="Banner chương trình">
+      <div class="promo-viewport">
+       <div class="promo-track">
+        <article class="promo-slide ps-orange" role="group" aria-roledescription="slide" aria-label="1 / 3">
+         <div class="ps-copy">
+          <span class="ps-tag">12.12</span>
+          <h2 class="ps-title">Đại tiệc mua chung</h2>
+          <p>Rủ bạn bè cùng chọn món, xem giá mua chung minh bạch trước khi tham gia nhóm.</p>
+          <a class="ps-cta fx-press" href="products.html">Khám phá sản phẩm <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+         </div>
+         <div class="ps-art" aria-hidden="true">
+          <span class="ps-blob"></span>
+          <img class="ps-prod" alt="" src="images/hero/backpack.webp" width="257" height="360" loading="lazy"/>
+          <span class="ps-sticker">12.12</span>
+         </div>
+        </article>
+        <article class="promo-slide ps-green" role="group" aria-roledescription="slide" aria-label="2 / 3">
+         <div class="ps-copy">
+          <span class="ps-tag">Black Friday</span>
+          <h2 class="ps-title">Săn deal cùng cả nhóm</h2>
+          <p>Lập nhóm và so sánh giá lẻ với giá mua chung ngay trên WeBuy.</p>
+          <a class="ps-cta fx-press" href="products.html">Xem giá nhóm <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+         </div>
+         <div class="ps-art" aria-hidden="true">
+          <span class="ps-disc"></span>
+          <img class="ps-prod ps-speaker" alt="" src="images/hero/speaker.webp" width="300" height="216" loading="lazy"/>
+          <span class="ps-ribbon">-20%</span>
+         </div>
+        </article>
+        <article class="promo-slide ps-photo" role="group" aria-roledescription="slide" aria-label="3 / 3">
+         <img class="ps-bg" alt="" src="images/webuy-group.webp" width="1536" height="864" loading="lazy"/>
+         <div class="ps-copy">
+          <span class="ps-tag">Mua chung</span>
+          <h2 class="ps-title">Càng đông, giá càng tốt</h2>
+          <p>Giá mua chung áp dụng khi nhóm đủ thành viên. Rủ thêm bạn để chốt nhóm nhanh hơn.</p>
+          <a class="ps-cta fx-press" href="#quy-trinh">Xem cách mua chung <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a>
+         </div>
+        </article>
+       </div>
+      </div>
+      <button class="promo-btn promo-prev fx-press" type="button" aria-label="Banner trước"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"></path></svg></button>
+      <button class="promo-btn promo-next fx-press" type="button" aria-label="Banner tiếp theo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg></button>
+      <div class="promo-dots" role="group" aria-label="Chọn banner"></div>
+     </div>
+
+     <a class="promo-side pside-lime fx-press" href="#nhom-sap-du">
+      <span class="pside-copy"><small>Sắp đủ người</small><b>Vào nhóm ngay, <br/>kẻo lỡ giá tốt</b><em>Xem nhóm →</em></span>
+      <img alt="" src="images/product-17.webp" width="600" height="600" loading="lazy"/>
+     </a>
+     <a class="promo-side pside-cream fx-press" href="seller-center.html">
+      <span class="pside-copy"><small>Kênh người bán</small><b>Đăng sản phẩm, <br/>mở nhóm bán</b><em>Bắt đầu →</em></span>
+      <img alt="" src="images/product-05.webp" width="600" height="600" loading="lazy"/>
+     </a>
+    </div>
+   </section>
+
+
+   <!-- ============ 3. NHÓM SẮP ĐỦ NGƯỜI (cuộn 3D) ============ -->
+   <section class="section near-section" id="nhom-sap-du" aria-labelledby="near-title" data-scroll3d>
+    <span class="near-deco deco-1" aria-hidden="true" style="--speed:-60"></span>
+    <span class="near-deco deco-2" aria-hidden="true" style="--speed:80"></span>
+    <div class="container">
+     <div class="section-header">
+      <div>
+       <p class="eyebrow eyebrow-light"><span></span>Đang diễn ra</p>
+       <h2 id="near-title">Nhóm sắp đủ người</h2>
+       <p class="section-desc">Chỉ còn thiếu vài thành viên – vào nhóm để cả nhóm cùng nhận giá mua chung.</p>
+      </div>
+      <a class="section-link section-link-light fx-icon" href="products.html">Xem tất cả nhóm
+       <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
+      </a>
+     </div>
+     <ol class="near-stack" id="near-groups" aria-live="polite">
+      <li class="near-empty">Đang tải các nhóm mua…</li>
+     </ol>
+     <p class="near-note">Số thành viên và thời gian là dữ liệu mô phỏng trên trình duyệt (bản demo).</p>
+    </div>
+   </section>
+
+   <!-- ============ 4. SẢN PHẨM NỔI BẬT ============ -->
    <section class="section section-products reveal" aria-labelledby="fp-title">
     <div class="container">
      <div class="section-header">
@@ -208,215 +269,122 @@
        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 19c0-8.3 5.4-13.7 16-14-0.3 10.6-5.7 16-14 16"></path><path d="M5 19c3-4.5 6.7-7.5 11-10"></path></svg>
        <h2 id="fp-title">Sản phẩm nổi bật</h2>
       </div>
-      <a class="section-link" href="products.html">Xem tất cả sản phẩm
+      <a class="section-link fx-icon" href="products.html">Xem tất cả sản phẩm
        <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
       </a>
      </div>
      <div class="carousel fp-carousel" data-carousel="products" role="region" aria-roledescription="carousel" aria-label="Sản phẩm nổi bật">
-      <button aria-label="Sản phẩm trước" class="car-btn car-prev" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"></path></svg></button>
+      <button aria-label="Sản phẩm trước" class="car-btn car-prev fx-press" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"></path></svg></button>
       <div class="fp-viewport" tabindex="0" aria-label="Danh sách sản phẩm nổi bật, cuộn ngang để xem thêm">
        <div class="fp-track" id="fp-track">
         <noscript><p class="muted">Bật JavaScript để xem sản phẩm nổi bật hoặc <a href="products.html"><b>xem toàn bộ sản phẩm</b></a>.</p></noscript>
        </div>
       </div>
-      <button aria-label="Sản phẩm tiếp theo" class="car-btn car-next" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg></button>
+      <button aria-label="Sản phẩm tiếp theo" class="car-btn car-next fx-press" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg></button>
       <div class="car-dots" data-dots="products"></div>
      </div>
     </div>
    </section>
 
-   <!-- ============ PROMO CARDS ============ -->
-   <section class="promo-section reveal" aria-label="Ưu đãi mua chung">
-    <div class="container promo-grid">
-     <a class="promo-card promo-group" href="products.html">
-      <div class="promo-copy">
-       <h3>Mua chung – <span>tiết kiệm hơn</span></h3>
-       <p>Rủ bạn bè cùng mua để nhận giá nhóm khi đủ thành viên.</p>
-       <span class="promo-cta">Tham gia ngay <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></span>
-      </div>
-      <div class="promo-art" aria-hidden="true">
-       <svg class="promo-bag"><use href="#art-bag"></use></svg>
-      </div>
-     </a>
-     <a class="promo-card promo-deal" href="products.html">
-      <div class="promo-copy">
-       <h3>Deal hot <span>mỗi ngày</span></h3>
-       <p>Khám phá các món đang có giá mua chung trên WeBuy.</p>
-       <span class="promo-cta">Khám phá ngay <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></span>
-      </div>
-      <div class="promo-art" aria-hidden="true">
-       <svg class="promo-gift" style="color:#FF6B00;--rib:#D9FF4F"><use href="#art-gift"></use></svg>
-      </div>
-     </a>
-    </div>
-   </section>
-
-   <!-- ============ NHÓM MUA MẪU ============ -->
-   <section class="section live-section">
-    <div class="container">
-     <div class="live-board">
-      <div class="live-copy">
-       <p class="eyebrow eyebrow-light"><span></span>Một ý tưởng khác biệt</p>
-       <h2>Mua chung không khó.<br/>Khó là chưa có nhóm!</h2>
-       <p>WeBuy hướng tới việc gợi ý nhóm phù hợp để người mua dễ kết nối hơn, không nhất thiết phải tự rủ đủ bạn bè.</p>
-       <a class="btn btn-cream" href="about.html#quy-trinh">Khám phá cách hoạt động
-        <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
-       </a>
-      </div>
-      <div class="live-card">
-       <div class="live-card-top">
-        <span class="live-round">
-         <svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"></circle><path d="M2 20v-2a6 6 0 0 1 12 0v2"></path><path d="M17 5a3 3 0 0 1 0 6m0 5a5 5 0 0 1 5 4"></path></svg>
-        </span>
-        <div>
-         <strong>Nhóm mua đang mở</strong>
-         <small>Ví dụ minh họa giao diện</small>
-        </div>
-        <span class="mock-pill">NHÓM MẪU</span>
-       </div>
-       <div class="live-card-product">
-        <img alt="Balo canvas Everyday" height="83" loading="lazy" src="images/product-01.webp" width="83"/>
-        <div>
-         <strong>Balo canvas Everyday</strong>
-         <span>Từ 3 thành viên</span>
-         <b>249.000đ</b>
-        </div>
-       </div>
-       <div class="live-team">
-        <span>Tiến độ tham gia</span>
-        <b>2/3 thành viên hợp lệ</b>
-       </div>
-       <div class="progress-track"><span style="width:67%"></span></div>
-       <div class="live-card-foot">
-        <span>
-         <svg aria-hidden="true" class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-         Còn 18 giờ (mẫu)
-        </span>
-        <a href="product-detail.html?id=1">Xem nhóm
-         <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
-        </a>
-       </div>
-      </div>
-     </div>
-    </div>
-   </section>
-
-   <!-- ============ QUY TRÌNH ============ -->
-   <section class="section process-section reveal" id="quy-trinh" aria-labelledby="process-title">
+   <!-- ============ 5. CÁCH MUA CHUNG: 3 BƯỚC (cuộn 3D) ============ -->
+   <section class="section steps-section" id="quy-trinh" aria-labelledby="process-title" data-scroll3d>
     <div class="container">
      <div class="section-header">
       <div>
-       <p class="eyebrow"><span></span>Chỉ với vài bước</p>
+       <p class="eyebrow"><span></span>Chỉ 3 bước</p>
        <h2 id="process-title">Mua chung hoạt động thế nào?</h2>
-       <p class="section-desc">Theo dõi từng bước và xem rõ trạng thái của nhóm trước khi quyết định.</p>
+       <p class="section-desc">Xem rõ giá và tiến độ nhóm trước khi quyết định. Chưa đủ người thì không áp dụng giá nhóm.</p>
       </div>
      </div>
-     <div class="journey-steps">
-      <article class="journey-step">
-       <div class="journey-marker">
-        <span class="journey-count" aria-hidden="true">01</span>
-        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"></circle><path d="m16 16 5 5"></path></svg></span>
-       </div>
-       <div class="journey-copy">
-        <h3>Chọn món yêu thích</h3>
-        <p>Xem thông tin sản phẩm và điều kiện tham gia nhóm.</p>
-       </div>
-      </article>
-      <article class="journey-step">
-       <div class="journey-marker">
-        <span class="journey-count" aria-hidden="true">02</span>
-        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2m3-12v6m-3-3h6"></path></svg></span>
-       </div>
-       <div class="journey-copy">
-        <h3>Tạo hoặc tham gia nhóm</h3>
-        <p>Chọn một nhóm đang mở hoặc tạo nhóm mới.</p>
-       </div>
-      </article>
-      <article class="journey-step">
-       <div class="journey-marker">
-        <span class="journey-count" aria-hidden="true">03</span>
-        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12.5 9.5 17 20 6.5"></path><path d="M12 22a10 10 0 1 0-10-10"></path></svg></span>
-       </div>
-       <div class="journey-copy">
-        <h3>Xác nhận tham gia</h3>
-        <p>Kiểm tra lựa chọn và xác nhận tham gia nhóm.</p>
-       </div>
-      </article>
-      <article class="journey-step journey-step-progress">
-       <div class="journey-marker">
-        <span class="journey-count" aria-hidden="true">04</span>
-        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.7 10.6 6.6-4.2m-6.6 7 6.6 4"></path></svg></span>
-       </div>
-       <div class="journey-copy">
-        <h3>Rủ bạn, chờ đủ nhóm</h3>
-        <p>Chia sẻ nhóm và theo dõi số thành viên.</p>
-        <div class="journey-progress">
-         <div class="journey-progress-label"><span>Tiến độ nhóm mẫu</span><strong>2/3 thành viên</strong></div>
-         <div class="journey-progress-track" role="progressbar" aria-label="Tiến độ nhóm mẫu" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2"><span></span></div>
-        </div>
-       </div>
-      </article>
-      <article class="journey-step journey-step-outcome">
-       <div class="journey-marker">
-        <span class="journey-count" aria-hidden="true">05</span>
-        <span class="journey-icon"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 3.5 7.5v9L12 21l8.5-4.5v-9L12 3Z"></path><path d="m3.8 7.7 8.2 4.5 8.2-4.5M12 12.2V21m-3.5-15 8.2 4.5"></path></svg></span>
-       </div>
-       <div class="journey-copy">
-        <h3>Nhận kết quả nhóm</h3>
-        <div class="journey-outcomes" aria-label="Hai trạng thái có thể có">
-         <div class="journey-outcome journey-outcome--ready">
-          <strong>Nhóm đủ điều kiện</strong>
-          <p>Xem trạng thái và thông tin bước tiếp theo.</p>
+     <div class="steps-wrap">
+      <svg class="steps-path" aria-hidden="true" viewBox="0 0 1000 100" preserveAspectRatio="none">
+       <path class="steps-path-bg" d="M164 50 C 260 0, 400 100, 500 50 S 740 0, 836 50" pathLength="1"></path>
+       <path class="steps-path-fg" d="M164 50 C 260 0, 400 100, 500 50 S 740 0, 836 50" pathLength="1"></path>
+      </svg>
+      <span class="steps-node" data-node="1" aria-hidden="true" style="left:16.4%"></span>
+      <span class="steps-node" data-node="2" aria-hidden="true" style="left:50%"></span>
+      <span class="steps-node" data-node="3" aria-hidden="true" style="left:83.6%"></span>
+      <ol class="steps3d">
+       <li class="step-slot" style="--i:0">
+        <article class="step-card fx-tilt" data-step="1" tabindex="0" aria-labelledby="step1-title">
+         <span class="step-num" aria-hidden="true">01</span>
+         <div class="step-art" aria-hidden="true">
+          <svg viewBox="0 0 160 110">
+           <rect class="art-plate" x="18" y="14" width="96" height="80" rx="14"></rect>
+           <rect x="30" y="26" width="40" height="40" rx="9" fill="#FFF6E8"></rect>
+           <path d="M42 40v-4a8 8 0 0 1 16 0v4" fill="none" stroke="#0D6B47" stroke-width="3"></path>
+           <rect x="36" y="40" width="28" height="22" rx="4" fill="#FF6B00"></rect>
+           <rect x="78" y="30" width="28" height="6" rx="3" fill="#0D6B47"></rect>
+           <rect x="78" y="42" width="20" height="6" rx="3" fill="#B7C9BE"></rect>
+           <rect x="30" y="74" width="34" height="9" rx="4.5" fill="#D9FF4F"></rect>
+           <rect x="70" y="74" width="30" height="9" rx="4.5" fill="#E3EBDB"></rect>
+           <g class="art-lens"><circle cx="118" cy="64" r="20" fill="rgba(217,255,79,.35)" stroke="#08472F" stroke-width="6"></circle><path d="M132 79l14 14" stroke="#08472F" stroke-width="8" stroke-linecap="round"></path></g>
+          </svg>
          </div>
-         <div class="journey-outcome journey-outcome--waiting">
-          <strong>Nhóm chưa đủ điều kiện</strong>
-          <p>Nhóm chưa đạt số người yêu cầu.</p>
+         <h3 id="step1-title">Chọn món &amp; xem giá nhóm</h3>
+         <p>So sánh giá lẻ với giá mua chung, xem nhóm cần bao nhiêu thành viên.</p>
+        </article>
+       </li>
+       <li class="step-slot" style="--i:1">
+        <article class="step-card fx-tilt" data-step="2" tabindex="0" aria-labelledby="step2-title">
+         <span class="step-num" aria-hidden="true">02</span>
+         <div class="step-art" aria-hidden="true">
+          <svg viewBox="0 0 160 110">
+           <rect class="art-plate" x="14" y="14" width="132" height="80" rx="14"></rect>
+           <g class="art-person p1"><circle cx="48" cy="44" r="12" fill="#F2C3A0"></circle><path d="M30 82c0-12 8-20 18-20s18 8 18 20z" fill="#0D6B47"></path></g>
+           <g class="art-person p2"><circle cx="80" cy="40" r="13" fill="#C98E6B"></circle><path d="M60 82c0-13 9-22 20-22s20 9 20 22z" fill="#FF6B00"></path></g>
+           <g class="art-person p3"><circle cx="112" cy="44" r="12" fill="none" stroke="#0D6B47" stroke-width="3" stroke-dasharray="5 4"></circle><path d="M94 82c0-12 8-20 18-20s18 8 18 20z" fill="none" stroke="#0D6B47" stroke-width="3" stroke-dasharray="5 4"></path><path class="art-plus" d="M112 38v12m-6-6h12" stroke="#0D6B47" stroke-width="3" stroke-linecap="round"></path></g>
+          </svg>
          </div>
-        </div>
-       </div>
-      </article>
+         <h3 id="step2-title">Vào nhóm hoặc rủ bạn</h3>
+         <p>Tham gia nhóm đang mở gần bạn, hoặc tạo nhóm mới và chia sẻ đường dẫn.</p>
+        </article>
+       </li>
+       <li class="step-slot" style="--i:2">
+        <article class="step-card fx-tilt" data-step="3" tabindex="0" aria-labelledby="step3-title">
+         <span class="step-num" aria-hidden="true">03</span>
+         <div class="step-art" aria-hidden="true">
+          <svg viewBox="0 0 160 110">
+           <rect class="art-plate" x="14" y="14" width="132" height="80" rx="14"></rect>
+           <rect x="30" y="66" width="100" height="10" rx="5" fill="#E3EBDB"></rect>
+           <rect class="art-bar" x="30" y="66" width="100" height="10" rx="5" fill="#0D6B47"></rect>
+           <g class="art-check"><circle cx="80" cy="38" r="20" fill="#D9FF4F"></circle><path d="M70 38l7 7 14-14" fill="none" stroke="#08472F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path></g>
+           <g class="art-coin"><circle cx="128" cy="34" r="10" fill="#F5B400"></circle><circle cx="128" cy="34" r="6.5" fill="none" stroke="#C98A00" stroke-width="2"></circle></g>
+          </svg>
+         </div>
+         <h3 id="step3-title">Đủ người, áp dụng giá nhóm</h3>
+         <p>Nhóm đạt số thành viên tối thiểu thì giá nhóm được áp dụng; chưa đủ người thì không tính giá nhóm.</p>
+        </article>
+       </li>
+      </ol>
      </div>
-     <a class="journey-cta" href="products.html">Khám phá nhóm mua
+     <a class="journey-cta fx-press fx-icon" href="products.html">Khám phá nhóm mua
       <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
      </a>
     </div>
    </section>
 
-   <!-- ============ GIỚI THIỆU NGẮN ============ -->
-   <section class="section about-home">
+   <!-- ============ 6. TIN CẬY ============ -->
+   <section class="section trust-section reveal" aria-labelledby="trust-title">
     <div class="container">
-     <div class="about-feature">
-      <div class="about-feature-photo">
-       <img alt="Hai bạn trẻ cùng trao đổi và mua sắm qua điện thoại" height="360" loading="lazy" src="images/about-lifestyle.webp" width="600"/>
-      </div>
-      <div class="about-feature-copy">
-       <p class="eyebrow"><span></span>Từ một ý tưởng rất đời thường</p>
-       <h2>Mua sắm không chỉ là chọn đồ.<br/><em>Còn là kết nối.</em></h2>
-       <p>WeBuy xuất phát từ một câu hỏi đơn giản: Nếu nhiều người cùng cần một món đồ, tại sao không giúp họ tìm thấy nhau để mua chung với mức giá phù hợp?</p>
-       <a class="section-link" href="about.html">Tìm hiểu câu chuyện WeBuy
+     <div class="trust-board">
+      <div class="trust-copy">
+       <p class="eyebrow"><span></span>Vì sao yên tâm</p>
+       <h2 id="trust-title">Mua chung minh bạch, <em>không ép đủ nhóm</em></h2>
+       <ul class="trust-list">
+        <li><span class="trust-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"></path><path d="m15 16 2 2 4-4"></path></svg></span><div><b>Giá rõ ràng</b><p>Giá lẻ, giá nhóm và điều kiện số thành viên hiển thị cạnh nhau.</p></div></li>
+        <li><span class="trust-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2"></path><path d="M17 8v6m-3-3h6"></path></svg></span><div><b>Chỉ áp dụng khi đủ người</b><p>Nhóm chưa đủ thành viên thì không áp dụng giá nhóm.</p></div></li>
+        <li><span class="trust-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-10a6 6 0 1 1 12 0c0 4.7-6 10-6 10z"></path><circle cx="12" cy="11" r="2.2"></circle></svg></span><div><b>Nhóm gần bạn</b><p>Chọn khu vực để ưu tiên các nhóm mua cùng tỉnh, thành.</p></div></li>
+        <li><span class="trust-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div><b>Bản demo an toàn</b><p>Không thu tiền thật; dữ liệu chỉ lưu trên trình duyệt của bạn.</p></div></li>
+       </ul>
+       <a class="section-link fx-icon" href="about.html">Tìm hiểu câu chuyện WeBuy
         <svg aria-hidden="true" class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg>
        </a>
       </div>
+      <div class="trust-photo">
+       <img alt="Hai bạn trẻ cùng trao đổi và mua sắm qua điện thoại" decoding="async" height="820" loading="lazy" src="images/about-lifestyle.webp" width="1100"/>
+      </div>
      </div>
-    </div>
-   </section>
-
-   <!-- ============ NEWSLETTER ============ -->
-   <section class="newsletter reveal" aria-label="Đăng ký nhận ưu đãi">
-    <div class="container">
-     <form class="nl-bar" id="newsletter-form" novalidate>
-      <svg aria-hidden="true" class="nl-icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m4 7 8 6 8-6"></path></svg>
-      <div class="nl-copy">
-       <h2>Nhận ưu đãi sớm nhất từ WeBuy</h2>
-       <p>Để lại email để WeBuy gửi thông tin chương trình mua chung khi tính năng sẵn sàng.</p>
-      </div>
-      <div class="nl-field">
-       <label class="sr-only" for="nl-email">Email của bạn</label>
-       <input autocomplete="email" id="nl-email" name="email" placeholder="Nhập email của bạn..." type="email"/>
-       <button class="nl-btn" type="submit">Đăng ký ngay</button>
-      </div>
-      <p aria-live="polite" class="nl-msg" id="nl-msg" role="status"></p>
-     </form>
     </div>
    </section>
   </main>
@@ -453,7 +421,7 @@
      <a href="products.html">Khám phá sản phẩm →</a>
     </div>
    </div>
-   <div class="container footer-bottom">
+   <div class="container footer-bottom"><nav class="help-links" aria-label="Hỗ trợ"><a href="policy.html">Chính sách</a><a href="faq.html">Câu hỏi thường gặp</a></nav>
     <span>© 2026 WeBuy. Giao diện phục vụ đồ án học tập.</span>
     <span>HTML · CSS · JavaScript · Demo tương tác</span>
    </div>
@@ -461,10 +429,19 @@
   <div aria-live="polite" class="app-toast" id="app-toast" role="status"></div>
   <div id="app-dialog-root"></div>
   <script defer src="js/catalog-data.js"></script>
-  <script defer src="js/home.js"></script>
+  <script defer src="js/wishlist.js"></script>
+  <script defer src="js/compare.js"></script>
+  <script defer src="js/fx.js"></script>
   <script defer src="js/app.js"></script>
+  <script defer src="js/home.js"></script>
   <!-- Tính năng 11: Xu WeBuy (điểm danh, trò chơi) -->
   <script defer="" src="js/rewards-art.js"></script>
   <script defer="" src="js/rewards.js"></script>
- </body>
+ 
+  <script defer src="js/image-search.js"></script>
+  <script defer src="js/image-fallback.js"></script>
+  <script defer src="js/weby-assistant.js"></script>
+  <script defer src="js/notifications.js"></script>
+  <script defer src="js/feature-shell.js"></script>
+</body>
 </html>

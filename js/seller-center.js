@@ -47,6 +47,10 @@
     const target = q(`[data-error-for="${name}"]`, form);
     if (target) target.textContent = message || '';
     const input = form.elements.namedItem(name);
+    if (target && input?.setAttribute) {
+      target.id ||= form.id + '-' + name + '-error';
+      input.setAttribute('aria-describedby', target.id);
+    }
     if (input?.setAttribute) {
       if (message) input.setAttribute('aria-invalid', 'true');
       else input.removeAttribute('aria-invalid');
@@ -127,6 +131,7 @@
   }
   function updateIdentity() {
     q('#sc-shop-header-name').textContent = shop.storeName;
+    q('#sc-public-store').href = 'seller-store.html?id=' + encodeURIComponent(shop.id);
     q('#sc-welcome-name').textContent = shop.storeName;
     q('#sc-shop-avatar').src = picture(shop.logo || '');
   }
@@ -274,7 +279,7 @@
   }
   function myGroups() {
     const ids = new Set(getItems().filter(p => p.shopId === shop.id).map(p => p.id));
-    return getGroups().filter(g => g && ids.has(g.productId)).sort((a,b) => (Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+    return getGroups().filter(g => g && ids.has(g.productId) && (!g.isDemo || g.members?.length)).sort((a,b) => (Number(b.createdAt)||0)-(Number(a.createdAt)||0));
   }
 
   function renderProductRow(p, recent = false) {
@@ -348,7 +353,7 @@
     const {need,count,state,left} = groupMeta(g);
     const started = new Date(Number(g.createdAt)||now()).toLocaleString('vi-VN');
     const end = new Date(Number(g.endsAt)||now()).toLocaleString('vi-VN');
-    q('#sc-modal-root').innerHTML = `<div class="sc-modal-backdrop"><section class="sc-modal" role="dialog" aria-modal="true" aria-label="Chi tiết nhóm mua"><button class="sc-modal-close" type="button" data-sc-close aria-label="Đóng">×</button><span class="sc-eyebrow">NHÓM MUA LIÊN QUAN</span><h2>${esc(p?.name||'Sản phẩm')}</h2><p><strong>Mã nhóm:</strong> ${esc(g.id)}</p><p><strong>Trạng thái:</strong> ${statusLabel(state)}</p><p><strong>Thành viên:</strong> ${count}/${need}</p><p><strong>Khởi tạo:</strong> ${esc(started)}</p><p><strong>Kết thúc dự kiến:</strong> ${esc(end)}</p><p>${state==='open'?`Còn khoảng ${left} giờ để đạt điều kiện mua chung.`:state==='success'?'Nhóm đã đủ số lượng thành viên tối thiểu.':'Nhóm đã quá thời hạn mà chưa đủ người.'}</p><button class="sc-btn sc-btn-primary" type="button" data-sc-close>Đóng</button></section></div>`;
+    q('#sc-modal-root').innerHTML = `<div class="sc-modal-backdrop"><section class="sc-modal" role="dialog" aria-modal="true" aria-label="Chi tiết nhóm mua"><button class="sc-modal-close" type="button" data-sc-close aria-label="Đóng">×</button><span class="sc-eyebrow">NHÓM MUA LIÊN QUAN</span><h2>${esc(p?.name||'Sản phẩm')}</h2><p><strong>Mã nhóm:</strong> ${esc(g.id)}</p><p><strong>Trạng thái:</strong> ${statusLabel(state)}</p><p><strong>Thành viên:</strong> ${count}/${need}</p><p><strong>Khởi tạo:</strong> ${esc(started)}</p><p><strong>Kết thúc dự kiến:</strong> ${esc(end)}</p><p>${state==='open'?`Còn khoảng ${left} giờ để đạt điều kiện mua chung.`:state==='success'?'Nhóm đã đủ số lượng thành viên tối thiểu.':'Nhóm đã quá thời hạn mà chưa đủ người.'}</p>${p?.status === 'published' ? `<a class="sc-btn sc-btn-primary" href="product-detail.html?id=${encodeURIComponent(p.id)}&group=${encodeURIComponent(g.id)}#group-${encodeURIComponent(g.id)}">Xem nhóm trên WeBuy</a>` : ''}<button class="sc-btn sc-btn-secondary" type="button" data-sc-close>Đóng</button></section></div>`;
     q('.sc-modal-close', q('#sc-modal-root')).focus();
   }
 
@@ -427,6 +432,9 @@
     if (event.target.classList.contains('sc-modal-backdrop')) q('#sc-modal-root').innerHTML='';
   });
   document.addEventListener('keydown',event=>{if(event.key==='Escape' && q('#sc-modal-root').innerHTML)q('#sc-modal-root').innerHTML='';});
+  document.addEventListener('webuy:lan-state',refreshViews);
+  window.addEventListener('pageshow', () => { if (shop) refreshViews(); });
+  setInterval(() => { if (shop && !document.hidden) { renderOverview(); renderGroups(); } },60000);
   window.addEventListener('storage',event=>{if([PRODUCTS_KEY,GROUPS_KEY,STORE_KEY].includes(event.key)){shop=read(STORE_KEY,null);if(shop){updateIdentity();refreshViews();}}});
 
   activate();

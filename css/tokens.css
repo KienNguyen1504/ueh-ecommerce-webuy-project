@@ -1,0 +1,191 @@
+/* =====================================================================
+   WeBuy Design Tokens — nguồn DUY NHẤT cho màu, chữ, khoảng cách,
+   bo góc, bóng, icon và chuyển động của toàn site (Kênh người mua,
+   Seller Center, Xu WeBuy).
+   - Nạp ĐẦU TIÊN trên mọi trang, trước styles.css / seller-center.css.
+   - File khác chỉ dùng var(--...), không khai báo lại mã màu thương hiệu.
+   - Chỉ chứa biến CSS: không đụng DOM, không ghi đè logic JS.
+   - Xem minh họa: style-guide.html
+   ===================================================================== */
+
+:root{
+  /* ---------- 1. Bảng màu gốc ---------- */
+  --wb-green-900:#08472F;   /* nền footer đậm, chữ trên lime */
+  --wb-green-800:#0A5A3B;   /* hover của xanh chính */
+  --wb-green-700:#0D6B47;   /* XANH ĐẬM THƯƠNG HIỆU */
+  --wb-green-500:#3A9A6B;
+  --wb-green-100:#E4F3EA;
+  --wb-lime-500:#D9FF4F;    /* LIME THƯƠNG HIỆU */
+  --wb-lime-300:#E6FF7E;
+  --wb-lime-200:#CFE58A;    /* viền nhạt của nền lime */
+  --wb-lime-100:#F4FFD9;
+  --wb-lime-50:#FAFFF0;
+  --wb-orange-600:#E85F00;
+  --wb-orange-500:#FF6B00;  /* CAM THƯƠNG HIỆU (CTA, giá nhóm) */
+  --wb-orange-100:#FFE8D3;
+  --wb-cream:#FFF6E8;
+  --wb-ink:#10281F;         /* tiêu đề */
+  --wb-body:#2B403A;        /* chữ nội dung */
+  --wb-muted:#5F7068;       /* chữ phụ (AA trên nền trắng) */
+  --wb-line:#E3EBDB;
+  --wb-line-warm:#D9CDB4;
+  --wb-surface:#F6F8F2;
+  --wb-white:#FFFFFF;
+  --wb-danger:#B83232;
+  --wb-warning:#B45309;
+
+  /* ---------- 2. Vai trò màu (dùng trong component mới) ---------- */
+  --color-primary:var(--wb-green-700);
+  --color-primary-hover:var(--wb-green-800);
+  --color-primary-strong:var(--wb-green-900);
+  --color-accent:var(--wb-lime-500);
+  --color-accent-soft:var(--wb-lime-100);
+  --color-cta:var(--wb-orange-500);
+  --color-cta-hover:var(--wb-orange-600);
+  --color-text:var(--wb-ink);
+  --color-text-body:var(--wb-body);
+  --color-text-muted:var(--wb-muted);
+  --color-text-on-dark:#FFFFFF;
+  --color-border:var(--wb-line);
+  --color-bg:var(--wb-white);
+  --color-bg-soft:var(--wb-surface);
+  --color-bg-warm:var(--wb-cream);
+  --color-danger:var(--wb-danger);
+  --color-heart:#E5484D;
+
+  /* ---------- 3. Chữ: Reddit Sans ---------- */
+  --font-sans:'Reddit Sans',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --font-display:var(--font-sans);
+  --fs-xs:12px;
+  --fs-sm:14px;
+  --fs-md:16px;
+  --fs-lg:18px;
+  --fs-xl:clamp(20px,2vw,24px);
+  --fs-2xl:clamp(24px,2.6vw,30px);
+  --fs-3xl:clamp(28px,4vw,42px);
+  --fs-hero:clamp(32px,4.6vw,56px);
+  --fw-regular:400;
+  --fw-medium:500;
+  --fw-semibold:600;
+  --fw-bold:700;
+  --fw-black:800;
+  --lh-tight:1.15;
+  --lh-snug:1.35;
+  --lh-body:1.6;
+  --ls-tight:-.02em;
+
+  /* ---------- 4. Khoảng cách (bước 4px) ---------- */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+  --space-12:48px;
+  --space-16:64px;
+  --section-y:clamp(40px,6vw,72px);
+  --container:1200px;
+
+  /* ---------- 5. Bo góc ---------- */
+  --r-xs:8px;
+  --r-sm:12px;
+  --r-md:16px;
+  --r-lg:20px;
+  --r-xl:26px;
+  --r-pill:999px;
+
+  /* ---------- 6. Bóng (ánh xanh nhẹ, không dùng bóng đen gắt) ---------- */
+  --shadow-sm:0 4px 14px rgba(13,107,71,.07);
+  --shadow:0 12px 32px rgba(13,107,71,.10);
+  --shadow-lg:0 22px 48px rgba(13,107,71,.16);
+  --shadow-cta:0 8px 18px rgba(255,107,0,.28);
+  --shadow-float:0 30px 60px -18px rgba(8,71,47,.45);
+
+  /* ---------- 7. Nút ---------- */
+  --btn-h:46px;
+  --btn-h-sm:38px;
+  --btn-px:24px;
+  --btn-radius:var(--r-pill);
+  --btn-fs:15px;
+
+  /* ---------- 8. Icon (SVG nét) ---------- */
+  --icon-sm:16px;
+  --icon-md:20px;
+  --icon-lg:24px;
+  --icon-stroke:1.8;
+
+  /* ---------- 9. Chuyển động ---------- */
+  --ease:cubic-bezier(.22,.8,.3,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --dur-fast:.15s;
+  --dur:.25s;
+  --dur-slow:.45s;
+  --tilt-max:7deg;          /* độ nghiêng tối đa của thẻ 3D */
+  --motion-scale:1;         /* mobile giảm cường độ, reduced-motion = 0 */
+
+  /* ---------- 10. Lớp chồng ---------- */
+  --z-header:30;
+  --z-tray:60;
+  --z-modal:110;         /* trên nút Xu nổi (90) và popup cũ (100) */
+  --z-toast:90;
+
+  /* ---------- 11. Tiêu điểm bàn phím ---------- */
+  --focus-outline:3px solid var(--wb-green-700);
+  --focus-offset:3px;
+  --focus-ring:0 0 0 4px rgba(217,255,79,.75);
+
+  /* ---------- 12. Bí danh tương thích (CSS cũ của nhóm đang dùng) ---------- */
+  --green:var(--wb-green-700);
+  --green-deep:var(--wb-green-800);
+  --green-dark:var(--wb-green-900);
+  --lime:var(--wb-lime-500);
+  --soft-lime:var(--wb-lime-100);
+  --mint:var(--wb-lime-100);
+  --mint-soft:var(--wb-lime-50);
+  --orange:var(--wb-orange-500);
+  --orange-deep:var(--wb-orange-600);
+  --cream:var(--wb-cream);
+  --white:var(--wb-white);
+  --paper:var(--wb-white);
+  --ink:var(--wb-ink);
+  --body:var(--wb-body);
+  --muted:var(--wb-muted);
+  --line:var(--wb-line);
+  --surface:var(--wb-surface);
+  --sans:var(--font-sans);
+  --serif:var(--font-sans);
+
+  /* Seller Center (css/seller-center.css) */
+  --sc-green:var(--wb-green-700);
+  --sc-dark:var(--wb-green-900);
+  --sc-ink:var(--wb-ink);
+  --sc-muted:var(--wb-muted);
+  --sc-bg:var(--wb-surface);
+  --sc-border:var(--wb-line);
+  --sc-soft:var(--wb-green-100);
+  --sc-red:var(--wb-danger);
+  --sc-radius:var(--r-md);
+
+  /* Xu WeBuy (css/rewards.css) */
+  --wbr-orange:var(--wb-orange-500);
+  --wbr-green:var(--wb-green-700);
+  --wbr-lime:var(--wb-lime-500);
+  --wbr-cream:var(--wb-cream);
+  --wbr-ink:var(--wb-ink);
+  --wbr-muted:var(--wb-body);
+  --wbr-line:var(--wb-line-warm);
+  --wbr-display:var(--font-display);
+  --wbr-body:var(--font-sans);
+  --wbr-sticker:0 6px 0 var(--wb-ink);
+}
+
+/* Mobile: giảm cường độ chuyển động 3D */
+@media (max-width:767px){
+  :root{--tilt-max:4deg;--motion-scale:.45}
+}
+/* Người dùng bật giảm chuyển động: tắt hiệu ứng 3D */
+@media (prefers-reduced-motion:reduce){
+  :root{--tilt-max:0deg;--motion-scale:0}
+}

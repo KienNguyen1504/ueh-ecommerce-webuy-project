@@ -12,10 +12,14 @@
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="css/tokens.css" rel="stylesheet"/>
   <link href="css/styles.css" rel="stylesheet"/>
   <link href="css/app.css" rel="stylesheet"/>
   <link href="css/webuy-theme.css" rel="stylesheet"/>
+  <link href="css/fx.css" rel="stylesheet"/>
+  <link href="css/features.css" rel="stylesheet"/>
   <link href="css/rewards.css" rel="stylesheet"/>
+  <link href="css/advanced-features.css" rel="stylesheet"/>
   <link href="css/about-page.css" rel="stylesheet"/>
   <script>document.documentElement.classList.add("ab-js")</script>
  </head>
@@ -212,19 +216,19 @@
      </div>
      <div class="ab-vgrid">
       <article class="ab-vcard ab-reveal" style="--d:0s" tabindex="0" role="button" aria-expanded="false">
-       <div class="bg"><img src="images/value-collaboration.png" alt="Nhóm bạn cùng xem và chia sẻ sản phẩm"/></div>
+       <div class="bg"><img src="images/value-collaboration.webp" alt="Nhóm bạn cùng xem và chia sẻ sản phẩm"/></div>
        <span class="ab-vnum">01</span><span class="ab-vplus">+</span>
        <div class="ab-vmarq" aria-hidden="true"><span><i>Cộng hưởng</i><i>Cộng hưởng</i><i>Cộng hưởng</i><i>Cộng hưởng</i></span></div>
        <div class="ab-vbody"><h3>Cộng hưởng</h3><p>Sức mua tập thể tạo nên giá trị. Mỗi thành viên góp sức để nhóm tiếp cận mức giá tốt hơn.</p></div>
       </article>
       <article class="ab-vcard ab-reveal" style="--d:.1s" tabindex="0" role="button" aria-expanded="false">
-       <div class="bg"><img src="images/value-connection.png" alt="Nhóm bạn cùng xem sản phẩm trên điện thoại"/></div>
+       <div class="bg"><img src="images/value-connection.webp" alt="Nhóm bạn cùng xem sản phẩm trên điện thoại"/></div>
        <span class="ab-vnum">02</span><span class="ab-vplus">+</span>
        <div class="ab-vmarq" aria-hidden="true"><span><i>Gắn kết</i><i>Gắn kết</i><i>Gắn kết</i><i>Gắn kết</i></span></div>
        <div class="ab-vbody"><h3>Gắn kết</h3><p>Kết nối những người chung nhu cầu. Bạn bè, đồng nghiệp và gia đình có thể cùng chọn món phù hợp.</p></div>
       </article>
       <article class="ab-vcard ab-reveal" style="--d:.2s" tabindex="0" role="button" aria-expanded="false">
-       <div class="bg"><img src="images/value-trust-4k.png" alt="Biểu tượng bảo vệ và tin cậy giao dịch"/></div>
+       <div class="bg"><img src="images/value-trust.webp" alt="Biểu tượng bảo vệ và tin cậy giao dịch"/></div>
        <span class="ab-vnum">03</span><span class="ab-vplus">+</span>
        <div class="ab-vmarq" aria-hidden="true"><span><i>Tin cậy</i><i>Tin cậy</i><i>Tin cậy</i><i>Tin cậy</i></span></div>
        <div class="ab-vbody"><h3>Tin cậy</h3><p>Minh bạch thông tin trong từng giao dịch. Giá, điều kiện và tiến độ luôn được hiển thị rõ ràng.</p></div>
@@ -412,7 +416,7 @@
      </a>
     </div>
    </div>
-   <div class="container footer-bottom">
+   <div class="container footer-bottom"><nav class="help-links" aria-label="Hỗ trợ"><a href="policy.html">Chính sách</a><a href="faq.html">Câu hỏi thường gặp</a></nav>
     <span>
      &copy; 2026 WeBuy. Giao diện phục vụ &dstrok;ồ &aacute;n học tập.
     </span>
@@ -427,11 +431,20 @@
   </div>
   <script defer="" src="js/catalog-data.js">
   </script>
+  <script defer src="js/wishlist.js"></script>
+  <script defer src="js/compare.js"></script>
+  <script defer src="js/fx.js"></script>
   <script defer="" src="js/app.js">
   </script>
   <script defer="" src="js/about-page.js"></script>
   <!-- Tính năng 11: Xu WeBuy (điểm danh, trò chơi) -->
   <script defer="" src="js/rewards-art.js"></script>
   <script defer="" src="js/rewards.js"></script>
- </body>
+ 
+  <script defer src="js/image-search.js"></script>
+  <script defer src="js/image-fallback.js"></script>
+  <script defer src="js/weby-assistant.js"></script>
+  <script defer src="js/notifications.js"></script>
+  <script defer src="js/feature-shell.js"></script>
+</body>
 </html>
