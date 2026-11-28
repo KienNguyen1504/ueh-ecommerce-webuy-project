@@ -3,6 +3,7 @@
   'use strict';
   const products = window.WEBUY_PRODUCTS || [];
   const lan = window.WeBuyLan;
+  const liveCommerce = window.WeBuyLiveCommerce;
   const storagePrefix = 'webuy_demo_v2_';
   /* Danh mục lấy từ cùng nguồn dữ liệu (js/catalog-data.js); dự phòng 4 danh mục cũ nếu thiếu. */
   const CATEGORY_LIST = Array.isArray(window.WEBUY_CATEGORIES) && window.WEBUY_CATEGORIES.length
@@ -284,6 +285,7 @@
     document.querySelectorAll('[data-avatar]').forEach(el=>el.textContent=initials||'WB');
   };
   const refreshHeader=()=>{
+    if (liveCommerce) return;
     const n=cart.reduce((sum,item)=>sum+Math.max(1,Number(item.quantity)||1),0);
     document.querySelectorAll('[data-cart-count]').forEach(el=>{el.textContent=n>99?'99+':String(n);el.setAttribute('aria-label',`${n} sản phẩm trong giỏ hàng`);});
     updateAvatar();
@@ -499,7 +501,9 @@ const normalizeSearchText = (text) =>
   };
   const renderDetail=()=>{
     if(page!=='product-detail.html')return;
-    const params=new URLSearchParams(location.search),p=product(params.get('id'));
+    if (liveCommerce && liveCommerce.product === undefined) return;
+    const params=new URLSearchParams(location.search);
+    const p=liveCommerce ? liveCommerce.product : product(params.get('id'));
     if(!p){
       const detailGrid=document.querySelector('.detail-grid');
       if(detailGrid){detailGrid.hidden=true;detailGrid.querySelectorAll('button').forEach(button=>button.disabled=true);}
@@ -530,9 +534,10 @@ const normalizeSearchText = (text) =>
       const heading=desc.querySelector('.description-grid h2'),paragraph=desc.querySelector('.description-grid > div:first-child > p:last-of-type');
       if(heading)heading.textContent='Mô tả sản phẩm';
       if(paragraph)paragraph.textContent=p.description;
-      const spec=desc.querySelector('.spec-table tbody');if(spec)spec.innerHTML=`<tr><th>Tên sản phẩm</th><td>${safe(p.name)}</td></tr><tr><th>Danh mục</th><td>${safe(p.category)}</td></tr><tr><th>Giá mua lẻ</th><td>${money(p.retail)}</td></tr><tr><th>Giá mua chung</th><td>${money(p.group)} (từ ${p.minMembers} người)</td></tr><tr><th>Tình trạng</th><td>Dữ liệu minh họa, chưa có giao dịch thật</td></tr>`;
+      const spec=desc.querySelector('.spec-table tbody');if(spec)spec.innerHTML=`<tr><th>Tên sản phẩm</th><td>${safe(p.name)}</td></tr><tr><th>Danh mục</th><td>${safe(p.category)}</td></tr><tr><th>Giá mua lẻ</th><td>${money(p.retail)}</td></tr><tr><th>Giá mua chung</th><td>${money(p.group)} (từ ${p.minMembers} người)</td></tr><tr><th>Tình trạng</th><td>${liveCommerce ? 'Đang bán · Đặt đơn thử nghiệm' : 'Dữ liệu minh họa, chưa có giao dịch thật'}</td></tr>`;
     }
     const table=document.getElementById('dynamic-tiers');if(table){table.innerHTML=`<h2>So sánh giá theo hình thức mua</h2><table class="tier-table"><thead><tr><th>Hình thức</th><th>Điều kiện</th><th>Giá / sản phẩm</th></tr></thead><tbody><tr><td>Mua lẻ</td><td>1 người</td><td>${money(p.retail)}</td></tr><tr class="is-tier"><td>Mua chung</td><td>Từ ${p.minMembers} người</td><td>${money(p.group)}</td></tr></tbody></table><p class="table-note">Giá mua chung chỉ áp dụng khi nhóm đủ số thành viên trong thời hạn. Đây là dữ liệu demo.</p>`;}
+    if (liveCommerce) return;
     const currentGroups=groups.filter(g=>g.productId===p.id).sort((a,b)=>(groupState(a)==='open'?0:1)-(groupState(b)==='open'?0:1));
     const open=currentGroups.filter(g=>groupState(g)==='open');
     const mainGroup=currentGroups.find(g => g.id === params.get('group')) || open[0] || currentGroups[0];
@@ -578,7 +583,7 @@ const normalizeSearchText = (text) =>
     document.getElementById('detail-add-cart')?.setAttribute('data-add-detail-cart',p.id);
   };
   const renderCart=()=>{
-    if(page!=='cart.html')return;
+    if(page!=='cart.html' || liveCommerce)return;
     const list=document.getElementById('cart-items');if(!list)return;
     if(!cart.length){list.innerHTML='<div class="empty-panel"><span class="empty-emoji">🧺</span><h2>Giỏ hàng của bạn đang trống</h2><p>Khám phá những món đồ bạn thích và thêm vào giỏ hàng nhé.</p><a class="btn btn-primary" href="products.html">Khám phá sản phẩm</a></div>';}
     else list.innerHTML=cart.map((item,i)=>{
@@ -610,7 +615,7 @@ const normalizeSearchText = (text) =>
     refreshHeader();
   };
   const renderCheckout=(summaryOnly=false)=>{
-    if(page!=='checkout.html')return;
+    if(page!=='checkout.html' || liveCommerce)return;
     const list=document.getElementById('checkout-summary');if(!list)return;
     const ready=cart.filter(item=>{let g=groups.find(x=>x.id===item.groupId);return item.kind==='retail'||(g&&groupState(g)==='success');});
     document.getElementById('checkout-form').hidden = !ready.length;
@@ -835,6 +840,7 @@ const normalizeSearchText = (text) =>
     }
 
     if (e.target.id === 'checkout-form') {
+      if (liveCommerce) return;
       e.preventDefault();
       const f = e.target;
       if (!f.reportValidity()) return;
@@ -914,6 +920,7 @@ const normalizeSearchText = (text) =>
     refreshProductProgress(); renderDetail(); renderCart(); renderProfile();
     if (page === 'checkout.html') renderCheckout(true);
   });
+  document.addEventListener('webuy:live-product', renderDetail);
   injectHeaderLocationBtn();
   updateLocationUI();
   refreshHeader();

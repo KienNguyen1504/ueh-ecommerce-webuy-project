@@ -70,9 +70,9 @@
           ${o.status === 'PENDING' ? `<p>Giữ hàng cho bạn trong <span class="wb-countdown" data-countdown>--:--</span>. Quá thời gian này đơn sẽ tự hủy và trả hàng về kho.</p>` : ''}
           ${o.status === 'CANCELLED' && o.cancelReason ? `<p>Lý do hủy: ${esc(o.cancelReason)}</p>` : ''}
           <ul class="wb-items">${o.items.map(i => `
-            <li><img src="${esc(API.imageUrl(i.image))}" alt="">
+            <li><img src="${esc(i.image?.startsWith('images/') || !i.image ? '../' + API.imageUrl(i.image) : API.imageUrl(i.image))}" alt="">
               <div><strong>${esc(i.name)}</strong>
-                <small>${i.kind === 'group' ? 'Mua chung' : 'Mua lẻ'} · ${i.quantity} × ${money(i.unitPrice)} (giá chốt lúc đặt)</small></div>
+                <small>${i.kind === 'group' ? 'Mua chung · Giá lúc giữ suất' : 'Mua lẻ · Giá lúc đặt'} · ${i.quantity} × ${money(i.unitPrice)}</small></div>
               <strong>${money(i.lineTotal)}</strong></li>`).join('')}</ul>
         </section>
         <aside class="wb-card">

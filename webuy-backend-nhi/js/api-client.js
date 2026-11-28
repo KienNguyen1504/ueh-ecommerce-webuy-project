@@ -8,6 +8,7 @@
  *   WeBuyAPI.products      search, get, categories
  *   WeBuyAPI.seller        register, myStore, updateStore, dashboard, listProducts, saveProduct, setStatus, uploadImage
  *   WeBuyAPI.stock         hold, release
+ *   WeBuyAPI.groups        list, get, create, join, confirm, cancelReservation, cancel
  *   WeBuyAPI.cart          get, add, setQuantity, remove, merge
  *   WeBuyAPI.orders        place, get, list, payDemo, cancel, refundDemo
  *   WeBuyAPI.notifications list, markRead
@@ -23,6 +24,7 @@
 
   const CONFIG = window.WEBUY_API_CONFIG || { mode: 'mock' };
   const MODE = (() => {
+    if (window.WeBuyLan) return 'mock';
     try { return localStorage.getItem('webuy_api_mode') || CONFIG.mode || 'mock'; } catch { return CONFIG.mode || 'mock'; }
   })();
   const BUCKET = CONFIG.storageBucket || 'store-assets';
@@ -112,11 +114,11 @@
       return new ApiError(httpStatus >= 400 ? httpStatus : 500, code || 'SERVER_ERROR', error.message || FRIENDLY[500]);
     }
 
-    async function rpc(fn, args = {}) {
+    async function rpc(fn, args = {}, { includeStatus = false } = {}) {
       const client = await clientPromise;
       const { data, error, status } = await client.rpc(fn, args);
       if (error) throw toApiError(error, status);
-      return data;
+      return includeStatus ? { data, status } : data;
     }
 
     const authError = error => {
@@ -136,11 +138,11 @@
       toApiError,
       auth: {
         async getSession() { const c = await clientPromise; const { data } = await c.auth.getSession(); return sessionOf(data.session); },
-        async signUp({ email, password, name }) {
+        async signUp({ email, password, name, emailRedirectTo }) {
           const c = await clientPromise;
           const { data, error } = await c.auth.signUp({
             email, password,
-            options: { data: { full_name: name || '' }, emailRedirectTo: location.origin + location.pathname.replace(/[^/]*$/, 'login.html') }
+            options: { data: { full_name: name || '' }, emailRedirectTo: emailRedirectTo || new URL('login.html', location.href).href }
           });
           if (error) throw authError(error);
           return { session: sessionOf(data.session), needsConfirmation: !data.session };
@@ -611,6 +613,10 @@
 
   // Mỗi hàm: nếu là mock thì gọi bản giả lập, nếu là supabase thì gọi RPC tương ứng trong migration
   const call = (name, mockFn, rpcName, args, opts) => run(name, () => (isMock ? mockFn() : R(rpcName, args)), opts);
+  const groupRpc = (name, args, { retry = false, includeStatus = false } = {}) => run(name, () => {
+    if (isMock) fail(400, 'SUPABASE_REQUIRED', 'API nhóm cần chế độ Supabase.');
+    return impl.rpc(name, args, { includeStatus });
+  }, { retry });
 
   const WeBuyAPI = {
     mode: isMock ? 'mock' : 'supabase',
@@ -669,6 +675,22 @@
       release: holdId => call('stock.release', () => impl.stock.release(holdId), 'release_stock_hold', { p_hold_id: holdId })
     },
 
+    groups: {
+      list: (productId, regionCode = null) => groupRpc('list_buying_groups', {
+        p_product_id: String(productId), p_region_code: regionCode
+      }, { retry: true }),
+      get: groupId => groupRpc('get_buying_group', { p_group_id: groupId }, { retry: true }),
+      create: (productId, regionCode, durationHours, requestKey) => groupRpc('create_buying_group', {
+        p_product_id: String(productId), p_region_code: regionCode, p_duration_hours: durationHours, p_request_key: requestKey
+      }, { retry: true, includeStatus: true }),
+      join: (groupId, requestKey) => groupRpc('join_buying_group', {
+        p_group_id: groupId, p_request_key: requestKey
+      }, { retry: true, includeStatus: true }),
+      confirm: reservationId => groupRpc('confirm_group_reservation', { p_reservation_id: reservationId }),
+      cancelReservation: reservationId => groupRpc('cancel_group_reservation', { p_reservation_id: reservationId }),
+      cancel: groupId => groupRpc('cancel_buying_group', { p_group_id: groupId })
+    },
+
     cart: {
       get: () => call('cart.get', () => impl.cart.get(), 'get_cart', {}, { retry: true }),
       add: (productId, kind = 'retail', quantity = 1, groupId = null) => call('cart.add', () => impl.cart.add(String(productId), kind, quantity, groupId), 'add_to_cart', { p_product_id: String(productId), p_kind: kind, p_quantity: quantity, p_group_ref: groupId }),
@@ -679,7 +701,7 @@
     },
 
     orders: {
-      // requestId: tạo 1 lần cho mỗi lần bấm "Xác nhận" (WeBuyAPI.newRequestId()) và giữ nguyên khi thử lại
+      // Tạo requestId cho một nội dung đặt đơn. Retry dùng lại cả requestId lẫn nội dung đã gửi.
       place: (itemIds, shipping, requestId) => call('orders.place', () => impl.orders.place(itemIds, shipping, requestId), 'place_order', { p_cart_item_ids: itemIds, p_shipping: shipping, p_client_request_id: requestId }, { retry: true }),
       get: id => call('orders.get', () => impl.orders.get(id), 'get_order', { p_order_id: id }, { retry: true }),
       list: (limit = 20) => call('orders.list', () => impl.orders.list(limit), 'list_my_orders', { p_limit: limit }, { retry: true }),

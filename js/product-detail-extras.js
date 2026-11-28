@@ -3,6 +3,7 @@
  */
 (() => {
   'use strict';
+  if (window.WeBuyLiveCommerce) return;
   const products = () => window.WEBUY_PRODUCTS || [];
   const money = n => new Intl.NumberFormat('vi-VN').format(Number(n) || 0) + 'đ';
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

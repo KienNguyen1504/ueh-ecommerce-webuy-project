@@ -255,7 +255,11 @@ class Handler(BaseHTTPRequestHandler):
             raise Problem(404,"Không tìm thấy trang.")
         rel = file.relative_to(ROOT)
         page = len(rel.parts) == 1 and file.suffix == ".html"
-        if not page and (rel.parts[0] not in {"js","css","images"} or file.suffix.lower() not in
+        public_client = rel.parts in {
+            ("webuy-backend-nhi", "js", "api-config.js"),
+            ("webuy-backend-nhi", "js", "api-client.js"),
+        }
+        if not page and not public_client and (rel.parts[0] not in {"js","css","images"} or file.suffix.lower() not in
                          {".js",".css",".svg",".png",".webp",".jpg",".jpeg",".ico",".woff2"}):
             raise Problem(404,"Không tìm thấy tài nguyên.")
         content = file.read_bytes()
