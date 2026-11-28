@@ -1,6 +1,7 @@
 /* WeBuy – Share groups via Web Share / clipboard / QR URL. Wi-Fi sessions share group state through the local server. */
 (() => {
   'use strict';
+  if (window.WeBuyLiveCommerce) return;
   const lan = window.WeBuyLan;
   const KEY = 'webuy_demo_v2_groups';
   const products = () => window.WEBUY_PRODUCTS || [];

@@ -1162,6 +1162,7 @@
   }
 
   function renderCheckoutXu() {
+    if (window.WeBuyLiveCommerce) return;
     const box = document.getElementById('checkout-xu');
     if (!box) return;
 

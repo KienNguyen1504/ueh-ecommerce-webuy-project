@@ -12,6 +12,7 @@ import threading
 import uuid
 
 import psycopg
+from psycopg.types.json import Jsonb
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DSN = sys.argv[1] if len(sys.argv) > 1 else "postgresql://postgres@localhost:5432/webuy_test"
@@ -24,10 +25,11 @@ def admin_conn():
 
 def rebuild():
     with admin_conn() as c:
-        c.execute("drop schema if exists public cascade; create schema public; grant usage on schema public to anon, authenticated, service_role;")
+        c.execute("drop schema if exists public cascade; create schema public;")
         c.execute("drop schema if exists auth cascade; drop schema if exists storage cascade;")
-        files = [ROOT / "supabase/tests/00_local_supabase_stub.sql", *sorted((ROOT / "supabase/migrations").glob("*.sql")),
-                 ROOT / "supabase/seed.sql", ROOT / "supabase/seed.sql"]
+        c.execute((ROOT / "supabase/tests/00_local_supabase_stub.sql").read_text(encoding="utf-8"))
+        c.execute("grant usage on schema public to anon, authenticated, service_role")
+        files = [*sorted((ROOT / "supabase/migrations").glob("*.sql")), ROOT / "supabase/seed.sql", ROOT / "supabase/seed.sql"]
         for f in files:
             c.execute(f.read_text(encoding="utf-8"))
 
@@ -360,7 +362,14 @@ def _():
     A.rpc("add_to_cart", p_product_id="1", p_kind="retail", p_quantity=1)
     cart = A.rpc("add_to_cart", p_product_id="1", p_kind="retail", p_quantity=2)
     assert len(cart["items"]) == 1 and cart["items"][0]["quantity"] == 3 and cart["subtotal"] == 3 * 299000, cart
-    cart = A.rpc("add_to_cart", p_product_id="1", p_kind="group", p_quantity=1, p_group_ref="G-1")
+    group = A.rpc("create_buying_group", p_product_id="1", p_region_code="hn", p_duration_hours=Jsonb(1), p_request_key=uuid.uuid4())
+    group_id = uuid.UUID(group["group"]["id"])
+    group_buyer = Api(new_user("group-member@webuy.test"))
+    A.rpc("confirm_group_reservation", p_reservation_id=uuid.UUID(group["myReservation"]["id"]))
+    for buyer in (B, group_buyer):
+        slot = buyer.rpc("join_buying_group", p_group_id=group_id, p_request_key=uuid.uuid4())["myReservation"]
+        buyer.rpc("confirm_group_reservation", p_reservation_id=uuid.UUID(slot["id"]))
+    cart = A.rpc("add_to_cart", p_product_id="1", p_kind="group", p_quantity=1, p_group_ref=str(group_id))
     assert len(cart["items"]) == 2
 
 
@@ -449,7 +458,7 @@ def _():
             c.execute("update public.products set retail_price = 299000 where id = '1'")
 
 
-@case("Chốt giá theo lịch sử", "Dòng mua chung lấy giá nhóm và lưu cả giá lẻ/giá nhóm lúc đặt")
+@case("Chốt giá theo lịch sử", "Dòng mua chung dùng giá đã giữ của suất, giá lẻ theo catalog lúc đặt")
 def _():
     cart = A.rpc("get_cart")
     g = next(i for i in cart["items"] if i["kind"] == "group")

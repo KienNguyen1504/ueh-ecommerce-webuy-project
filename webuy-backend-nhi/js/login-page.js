@@ -13,6 +13,7 @@
   // Chỉ cho quay về trang .html của chính website (chặn chuyển hướng sang trang lạ)
   const next = (() => {
     const raw = params.get('next') || '';
+    if (/^\.\.\/(product-detail|cart|checkout)\.html(\?[^#\s]*)?(#[\w-]*)?$/.test(raw)) return raw;
     return /^[a-z0-9-]+\.html(\?[^#\s]*)?(#[\w-]*)?$/i.test(raw) && !/^login\.html/i.test(raw) ? raw : 'index.html';
   })();
   q('[data-back]').href = next;
@@ -120,7 +121,10 @@
     if (bad.some(Boolean)) { f.querySelector('[aria-invalid="true"]').focus(); return; }
     show('');
     try {
-      const res = await API.ui.withLoading(f.querySelector('[type="submit"]'), () => API.auth.signUp({ name, email, password }), 'Đang tạo tài khoản…');
+      const callback = new URL('login.html', location.href);
+      if (next.startsWith('../')) callback.searchParams.set('next', next);
+      const res = await API.ui.withLoading(f.querySelector('[type="submit"]'),
+        () => API.auth.signUp({ name, email, password, emailRedirectTo: callback.href }), 'Đang tạo tài khoản…');
       if (res.needsConfirmation) {
         show(`Đã gửi email xác nhận tới ${email}. Bấm vào liên kết trong email rồi quay lại đăng nhập.`, 'ok');
         selectTab(tabs[0]);

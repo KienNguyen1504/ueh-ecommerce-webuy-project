@@ -23,6 +23,33 @@ Mở thư mục chứa `index.html` bằng Live Server hoặc chạy `python -m 
 - [Kịch bản demo 5 phút](#kịch-bản-demo-5-phút)
 - [Bộ kiểm thử trình duyệt](tests/test-runner.html)
 
+## Backend mua chung trên Supabase staging
+
+[API contract và sơ đồ trạng thái](docs/backend-contract.md) mô tả luồng browser → Supabase Auth/PostgREST → PostgreSQL. Dùng project staging riêng với project demo production. Trang chi tiết, giỏ và checkout ở thư mục gốc dùng API thật khi bật Supabase. Server Wi-Fi vẫn chạy chế độ LAN.
+
+1. Trên **project staging**, bật `unaccent`. Chạy năm file trong `webuy-backend-nhi/supabase/migrations/` theo thứ tự `20261129000100_nhi_foundation.sql`, `20261129000200_nhi_store_catalog.sql`, `20261129000300_nhi_stock_cart_orders.sql`, `20261129000400_nhi_notifications.sql`, `20261129000900_nhi_grants.sql`. Chạy tiếp `webuy-backend-nhi/supabase/seed.sql`.
+2. Áp dụng `20261129001000_hoa_group_schema.sql` → `20261129001100_hoa_group_rpcs.sql` → `20261129001200_hoa_group_checkout.sql`. Nếu staging đã chạy nền Nhi, áp dụng các migration Hoa còn thiếu theo lịch sử migration. Chỉ bật `pg_cron` nếu cần ghi trạng thái và gửi thông báo hết hạn khi không có lượt thao tác. Khi bật, lên lịch chạy `select public.expire_buying_groups();` mỗi phút bằng role DB được phép thực thi, và kiểm tra cả lịch `webuy-release-expired-holds` của Nhi nếu cần tự dọn giữ hàng. Hai tác vụ dọn dùng hai vòng đời riêng.
+3. Điền **Project URL** và **publishable key** trong `webuy-backend-nhi/js/api-config.js`, đặt `mode: 'supabase'`. Hoa gửi Nhi hai giá trị công khai này. Giữ secret key, `service_role` và mật khẩu DB ngoài chat, Git, lệnh được ghi log và JavaScript frontend. [`.env.example`](.env.example) liệt kê hai biến công khai dùng cho kiểm tra thủ công. HTML tĩnh nạp cấu hình JavaScript.
+4. Trong Supabase Auth, đặt Site URL và Redirect URLs cho origin staging và trang `webuy-backend-nhi/login.html` tương ứng, gồm URL callback có `next` của luồng xác nhận email. Thử từ localhost và URL GitHub Pages dự kiến qua HTTPS, giữ nguyên đường dẫn project. Dùng các ID catalog đã seed (`1`–`8`), chẳng hạn `product-detail.html?id=2`.
+5. Từ origin staging, gọi health (`POST /rest/v1/rpc/health` với header `apikey` và body `{}`), đăng nhập và mở cùng link nhóm trong hai phiên độc lập. Xác minh status thật `201`, `200`, `409`, header `Idempotency-Key` nếu client dùng header và preflight tương ứng. Browser hiện gửi khóa trong JSON. Vòng kiểm thử tối thiểu gồm 20 tài khoản tranh suất cuối, replay, hết hạn, RLS hai tài khoản, đổi giá catalog sau giữ suất và `OUT_OF_STOCK` khi đặt đơn. Kiểm tra Auth redirect, Storage của seller và các thao tác qua Pages trước khi bật demo production.
+
+Khi bàn giao, xuất dữ liệu demo và lưu danh sách thứ tự migration, cấu hình Auth và bucket. Khôi phục bản export vào project thử riêng, áp dụng các migration còn thiếu theo thứ tự và kiểm tra lại danh mục, đăng nhập, RLS, nhóm và đặt đơn. Nếu dùng ảnh upload, sao lưu và phục hồi object Storage cùng dữ liệu DB. Khi lỗi tích hợp, kiểm tra mã RPC trong Network, project URL, chế độ API, phiên đăng nhập và lịch sử migration của staging.
+
+### Kiểm thử local
+
+Chạy lệnh từ thư mục gốc. Hai database PostgreSQL chỉ dùng cho kiểm thử. Suite Nhi dựng lại schema; suite Hoa yêu cầu database rỗng ở mỗi lần chạy.
+
+```bash
+python -m pip install 'psycopg[binary]'
+createdb webuy_test
+createdb webuy_hoa_test
+python -B webuy-backend-nhi/supabase/tests/test_backend_nhi.py 'postgresql://postgres@127.0.0.1/webuy_test'
+WEBUY_HOA_TEST_DSN='postgresql://postgres@127.0.0.1/webuy_hoa_test' python -B webuy-backend-nhi/supabase/tests/test_backend_hoa.py
+python -B tests/test_lan_sync.py
+```
+
+Hai suite SQL dùng PostgreSQL thật, role browser và JWT claims giả lập bằng stub local. HTTP gateway, Auth và CORS trên Supabase managed cần nghiệm thu ở staging.
+
 ## 1. Giới thiệu và mục tiêu
 
 WeBuy là website thương mại điện tử mô phỏng mô hình **mua chung theo nhóm**. Dự án hướng đến việc giúp người dùng xem sản phẩm, so sánh giá mua lẻ và giá mua chung, tìm kiếm/lọc sản phẩm, xem thông tin chi tiết và thao tác với giỏ hàng. Mục tiêu học tập của Buổi 3 là chuyển giao diện HTML/CSS ở các buổi trước thành website có tương tác JavaScript, sử dụng nguồn dữ liệu chung và phối hợp mã nguồn trên GitHub.
@@ -51,7 +78,7 @@ Bảng trên lưu phân công lịch sử của Buổi 3. Sheet hiện tại đ�
 - **`localStorage`:** lưu trạng thái giỏ hàng, nhóm mua, hồ sơ và đơn hàng demo trong cùng trình duyệt.
 - **Git/GitHub:** quản lý phiên bản và phối hợp làm bài nhóm; **Visual Studio Code + Live Server:** hỗ trợ chạy thử tại máy.
 
-Frontend ở thư mục gốc chạy bằng HTML/CSS/JavaScript và localStorage. Thư mục `webuy-backend-nhi/` chứa phần tích hợp backend riêng.
+Frontend ở thư mục gốc chạy bằng HTML/CSS/JavaScript. Demo tĩnh dùng localStorage; các trang chi tiết, giỏ và checkout có thể dùng backend trong `webuy-backend-nhi/` khi bật Supabase.
 
 ## 4. Tính năng Frontend mở rộng (27/11/2026)
 
